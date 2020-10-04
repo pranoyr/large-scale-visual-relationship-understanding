@@ -1030,13 +1030,13 @@ __C.EXPECTED_RESULTS_EMAIL = ''
 
 # ------------------------------
 
-# Data directory
-__C.DATASET_DIR = '/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD'
-__C.WORD_VECTORS_DIR = '/Users/pranoyr/Downloads/GoogleNews-vectors-negative300.bin'
-
 # # Data directory
-# __C.DATASET_DIR = '/home/neuroplex/code/faster-rcnn/data/VRD'
-# __C.WORD_VECTORS_DIR = '/home/neuroplex/data/GoogleNews-vectors-negative300.bin'
+# __C.DATASET_DIR = '/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD'
+# __C.WORD_VECTORS_DIR = '/Users/pranoyr/Downloads/GoogleNews-vectors-negative300.bin'
+
+# Data directory
+__C.DATASET_DIR = '/home/neuroplex/code/faster-rcnn/data/VRD'
+__C.WORD_VECTORS_DIR = '/home/neuroplex/data/GoogleNews-vectors-negative300.bin'
 
 
 # [Deprecate]
