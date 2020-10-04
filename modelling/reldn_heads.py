@@ -27,7 +27,6 @@ class reldn_head(nn.Module):
 
 		num_prd_classes = 80 + 1
 			
-
 		# add subnet
 		self.prd_feats = nn.Sequential(
 			nn.Linear(dim_in, 1024),
