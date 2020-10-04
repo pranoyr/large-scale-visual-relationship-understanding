@@ -26,6 +26,7 @@ import torchvision
 import math
 from torch.jit.annotations import Optional, List, Dict, Tuple
 from torchvision.models.detection.faster_rcnn import MultiScaleRoIAlign, TwoMLPHead, FastRCNNPredictor 
+from config import cfg
 
 
 class RoIHeads(torch.nn.Module):
@@ -37,20 +38,6 @@ class RoIHeads(torch.nn.Module):
 
 	def __init__(self):
 		super(RoIHeads, self).__init__()
-
-		# Box parameters
-		self.score_thresh=0.5
-		self.nms_thresh=0.5
-		self.box_detections_per_img=100
-		fg_iou_thresh=0.5
-		bg_iou_thresh=0.5
-		batch_size_per_image=512
-		positive_fraction=0.25
-		self.reg_weights=None
-		num_classes=101
-
-		batch_size_per_image_so = 64
-		positive_fraction_so = 0.5
 
 		self.box_roi_pool = MultiScaleRoIAlign(
 				featmap_names=['0', '1', '2', '3'],
@@ -66,25 +53,24 @@ class RoIHeads(torch.nn.Module):
 		representation_size = 1024
 		self.box_predictor = FastRCNNPredictor(
 			representation_size,
-			num_classes)
+			cfg.NUM_CLASSES)
 
 		self.RelDN = reldn_heads.reldn_head(self.box_head.fc7.out_features * 3)  # concat of SPO
-
 
 		self.box_similarity = box_ops.box_iou
 		# assign ground-truth boxes for each proposal
 		self.proposal_matcher = det_utils.Matcher(
-			fg_iou_thresh,
-			bg_iou_thresh,
+			cfg.FG_IOU_THRESH,
+			cfg.BG_IOU_THRESH,
 			allow_low_quality_matches=False)
 
 		self.fg_bg_sampler = det_utils.BalancedPositiveNegativeSampler(
-			batch_size_per_image,
-			positive_fraction)
+			cfg.BATCH_SIZE_PER_IMAGE,
+			cfg.POSITIVE_FRACTION)
 
 		self.fg_bg_sampler_so = det_utils.BalancedPositiveNegativeSampler(
-			batch_size_per_image_so,
-			positive_fraction_so)
+			cfg.BATCH_SIZE_PER_IMAGE_SO,
+			cfg.POSITIVE_FRACTION_SO)
 			
 		bbox_reg_weights = (10., 10., 5., 5.)
 		self.box_coder = det_utils.BoxCoder(bbox_reg_weights)
@@ -321,7 +307,7 @@ class RoIHeads(torch.nn.Module):
 			labels = labels.reshape(-1)
 
 			# remove low scoring boxes
-			inds = torch.nonzero(scores > self.score_thresh).squeeze(1)
+			inds = torch.nonzero(scores > cfg.SCORE_THRESH).squeeze(1)
 			boxes, scores, labels = boxes[inds], scores[inds], labels[inds]
 
 			# remove empty boxes
@@ -329,9 +315,9 @@ class RoIHeads(torch.nn.Module):
 			boxes, scores, labels = boxes[keep], scores[keep], labels[keep]
 
 			# non-maximum suppression, independently done per class
-			keep = box_ops.batched_nms(boxes, scores, labels, self.nms_thresh)
+			keep = box_ops.batched_nms(boxes, scores, labels, cfg.NMS_THRESH)
 			# keep only topk scoring predictions
-			keep = keep[:self.detections_per_img]
+			keep = keep[:cfg.DETECTIONS_PER_IMG]
 			boxes, scores, labels = boxes[keep], scores[keep], labels[keep]
 
 			all_boxes.append(boxes)

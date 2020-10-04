@@ -26,7 +26,7 @@ from torchvision.models.resnet import resnet101
 import torchvision
 import math
 from torch.jit.annotations import Optional, List, Dict, Tuple
-
+from config import cfg
 
 
 class RPN(nn.Module):
@@ -40,28 +40,17 @@ class RPN(nn.Module):
 		# Define RPN Head
 		# rpn_head = RPNHead(256, 9)
 		rpn_head = RPNHead(256, anchor_generator.num_anchors_per_location()[0])
-		# RPN parameters,
-		rpn_pre_nms_top_n_train = 2000
-		rpn_pre_nms_top_n_test = 1000
-		rpn_post_nms_top_n_train = 2000
-		rpn_post_nms_top_n_test = 1000
-		rpn_nms_thresh = 0.7
-		rpn_fg_iou_thresh = 0.7
-		rpn_bg_iou_thresh = 0.3
-		rpn_batch_size_per_image = 256
-		rpn_positive_fraction = 0.5
-
-		rpn_pre_nms_top_n = dict(training=rpn_pre_nms_top_n_train,
-								 testing=rpn_pre_nms_top_n_test)
-		rpn_post_nms_top_n = dict(
-			training=rpn_post_nms_top_n_train, testing=rpn_post_nms_top_n_test)
+		RPN_PRE_NMS_TOP_N = dict(training=cfg.RPN_PRE_NMS_TOP_N_TRAIN,
+								 testing=cfg.RPN_PRE_NMS_TOP_N_TEST)
+		RPN_POST_NMS_TOP_N = dict(
+			training=cfg.RPN_POST_NMS_TOP_N_TRAIN, testing=cfg.RPN_POST_NMS_TOP_N_TEST)
 
 		# Create RPN
 		self.rpn = RegionProposalNetwork(
 			anchor_generator, rpn_head,
-			rpn_fg_iou_thresh, rpn_bg_iou_thresh,
-			rpn_batch_size_per_image, rpn_positive_fraction,
-			rpn_pre_nms_top_n, rpn_post_nms_top_n, rpn_nms_thresh)
+			cfg.RPN_FG_IOU_THRESH, cfg.RPN_BG_IOU_THRESH,
+			cfg.RPN_BATCH_SIZE_PER_IMAGE, cfg.RPN_POSITIVE_FRACTION,
+			RPN_PRE_NMS_TOP_N, RPN_POST_NMS_TOP_N, cfg.RPN_NMS_THRESH)
 
 	def prepare_gt_for_rpn(self, targets):
 		gth_list = []
