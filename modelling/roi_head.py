@@ -99,8 +99,6 @@ class RoIHeads(torch.nn.Module):
 				)
 			else:
 				#set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
-				print(sbj_proposals_in_image)
-				print(gt_boxes_in_image[:,0,:])
 				sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
 				obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
 				# if sbj_match_quality_matrix.numel() == 0 or  obj_match_quality_matrix.numel() == 0:
@@ -318,7 +316,7 @@ class RoIHeads(torch.nn.Module):
 			rlp_proposals.append(box_utils.boxes_union(pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
 			
 		# assign gt_predicate to relation proposals
-		print(gt_boxes)
+		print(pos_sbj_proposals)
 		rlp_labels = self.assign_pred_to_rlp_proposals(pos_sbj_proposals, pos_obj_proposals, \
 		gt_boxes, gt_labels, gt_preds)
 
