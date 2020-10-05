@@ -85,11 +85,11 @@ def get_box_feature(boxes, width, height):
 
 def boxes_union(boxes1, boxes2):
     assert boxes1.shape == boxes2.shape
-    xmin = np.minimum(boxes1[:, 0], boxes2[:, 0])
-    ymin = np.minimum(boxes1[:, 1], boxes2[:, 1])
-    xmax = np.maximum(boxes1[:, 2], boxes2[:, 2])
-    ymax = np.maximum(boxes1[:, 3], boxes2[:, 3])
-    return torch.from_numpy(np.vstack((xmin, ymin, xmax, ymax)).transpose())
+    xmin = torch.minimum(boxes1[:, 0], boxes2[:, 0])
+    ymin = torch.minimum(boxes1[:, 1], boxes2[:, 1])
+    xmax = torch.maximum(boxes1[:, 2], boxes2[:, 2])
+    ymax = torch.maximum(boxes1[:, 3], boxes2[:, 3])
+    return torch.from_numpy(torch.vstack((xmin, ymin, xmax, ymax)).t())
 
 
 def rois_union(rois1, rois2):
