@@ -297,6 +297,7 @@ class RoIHeads(torch.nn.Module):
 		rlp_proposals = []
 		for img_id in range(num_images):
 			min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
+			print(min_shape)
 			# make subjects and objects sample count equal
 			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][:min_shape]
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][:min_shape]
@@ -307,6 +308,7 @@ class RoIHeads(torch.nn.Module):
 			obj_inds = np.tile(np.arange(min_shape), min_shape)
 			# remove same combination
 			sbj_inds, obj_inds = self.remove_self_pairs(min_shape, sbj_inds, obj_inds)
+			print(sbj_inds)
 
 			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][sbj_inds]
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
@@ -316,7 +318,6 @@ class RoIHeads(torch.nn.Module):
 			rlp_proposals.append(box_utils.boxes_union(pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
 			
 		# assign gt_predicate to relation proposals
-		print(pos_sbj_proposals)
 		rlp_labels = self.assign_pred_to_rlp_proposals(pos_sbj_proposals, pos_obj_proposals, \
 		gt_boxes, gt_labels, gt_preds)
 
