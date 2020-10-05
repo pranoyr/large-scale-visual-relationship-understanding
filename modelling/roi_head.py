@@ -88,7 +88,7 @@ class RoIHeads(torch.nn.Module):
 		for sbj_proposals_in_image, obj_proposals_in_image, gt_boxes_in_image, gt_labels_in_image, \
 			  gt_preds_in_image in zip(sbj_proposals, obj_proposals, gt_boxes, gt_labels, gt_preds):
 						  
-			if gt_preds.numel() == 0:
+			if gt_preds_in_image.numel() == 0:
 				# Background image
 				device = sbj_proposals_in_image.device
 				clamped_sbj_matched_idxs_in_image = torch.zeros(
