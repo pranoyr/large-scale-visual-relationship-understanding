@@ -254,8 +254,8 @@ class RoIHeads(torch.nn.Module):
 			matched_gt_boxes.append(gt_boxes_in_image[matched_idxs[img_id]])
 
 		regression_targets = self.box_coder.encode(matched_gt_boxes, all_proposals)
-		data = {"labels":labels, "proposals":all_proposals}
-		data = self.extract_positive_proposals(data)
+		# data = {"labels":labels, "proposals":all_proposals}
+		#data = self.extract_positive_proposals(data)
 
 		pos_proposals = proposals.copy()
 		
