@@ -243,7 +243,7 @@ class RoIHeads(torch.nn.Module):
 		num_images = len(proposals)
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
-			proposals[img_id] = proposals[img_id][img_sampled_inds]
+			all_proposals[img_id] = proposals[img_id][img_sampled_inds]
 			labels[img_id] = labels[img_id][img_sampled_inds]
 			matched_idxs[img_id] = matched_idxs[img_id][img_sampled_inds]
 
@@ -255,7 +255,8 @@ class RoIHeads(torch.nn.Module):
 		regression_targets = self.box_coder.encode(matched_gt_boxes, proposals)
 		data = {"labels":labels, "proposals":proposals}
 		data = self.extract_positive_proposals(data)
-		pos_proposals = data['proposals']
+
+		pos_proposals = proposals.copy()
 		
 		# get matching gt indices for each proposal
 		_, sub_labels = self.assign_targets_to_proposals(pos_proposals, gt_boxes, gt_labels, assign_to="subject")
@@ -279,27 +280,27 @@ class RoIHeads(torch.nn.Module):
 		data_o = {"labels":obj_labels, "proposals":obj_proposals}
 		data_o = self.extract_positive_proposals(data_o)
 
-		# prepare relation candidates
-		data_r = []
-		for img_id in range(num_images):
-			sbj_labels = data_s['labels'][img_id]
-			sbj_inds = np.repeat(np.arange(sbj_labels.shape[0]), sbj_labels.shape[0])
-			obj_inds = np.tile(np.arange(sbj_labels.shape[0]), sbj_labels.shape[0])
-			# remove same combination
-			sbj_inds, obj_inds = self.remove_self_pairs(sbj_labels.shape[0], sbj_inds, obj_inds)
+		# # prepare relation candidates
+		# data_r = []
+		# for img_id in range(num_images):
+		# 	sbj_labels = data_s['labels'][img_id]
+		# 	sbj_inds = np.repeat(np.arange(sbj_labels.shape[0]), sbj_labels.shape[0])
+		# 	obj_inds = np.tile(np.arange(sbj_labels.shape[0]), sbj_labels.shape[0])
+		# 	# remove same combination
+		# 	sbj_inds, obj_inds = self.remove_self_pairs(sbj_labels.shape[0], sbj_inds, obj_inds)
 
-			data_s[img_id] = data_s[img_id]['labels'][sbj_inds]
-			data_o[img_id] = data_o[img_id]['labels'][sbj_inds]
+		# 	data_s[img_id] = data_s[img_id]['labels'][sbj_inds]
+		# 	data_o[img_id] = data_o[img_id]['labels'][sbj_inds]
 
-			obj_labels = data_o['labels'][obj_inds]
-			sbj_proposals = data_s['proposals'][sbj_inds]
-			obj_proposals = data_o['proposals'][obj_inds]
+		# 	obj_labels = data_o['labels'][obj_inds]
+		# 	sbj_proposals = data_s['proposals'][sbj_inds]
+		# 	obj_proposals = data_o['proposals'][obj_inds]
 
-			# assign predicate to subjects
-			matched_idxs, sub_labels = self.assign_pred_to_rel_proposals(relation_proposals, gt_boxes, gt_labels)
+		# 	# assign predicate to subjects
+		# 	matched_idxs, sub_labels = self.assign_pred_to_rel_proposals(relation_proposals, gt_boxes, gt_labels)
 			
 	
-		return proposals, matched_idxs, labels, regression_targets, data_s, data_o
+		return all_proposals, matched_idxs, labels, regression_targets, data_s, data_o
 
 	def postprocess_detections(self,
 							   class_logits,    # type: Tensor
