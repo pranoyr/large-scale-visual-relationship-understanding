@@ -318,6 +318,7 @@ class RoIHeads(torch.nn.Module):
 			rlp_proposals.append(box_utils.boxes_union(pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
 			
 		# assign gt_predicate to relation proposals
+		print(gt_boxes)
 		rlp_labels = self.assign_pred_to_rlp_proposals(pos_sbj_proposals, pos_obj_proposals, \
 		gt_boxes, gt_labels, gt_preds)
 
