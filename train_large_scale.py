@@ -38,7 +38,7 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 dataloader = DataLoader(
-	dataset_train, num_workers=0, collate_fn=collater, batch_size=2)
+	dataset_train, num_workers=0, collate_fn=collater, batch_size=1)
 
 
 faster_rcnn = FasterRCNN().to(DEVICE)
