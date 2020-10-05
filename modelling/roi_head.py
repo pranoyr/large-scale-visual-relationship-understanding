@@ -238,7 +238,8 @@ class RoIHeads(torch.nn.Module):
 		# get matching gt indices for each proposal
 		matched_idxs, labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="all")
 		# sample a fixed proportion of positive-negative proposals
-		sampled_inds = self.subsample(labels, sample_for="all")								# size 512
+		sampled_inds = self.subsample(labels, sample_for="all")	# size 512
+		all_proposals = proposals.copy()						
 		matched_gt_boxes = []
 		num_images = len(proposals)
 		for img_id in range(num_images):

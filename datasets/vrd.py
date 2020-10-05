@@ -145,4 +145,6 @@ def collater(data):
 	annotations = [{"boxes": s['boxes'].to(DEVICE)} for s in data]
 	for i, s in enumerate(data):
 		annotations[i]['labels'] = s['labels'].to(DEVICE)
+	for i, s in enumerate(data):
+    		annotations[i]['preds'] = s['preds'].to(DEVICE)
 	return imgs, annotations
