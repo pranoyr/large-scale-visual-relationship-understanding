@@ -91,7 +91,7 @@ class RoIHeads(torch.nn.Module):
 			if gt_preds.numel() == 0:
 				# Background image
 				device = sbj_proposals_in_image.device
-				clamped_matched_idxs_in_image = torch.zeros(
+				clamped_sbj_matched_idxs_in_image = torch.zeros(
 					(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
 				)
 				labels_in_image = torch.zeros(
