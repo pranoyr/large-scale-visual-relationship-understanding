@@ -297,7 +297,8 @@ class RoIHeads(torch.nn.Module):
 		rlp_proposals = []
 		for img_id in range(num_images):
 			min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
-			print(min_shape)
+			print(pos_sbj_labels)
+			print(pos_obj_labels)
 			# make subjects and objects sample count equal
 			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][:min_shape]
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][:min_shape]
@@ -308,7 +309,6 @@ class RoIHeads(torch.nn.Module):
 			obj_inds = np.tile(np.arange(min_shape), min_shape)
 			# remove same combination
 			sbj_inds, obj_inds = self.remove_self_pairs(min_shape, sbj_inds, obj_inds)
-			print(sbj_inds)
 
 			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][sbj_inds]
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
