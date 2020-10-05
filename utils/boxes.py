@@ -47,13 +47,14 @@ from __future__ import unicode_literals
 
 import warnings
 import numpy as np
+import torch
 
-from core.config import cfg
-import utils.cython_bbox as cython_bbox
-import utils.cython_nms as cython_nms
+from config import cfg
+# import utils.cython_bbox as cython_bbox
+# import utils.cython_nms as cython_nms
 
-bbox_overlaps = cython_bbox.bbox_overlaps
-bbox_pair_overlaps = cython_bbox.bbox_pair_overlaps
+# bbox_overlaps = cython_bbox.bbox_overlaps
+# bbox_pair_overlaps = cython_bbox.bbox_pair_overlaps
 
 
 def get_spt_features(boxes1, boxes2, width, height):
@@ -88,7 +89,7 @@ def boxes_union(boxes1, boxes2):
     ymin = np.minimum(boxes1[:, 1], boxes2[:, 1])
     xmax = np.maximum(boxes1[:, 2], boxes2[:, 2])
     ymax = np.maximum(boxes1[:, 3], boxes2[:, 3])
-    return np.vstack((xmin, ymin, xmax, ymax)).transpose()
+    return torch.from_numpy(np.vstack((xmin, ymin, xmax, ymax)).transpose())
 
 
 def rois_union(rois1, rois2):

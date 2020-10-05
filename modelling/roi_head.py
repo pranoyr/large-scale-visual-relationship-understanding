@@ -6,6 +6,8 @@ import torch.optim as optim
 import torchvision.models.detection._utils as  det_utils
 from torchvision.ops import boxes as box_ops
 import os
+import utils.boxes as box_utils
+import copy
 from losses import fastrcnn_loss, reldn_losses
 from collections import OrderedDict
 import random
@@ -49,6 +51,7 @@ class RoIHeads(torch.nn.Module):
 		self.box_head = TwoMLPHead(
 			256 * resolution ** 2,
 			representation_size)
+		self.rlp_box_head = copy.deepcopy(self.box_head)
 
 		representation_size = 1024
 		self.box_predictor = FastRCNNPredictor(
@@ -71,49 +74,52 @@ class RoIHeads(torch.nn.Module):
 		self.fg_bg_sampler_so = det_utils.BalancedPositiveNegativeSampler(
 			cfg.BATCH_SIZE_PER_IMAGE_SO,
 			cfg.POSITIVE_FRACTION_SO)
+
+		self.fg_bg_sampler_rlp = det_utils.BalancedPositiveNegativeSampler(
+			128,
+			0.25)
 			
 		bbox_reg_weights = (10., 10., 5., 5.)
 		self.box_coder = det_utils.BoxCoder(bbox_reg_weights)
 
-	def assign_pred_to_rel_proposals(self, sbj_proposals, obj_proposals, gt_boxes, gt_labels, assign_to='all'):
-			# type: (List[Tensor], List[Tensor], List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
-		matched_idxs = []
-		sub_labels = []
-		obj_labels = []
-		prd_labels = []
+	def assign_pred_to_rlp_proposals(self, sbj_proposals, obj_proposals, gt_boxes, gt_labels, gt_preds):
+		# type: (List[Tensor], List[Tensor], List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
+		labels = []
+		for sbj_proposals_in_image, obj_proposals_in_image, gt_boxes_in_image, gt_labels_in_image, \
+			  gt_preds_in_image in zip(sbj_proposals, obj_proposals, gt_boxes, gt_labels, gt_preds):
+						  
+			# if gt_preds.numel() == 0:
+			# 	# Background image
+			# 	device = proposals_in_image.device
+			# 	clamped_matched_idxs_in_image = torch.zeros(
+			# 		(proposals_in_image.shape[0],), dtype=torch.int64, device=device
+			# 	)
+			# 	labels_in_image = torch.zeros(
+			# 		(proposals_in_image.shape[0],), dtype=torch.int64, device=device
+			# 	)
+			# else:
+			#  set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
+
+			sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
+			obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
+
+			# # Label background (below the low threshold)
+			# bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
+			# labels_in_image[bg_inds] = 0
 		
-		for proposals_in_image, gt_boxes_in_image, gt_labels_in_image in zip(sbj_proposals, gt_boxes, gt_labels):
-			if gt_boxes_in_image.numel() == 0:
-				# Background image
-				device = proposals_in_image.device
-				clamped_matched_idxs_in_image = torch.zeros(
-					(proposals_in_image.shape[0],), dtype=torch.int64, device=device
-				)
-				labels_in_image = torch.zeros(
-					(proposals_in_image.shape[0],), dtype=torch.int64, device=device
-				)
-			else:
-				#  set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
-				match_quality_matrix = box_ops.box_iou(gt_boxes_in_image, proposals_in_image)
-				matched_idxs_in_image = self.proposal_matcher(match_quality_matrix)
+			sbj_matched_idxs_in_image = self.proposal_matcher(sbj_match_quality_matrix)
+			obj_matched_idxs_in_image = self.proposal_matcher(obj_match_quality_matrix)
 
-				clamped_matched_idxs_in_image = matched_idxs_in_image.clamp(min=0)
+			sbj_matched_idxs_in_image[sbj_matched_idxs_in_image != obj_matched_idxs_in_image] = -1
+			clamped_sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(min=0)
 
-				labels_in_image = gt_labels_in_image[clamped_matched_idxs_in_image]
-				labels_in_image = labels_in_image.to(dtype=torch.int64)
-
-				# Label background (below the low threshold)
-				bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
-				labels_in_image[bg_inds] = 0
-
-				# Label ignore proposals (between low and high thresholds)
-				ignore_inds = matched_idxs_in_image == self.proposal_matcher.BETWEEN_THRESHOLDS
-				labels_in_image[ignore_inds] = -1  # -1 is ignored by sampler
-
-			matched_idxs.append(clamped_matched_idxs_in_image)
+			labels_in_image = gt_preds_in_image[clamped_sbj_matched_idxs_in_image]
+			bg_inds = sbj_matched_idxs_in_image == -1
+			labels_in_image[bg_inds] = 0
+			
+			labels_in_image = labels_in_image.to(dtype=torch.int64)
 			labels.append(labels_in_image)
-		# return matched_idxs, labels
-		return sbj_proposals, obj_proposals, relation_proposals, sub_labels, obj_labels, prd_labels
+		return labels
 
 	def assign_targets_to_proposals(self, proposals, gt_boxes, gt_labels, assign_to='all'):
 		# type: (List[Tensor], List[Tensor], List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
@@ -169,6 +175,8 @@ class RoIHeads(torch.nn.Module):
 		# type: (List[Tensor]) -> List[Tensor]
 		if sample_for == "all":
 			sampled_pos_inds, sampled_neg_inds = self.fg_bg_sampler(labels)
+		elif sample_for =="rel":
+			sampled_pos_inds, sampled_neg_inds = self.fg_bg_sampler_rlp(labels)
 		else:
 			sampled_pos_inds, sampled_neg_inds = self.fg_bg_sampler_so(labels)
 		sampled_inds = []
@@ -197,11 +205,9 @@ class RoIHeads(torch.nn.Module):
 		obj_inds = obj_inds[keeps]
 		return sbj_inds, obj_inds
 
-	def extract_positive_proposals(self, data):
+	def extract_positive_proposals(self, labels, proposals):
 		n_props = []
 		n_labels = []
-		proposals = data['proposals']
-		labels = data['labels']
 		for proposal, label in zip(proposals, labels):
 			mask = label > 0
 			pos_label = label[mask]
@@ -209,8 +215,8 @@ class RoIHeads(torch.nn.Module):
 
 			n_labels.append(pos_label)
 			n_props.append(pos_proposal)
-			
-		return {'labels':n_labels, 'proposals':n_props}
+
+		return n_labels, n_props
 
 	def check_targets(self, targets):
 		# type: (Optional[List[Dict[str, Tensor]]]) -> None
@@ -257,15 +263,14 @@ class RoIHeads(torch.nn.Module):
 		
 		
 		# get matching gt indices for each proposal
-		_, sub_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="subject")
-		sampled_inds = self.subsample(sub_labels, sample_for="subject")   			#	size 64 --> 32 pos, 32 neg
-		sub_proposals = proposals.copy()
+		_, sbj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="subject")
+		sampled_inds = self.subsample(sbj_labels, sample_for="subject")   			#	size 64 --> 32 pos, 32 neg
+		sbj_proposals = proposals.copy()
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
-			sub_proposals[img_id] = proposals[img_id][img_sampled_inds]
-			sub_labels[img_id] = sub_labels[img_id][img_sampled_inds]
-		data_s = {"labels":sub_labels, "proposals":sub_proposals}
-		data_s = self.extract_positive_proposals(data_s)
+			sbj_proposals[img_id] = proposals[img_id][img_sampled_inds]
+			sbj_labels[img_id] = sbj_labels[img_id][img_sampled_inds]
+		pos_sbj_labels, pos_sbj_proposals = self.extract_positive_proposals(sbj_labels, sbj_proposals)
 
 		# get matching gt indices for each proposal
 		_, obj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="objects")
@@ -275,30 +280,58 @@ class RoIHeads(torch.nn.Module):
 			img_sampled_inds = sampled_inds[img_id]
 			obj_proposals[img_id] = proposals[img_id][img_sampled_inds]
 			obj_labels[img_id] = obj_labels[img_id][img_sampled_inds]
-		data_o = {"labels":obj_labels, "proposals":obj_proposals}
-		data_o = self.extract_positive_proposals(data_o)
+		pos_obj_labels, pos_obj_proposals = self.extract_positive_proposals(obj_labels, obj_proposals)
 
-		# # prepare relation candidates
-		# data_r = []
-		# for img_id in range(num_images):
-		# 	sbj_labels = data_s['labels'][img_id]
-		# 	sbj_inds = np.repeat(np.arange(sbj_labels.shape[0]), sbj_labels.shape[0])
-		# 	obj_inds = np.tile(np.arange(sbj_labels.shape[0]), sbj_labels.shape[0])
-		# 	# remove same combination
-		# 	sbj_inds, obj_inds = self.remove_self_pairs(sbj_labels.shape[0], sbj_inds, obj_inds)
-
-		# 	data_s[img_id] = data_s[img_id]['labels'][sbj_inds]
-		# 	data_o[img_id] = data_o[img_id]['labels'][sbj_inds]
-
-		# 	obj_labels = data_o['labels'][obj_inds]
-		# 	sbj_proposals = data_s['proposals'][sbj_inds]
-		# 	obj_proposals = data_o['proposals'][obj_inds]
-
-		# 	# assign predicate to subjects
-		# 	matched_idxs, sub_labels = self.assign_pred_to_rel_proposals(relation_proposals, gt_boxes, gt_labels)
-			
 	
-		return all_proposals, matched_idxs, labels, regression_targets, data_s, data_o
+		# prepare relation proposals   
+		rlp_proposals = []
+		for img_id in range(num_images):
+			min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
+			# make subjects and objects sample count equal
+			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][:min_shape]
+			pos_obj_labels[img_id] = pos_obj_labels[img_id][:min_shape]
+			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][:min_shape,:]
+			pos_obj_proposals[img_id] = pos_obj_proposals[img_id][:min_shape,:]
+			
+			sbj_inds = np.repeat(np.arange(min_shape), min_shape)
+			obj_inds = np.tile(np.arange(min_shape), min_shape)
+			# remove same combination
+			sbj_inds, obj_inds = self.remove_self_pairs(min_shape, sbj_inds, obj_inds)
+
+			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][sbj_inds]
+			pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
+			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][sbj_inds]
+			pos_obj_proposals[img_id] = pos_obj_proposals[img_id][obj_inds]
+
+			rlp_proposals.append(box_utils.boxes_union(pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
+			
+		# assign gt_predicate to relation proposals
+		rlp_labels = self.assign_pred_to_rlp_proposals(pos_sbj_proposals, pos_obj_proposals, \
+		gt_boxes, gt_labels, gt_preds)
+
+		sampled_inds = self.subsample(rlp_labels, sample_for="rel")   				#size 64 --> 32 pos, 32 neg)
+		for img_id in range(num_images):
+			img_sampled_inds = sampled_inds[img_id]
+			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][img_sampled_inds]
+			pos_obj_proposals[img_id] = pos_obj_proposals[img_id][img_sampled_inds]
+			rlp_proposals[img_id] = rlp_proposals[img_id][img_sampled_inds]
+			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][img_sampled_inds]
+			pos_obj_labels[img_id] = pos_obj_labels[img_id][img_sampled_inds]
+			rlp_labels[img_id] = rlp_labels[img_id][img_sampled_inds]
+		
+		data_sbj = {'proposals':pos_sbj_proposals, 'labels':pos_sbj_labels}
+		data_obj = {'proposals':pos_obj_proposals, 'labels':pos_obj_labels}
+		data_rlp = {'proposals':rlp_proposals, 'labels':rlp_labels}
+
+		# print(data_sbj['labels'][0].shape)
+		# print(data_obj['labels'][0].shape)
+		# print(data_rlp['labels'][0].shape)
+
+		# print(data_sbj['labels'][0])
+		# print(data_obj['labels'][0])
+		# print(data_rlp['labels'][0])
+
+		return all_proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp
 
 	def postprocess_detections(self,
 							   class_logits,    # type: Tensor
@@ -379,8 +412,8 @@ class RoIHeads(torch.nn.Module):
 				assert t["boxes"].dtype in floating_point_types, 'target boxes must of float type'
 				assert t["labels"].dtype == torch.int64, 'target labels must of int64 type'
 		if self.training:
-			proposals, matched_idxs, labels, regression_targets, data_s, data_o = self.select_training_samples(proposals, targets)
-			# print(labels[0].shape)
+			proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp = self.select_training_samples(proposals, targets)
+
 		else:
 			labels = None
 			regression_targets = None
@@ -392,26 +425,27 @@ class RoIHeads(torch.nn.Module):
 		class_logits, box_regression = self.box_predictor(box_features)
 		
 		# predicate branch
-		sbj_feat = self.box_roi_pool(features, data_s["proposals"], image_shapes)
+		sbj_feat = self.box_roi_pool(features, data_sbj["proposals"], image_shapes)
 		sbj_feat = self.box_head(sbj_feat)
-		obj_feat = self.box_roi_pool(features, data_o["proposals"], image_shapes)
+		obj_feat = self.box_roi_pool(features, data_obj["proposals"], image_shapes)
 		obj_feat = self.box_head(obj_feat)
 
-		#rel_feat = self.Prd_RCNN.Box_Head(blob_conv_prd, rel_ret, rois_name='rel_rois', use_relu=use_relu)
-		#concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
-		#prd_cls_scores, sbj_cls_scores, obj_cls_scores = \
-			#    self.RelDN(concat_feat, sbj_labels, obj_labels, sbj_feat, obj_feat)
+		rel_feat = self.box_roi_pool(features, data_rlp["proposals"], image_shapes)
+		rel_feat = self.rlp_box_head(rel_feat)
+		
+		concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
 
-		sbj_cls_scores, obj_cls_scores = \
-				self.RelDN(sbj_feat, obj_feat)
+		sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
+				self.RelDN(concat_feat ,sbj_feat, obj_feat)
 
 		result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
 		losses = {}
 		if self.training:
 			assert labels is not None and regression_targets is not None
 
-			loss_cls_sbj, accuracy_cls_sbj = reldn_losses(sbj_cls_scores, data_s["labels"])
-			loss_cls_obj, accuracy_cls_obj = reldn_losses(obj_cls_scores, data_o['labels'])
+			loss_cls_sbj, accuracy_cls_sbj = reldn_losses(sbj_cls_scores, data_sbj["labels"])
+			loss_cls_obj, accuracy_cls_obj = reldn_losses(obj_cls_scores, data_obj['labels'])
+			loss_cls_rlp, accuracy_cls_rlp = reldn_losses(rlp_cls_scores, data_rlp['labels'])
 
 			loss_classifier, loss_box_reg = fastrcnn_loss(
 				class_logits, box_regression, labels, regression_targets)
@@ -421,7 +455,9 @@ class RoIHeads(torch.nn.Module):
 				"loss_sbj" : loss_cls_sbj,
 				"acc_sbj"	: accuracy_cls_sbj.item(),
 				"loss_obj" : loss_cls_obj,
-				"acc_obj"	: accuracy_cls_obj.item()
+				"acc_obj"	: accuracy_cls_obj.item(),
+				"loss_rlp" : loss_cls_rlp,
+				"acc_rlp"	: accuracy_cls_rlp.item()
 			}
 		else:
 			boxes, scores, labels = self.postprocess_detections(class_logits, box_regression, proposals, image_shapes)

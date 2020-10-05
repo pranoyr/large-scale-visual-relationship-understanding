@@ -52,7 +52,7 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 		result, losses = faster_rcnn(images, targets)
 		final_loss = losses["loss_objectness"] + losses["loss_rpn_box_reg"] + \
 			losses["loss_classifier"] + losses["loss_box_reg"] + \
-			losses["loss_sbj"] + losses["loss_obj"]
+			losses["loss_sbj"] + losses["loss_obj"] + losses["loss_rlp"]
 			
 
 		loss.append(final_loss.item())
@@ -68,7 +68,9 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 				sbj_loss	   : {losses['loss_sbj']}\n\
 				obj_loss	   : {losses['loss_obj']}\n\
 				sbj_acc        : {losses['acc_sbj']}\n\
-				obj_acc	       : {losses['acc_obj']}\n """
+				obj_acc	       : {losses['acc_obj']}\n\
+			    rlp_loss   	   : {losses['loss_rlp']}\n\					 
+				rlp_acc 	   : {losses['acc_rlp']}\n"""
 				)
 
 	loss = torch.tensor(loss, dtype=torch.float32)
