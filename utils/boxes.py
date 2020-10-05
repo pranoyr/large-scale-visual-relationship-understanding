@@ -92,7 +92,7 @@ def boxes_union(boxes1, boxes2):
     ymin = np.minimum(boxes1[:, 1], boxes2[:, 1])
     xmax = np.maximum(boxes1[:, 2], boxes2[:, 2])
     ymax = np.maximum(boxes1[:, 3], boxes2[:, 3])
-    return torch.from_array(np.vstack((xmin, ymin, xmax, ymax)).transpose()).to(DEVICE)
+    return torch.from_numpy(np.vstack((xmin, ymin, xmax, ymax)).transpose()).to(DEVICE)
 
 
 def rois_union(rois1, rois2):
