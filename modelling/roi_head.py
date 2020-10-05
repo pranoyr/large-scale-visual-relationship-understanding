@@ -88,45 +88,33 @@ class RoIHeads(torch.nn.Module):
 		for sbj_proposals_in_image, obj_proposals_in_image, gt_boxes_in_image, gt_labels_in_image, \
 			  gt_preds_in_image in zip(sbj_proposals, obj_proposals, gt_boxes, gt_labels, gt_preds):
 						  
-			if gt_preds_in_image.numel() == 0:
-				# Background image
-				device = sbj_proposals_in_image.device
-				clamped_sbj_matched_idxs_in_image = torch.zeros(
-					(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
-				)
-				labels_in_image = torch.zeros(
-					(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
-				)
-			else:
-				#set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
-				sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
-				obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
-				# if sbj_match_quality_matrix.numel() == 0 or  obj_match_quality_matrix.numel() == 0:
-    			# 	# Background image
-				# 	device = sbj_proposals_in_image.device
-				# 	clamped_sbj_matched_idxs_in_image = torch.zeros(
-				# 		(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
-				# 	)
-				# 	labels_in_image = torch.zeros(
-				# 		(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
-				# 	)
-				# 	labels_in_image = labels_in_image.to(dtype=torch.int64)
-				# 	labels.append(labels_in_image)
-				# 	continue
-							
-				# # Label background (below the low threshold)
-				# bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
-				# labels_in_image[bg_inds] = 0
-				sbj_matched_idxs_in_image = self.proposal_matcher(sbj_match_quality_matrix)
-				obj_matched_idxs_in_image = self.proposal_matcher(obj_match_quality_matrix)
+			# if gt_preds_in_image.numel() == 0:
+			# 	# Background image
+			# 	device = sbj_proposals_in_image.device
+			# 	clamped_sbj_matched_idxs_in_image = torch.zeros(
+			# 		(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
+			# 	)
+			# 	labels_in_image = torch.zeros(
+			# 		(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
+			# 	)
+			# else:
+			#set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
+			sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
+			obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
+						
+			# # Label background (below the low threshold)
+			# bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
+			# labels_in_image[bg_inds] = 0
+			sbj_matched_idxs_in_image = self.proposal_matcher(sbj_match_quality_matrix)
+			obj_matched_idxs_in_image = self.proposal_matcher(obj_match_quality_matrix)
 
-				sbj_matched_idxs_in_image[sbj_matched_idxs_in_image != obj_matched_idxs_in_image] = -1
-				clamped_sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(min=0)
+			sbj_matched_idxs_in_image[sbj_matched_idxs_in_image != obj_matched_idxs_in_image] = -1
+			clamped_sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(min=0)
 
-				labels_in_image = gt_preds_in_image[clamped_sbj_matched_idxs_in_image]
-				bg_inds = sbj_matched_idxs_in_image == -1
-				labels_in_image[bg_inds] = 0
-				
+			labels_in_image = gt_preds_in_image[clamped_sbj_matched_idxs_in_image]
+			bg_inds = sbj_matched_idxs_in_image == -1
+			labels_in_image[bg_inds] = 0
+			
 			labels_in_image = labels_in_image.to(dtype=torch.int64)
 			labels.append(labels_in_image)
 		return labels
@@ -281,9 +269,6 @@ class RoIHeads(torch.nn.Module):
 			sbj_proposals[img_id] = proposals[img_id][img_sampled_inds]
 			sbj_labels[img_id] = sbj_labels[img_id][img_sampled_inds]
 		pos_sbj_labels, pos_sbj_proposals = self.extract_positive_proposals(sbj_labels, sbj_proposals)
-		print(gt_labels)
-		print(pos_sbj_labels)
-		print(gt_boxes)
 
 		# get matching gt indices for each proposal
 		_, obj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="objects")
@@ -295,7 +280,6 @@ class RoIHeads(torch.nn.Module):
 			obj_labels[img_id] = obj_labels[img_id][img_sampled_inds]
 		pos_obj_labels, pos_obj_proposals = self.extract_positive_proposals(obj_labels, obj_proposals)
 
-	
 		# prepare relation proposals   
 		rlp_proposals = []
 		for img_id in range(num_images):
