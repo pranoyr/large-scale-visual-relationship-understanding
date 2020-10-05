@@ -117,8 +117,8 @@ class RoIHeads(torch.nn.Module):
 				bg_inds = sbj_matched_idxs_in_image == -1
 				labels_in_image[bg_inds] = 0
 				
-				labels_in_image = labels_in_image.to(dtype=torch.int64)
-				labels.append(labels_in_image)
+			labels_in_image = labels_in_image.to(dtype=torch.int64)
+			labels.append(labels_in_image)
 		return labels
 
 	def assign_targets_to_proposals(self, proposals, gt_boxes, gt_labels, assign_to='all'):
