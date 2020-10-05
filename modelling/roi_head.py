@@ -254,29 +254,26 @@ class RoIHeads(torch.nn.Module):
 			matched_gt_boxes.append(gt_boxes_in_image[matched_idxs[img_id]])
 
 		regression_targets = self.box_coder.encode(matched_gt_boxes, all_proposals)
-		# data = {"labels":labels, "proposals":all_proposals}
-		#data = self.extract_positive_proposals(data)
-
-		pos_proposals = proposals.copy()
+		
 		
 		# get matching gt indices for each proposal
-		_, sub_labels = self.assign_targets_to_proposals(pos_proposals, gt_boxes, gt_labels, assign_to="subject")
+		_, sub_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="subject")
 		sampled_inds = self.subsample(sub_labels, sample_for="subject")   			#	size 64 --> 32 pos, 32 neg
-		sub_proposals = pos_proposals.copy()
+		sub_proposals = proposals.copy()
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
-			sub_proposals[img_id] = pos_proposals[img_id][img_sampled_inds]
+			sub_proposals[img_id] = proposals[img_id][img_sampled_inds]
 			sub_labels[img_id] = sub_labels[img_id][img_sampled_inds]
 		data_s = {"labels":sub_labels, "proposals":sub_proposals}
 		data_s = self.extract_positive_proposals(data_s)
 
 		# get matching gt indices for each proposal
-		_, obj_labels = self.assign_targets_to_proposals(pos_proposals, gt_boxes, gt_labels, assign_to="objects")
+		_, obj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="objects")
 		sampled_inds = self.subsample(obj_labels, sample_for="object")   				#size 64 --> 32 pos, 32 neg
-		obj_proposals = pos_proposals.copy()
+		obj_proposals = proposals.copy()
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
-			obj_proposals[img_id] = pos_proposals[img_id][img_sampled_inds]
+			obj_proposals[img_id] = proposals[img_id][img_sampled_inds]
 			obj_labels[img_id] = obj_labels[img_id][img_sampled_inds]
 		data_o = {"labels":obj_labels, "proposals":obj_proposals}
 		data_o = self.extract_positive_proposals(data_o)
