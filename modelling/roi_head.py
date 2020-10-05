@@ -106,7 +106,7 @@ class RoIHeads(torch.nn.Module):
 				# # Label background (below the low threshold)
 				# bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
 				# labels_in_image[bg_inds] = 0
-			
+				print(sbj_match_quality_matrix)
 				sbj_matched_idxs_in_image = self.proposal_matcher(sbj_match_quality_matrix)
 				obj_matched_idxs_in_image = self.proposal_matcher(obj_match_quality_matrix)
 
