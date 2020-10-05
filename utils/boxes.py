@@ -50,6 +50,7 @@ import numpy as np
 import torch
 
 from config import cfg
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # import utils.cython_bbox as cython_bbox
 # import utils.cython_nms as cython_nms
 
@@ -85,11 +86,13 @@ def get_box_feature(boxes, width, height):
 
 def boxes_union(boxes1, boxes2):
     assert boxes1.shape == boxes2.shape
-    xmin = torch.minimum(boxes1[:, 0], boxes2[:, 0])
-    ymin = torch.minimum(boxes1[:, 1], boxes2[:, 1])
-    xmax = torch.maximum(boxes1[:, 2], boxes2[:, 2])
-    ymax = torch.maximum(boxes1[:, 3], boxes2[:, 3])
-    return torch.from_numpy(torch.vstack((xmin, ymin, xmax, ymax)).t())
+    boxes1 = boxes1.cpu().numpy()
+    boxes2 = boxes2.cpu().numpy()
+    xmin = np.minimum(boxes1[:, 0], boxes2[:, 0])
+    ymin = np.minimum(boxes1[:, 1], boxes2[:, 1])
+    xmax = np.maximum(boxes1[:, 2], boxes2[:, 2])
+    ymax = np.maximum(boxes1[:, 3], boxes2[:, 3])
+    return torch.from_array(np.vstack((xmin, ymin, xmax, ymax)).transpose()).to(DEVICE)
 
 
 def rois_union(rois1, rois2):
