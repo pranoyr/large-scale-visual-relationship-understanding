@@ -281,7 +281,9 @@ class RoIHeads(torch.nn.Module):
 			sbj_proposals[img_id] = proposals[img_id][img_sampled_inds]
 			sbj_labels[img_id] = sbj_labels[img_id][img_sampled_inds]
 		pos_sbj_labels, pos_sbj_proposals = self.extract_positive_proposals(sbj_labels, sbj_proposals)
+		print(gt_labels)
 		print(pos_sbj_labels)
+		print(gt_boxes)
 
 		# get matching gt indices for each proposal
 		_, obj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="objects")
