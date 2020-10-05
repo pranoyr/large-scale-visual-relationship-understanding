@@ -71,6 +71,7 @@ class VRDDataset(Dataset):
         self._class_to_ind = dict(zip(self.classes, range(len(self.classes))))
         self._preds_to_ind = dict(
             zip(self.predicates, range(len(self.predicates))))
+		print(self._preds_to_ind)
         self.imgs_list = make_image_list(self.dataset_path, self.image_set)
 
     def __len__(self):
