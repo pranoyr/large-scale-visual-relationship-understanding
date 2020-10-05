@@ -99,7 +99,7 @@ class RoIHeads(torch.nn.Module):
 				)
 			else:
 				#set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
-
+				print(gt_boxes_in_image)
 				sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
 				obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
 
