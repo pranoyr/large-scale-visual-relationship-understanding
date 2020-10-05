@@ -55,6 +55,7 @@ class FasterRCNN(nn.Module):
 			gt = {}
 			gt["boxes"] = target["boxes"].view(-1,4)
 			gt["labels"] = target["labels"].view(-1)
+			gt["preds"] = target["preds"].view(-1)
 			gth_list.append(gt)
 		return gth_list
 	
@@ -64,6 +65,7 @@ class FasterRCNN(nn.Module):
 			gt = {}
 			gt["boxes"] = target["boxes"].view(-1,2,4)
 			gt["labels"] = target["labels"].view(-1,2)
+			gt["preds"] = target["preds"].view(-1)
 			gth_list.append(gt)
 		return gth_list
 
