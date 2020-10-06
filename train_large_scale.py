@@ -41,7 +41,7 @@ dataloader = DataLoader(
 	dataset_train, num_workers=0, collate_fn=collater, batch_size=1)
 
 
-faster_rcnn = FasterRCNN().to(DEVICE)
+to  = FasterRCNN().to(DEVICE)
 optimizer = optim.Adam(faster_rcnn.parameters(), lr=1e-5)
 faster_rcnn.train()
 
@@ -73,11 +73,13 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 				rlp_acc 	   : {losses['acc_rlp']}\n"""
 				)
 
-	loss = torch.tensor(loss, dtype=torch.float32)
-	print(f'loss : {torch.mean(loss)}')
-	# scheduler.step(torch.mean(loss))
+		loss = torch.tensor(loss, dtype=torch.float32)
+		print(f'loss : {torch.mean(loss)}')
+		# scheduler.step(torch.mean(loss))
 
-	state = {'state_dict': faster_rcnn.state_dict()}
-	torch.save(state, os.path.join('./snapshots', f'faster_rcnn.pth'))
-	print("model saved")
+		state = {'state_dict': faster_rcnn.state_dict()}
+		torch.save(state, os.path.join('./snapshots', f'faster_rcnn.pth'))
+		print("model saved")
+		break
+	break
 

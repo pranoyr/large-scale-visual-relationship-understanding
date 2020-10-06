@@ -50,14 +50,15 @@ ind_to_class = dict(zip(range(num_classes), classes))
 
 
 faster_rcnn = FasterRCNN().to(DEVICE)
-faster_rcnn.eval()
-
 
 # load pretrained weights
 # checkpoint = torch.load('./snapshots/faster_rcnn_custom.pth', map_location='cpu')
-checkpoint = torch.load('/Users/pranoyr/Downloads/faster_rcnn.pth', map_location='cpu')
-faster_rcnn.load_state_dict(checkpoint['state_dict'], strict=True)
+checkpoint = torch.load('./snapshots/faster_rcnn.pth', map_location='cpu')
+faster_rcnn.load_state_dict(checkpoint['state_dict'])
 print("Model Restored")
+
+faster_rcnn.eval()
+
 
 
 im = Image.open('/Users/pranoyr/Downloads/bike.jpg')

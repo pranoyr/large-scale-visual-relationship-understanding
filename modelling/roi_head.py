@@ -397,33 +397,28 @@ class RoIHeads(torch.nn.Module):
 		if self.training:
 			proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp = self.select_training_samples(proposals, targets)
 
-		else:
-			labels = None
-			regression_targets = None
-			matched_idxs = None
+			# faster_rcnn branch
+			box_features = self.box_roi_pool(features, proposals, image_shapes)
+			box_features = self.box_head(box_features)
+			class_logits, box_regression = self.box_predictor(box_features)
+			
+			# predicate branch
+			sbj_feat = self.box_roi_pool(features, data_sbj["proposals"], image_shapes)
+			sbj_feat = self.box_head(sbj_feat)
+			obj_feat = self.box_roi_pool(features, data_obj["proposals"], image_shapes)
+			obj_feat = self.box_head(obj_feat)
 
-		# faster_rcnn branch
-		box_features = self.box_roi_pool(features, proposals, image_shapes)
-		box_features = self.box_head(box_features)
-		class_logits, box_regression = self.box_predictor(box_features)
+			rel_feat = self.box_roi_pool(features, data_rlp["proposals"], image_shapes)
+			rel_feat = self.rlp_box_head(rel_feat)
+			
+			concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
+
+			sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
+					self.RelDN(concat_feat ,sbj_feat, obj_feat)
+
+			result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
+			losses = {}
 		
-		# predicate branch
-		sbj_feat = self.box_roi_pool(features, data_sbj["proposals"], image_shapes)
-		sbj_feat = self.box_head(sbj_feat)
-		obj_feat = self.box_roi_pool(features, data_obj["proposals"], image_shapes)
-		obj_feat = self.box_head(obj_feat)
-
-		rel_feat = self.box_roi_pool(features, data_rlp["proposals"], image_shapes)
-		rel_feat = self.rlp_box_head(rel_feat)
-		
-		concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
-
-		sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
-				self.RelDN(concat_feat ,sbj_feat, obj_feat)
-
-		result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
-		losses = {}
-		if self.training:
 			assert labels is not None and regression_targets is not None
 
 			loss_cls_sbj, accuracy_cls_sbj = reldn_losses(sbj_cls_scores, data_sbj["labels"])
@@ -442,17 +437,42 @@ class RoIHeads(torch.nn.Module):
 				"loss_rlp" : loss_cls_rlp,
 				"acc_rlp"	: accuracy_cls_rlp.item()
 			}
+		
 		else:
+			labels = None
+			regression_targets = None
+			matched_idxs = None
+
+			# faster_rcnn branch
+			box_features = self.box_roi_pool(features, proposals, image_shapes)
+			box_features = self.box_head(box_features)
+			class_logits, box_regression = self.box_predictor(box_features)
+
 			boxes, scores, labels = self.postprocess_detections(class_logits, box_regression, proposals, image_shapes)
 			num_images = len(boxes)
 			for i in range(num_images):
-				result.append(
-					{
-						"boxes": boxes[i],
-						"labels": labels[i],
-						"scores": scores[i],
-					}
-				)
+				boxes_per_image = boxes[i]
+				sbj_inds = np.repeat(np.arange(boxes_per_image.shape[0]), boxes_per_image.shape[0])
+				obj_inds = np.tile(np.arange(boxes_per_image.shape[0]), boxes_per_image.shape[0])
+
+				sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
+
+				sb_boxes = boxes_per_image[sbj_inds]
+				obj_boxes = boxes_per_image[obj_inds]
+
+				print(sb_boxes)
+				print(obj_boxes)
+
+							
+				
+			# for i in range(num_images):
+			# 	result.append(
+			# 		{
+			# 			"boxes": boxes[i],
+			# 			"labels": labels[i],
+			# 			"scores": scores[i],
+			# 		}
+			# 	)
 		   
 		return result, losses
 
