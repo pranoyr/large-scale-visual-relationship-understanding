@@ -99,8 +99,6 @@ class RoIHeads(torch.nn.Module):
 			# 	)
 			# else:
 			#set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
-			print(sbj_proposals_in_image)
-			print(obj_proposals_in_image)
 			sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
 			obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
 						
@@ -290,9 +288,7 @@ class RoIHeads(torch.nn.Module):
 			obj_shape = pos_obj_labels[img_id].shape[0]
 			sbj_inds = np.repeat(np.arange(sbj_shape), obj_shape)
 			obj_inds = np.tile(np.arange(obj_shape), sbj_shape)
-			# remove same combination
-			sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
-
+	
 			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][sbj_inds]
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
 			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][sbj_inds]
@@ -317,14 +313,6 @@ class RoIHeads(torch.nn.Module):
 		data_sbj = {'proposals':pos_sbj_proposals, 'labels':pos_sbj_labels}
 		data_obj = {'proposals':pos_obj_proposals, 'labels':pos_obj_labels}
 		data_rlp = {'proposals':rlp_proposals, 'labels':rlp_labels}
-
-		# print(data_sbj['labels'][0].shape)
-		# print(data_obj['labels'][0].shape)
-		# print(data_rlp['labels'][0].shape)
-
-		# print(data_sbj['labels'][0])
-		# print(data_obj['labels'][0])
-		# print(data_rlp['labels'][0])
 
 		return all_proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp
 
