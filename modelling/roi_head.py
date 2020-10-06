@@ -277,6 +277,8 @@ class RoIHeads(torch.nn.Module):
 
 		# prepare relation proposals   
 		rlp_proposals = []
+		print(pos_sbj_labels)
+		print(pos_obj_labels)
 		for img_id in range(num_images):
 			# min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
 			# make subjects and objects sample count equal
