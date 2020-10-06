@@ -60,15 +60,15 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 		optimizer.zero_grad()
 		final_loss.backward()
 		optimizer.step()
-		print(f"""RCNN_Loss    : {final_loss.item()}\n\
-				rpn_cls_loss   : {losses['loss_objectness'].item()}\n\
-				rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}\n\
-				box_loss 	   : {losses['loss_box_reg']}\n\
-				cls_loss       : {losses['loss_classifier']}\n\
-				sbj_loss	   : {losses['loss_sbj']}\n\
-				obj_loss	   : {losses['loss_obj']}\n\
-				sbj_acc        : {losses['acc_sbj']}\n\
-				obj_acc	       : {losses['acc_obj']}\n\
+		print(f"""RCNN_Loss    : {final_loss.item()}\n
+				rpn_cls_loss   : {losses['loss_objectness'].item()}\n
+				rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}\n
+				box_loss 	   : {losses['loss_box_reg']}\n
+				cls_loss       : {losses['loss_classifier']}\n
+				sbj_loss	   : {losses['loss_sbj']}\n
+				obj_loss	   : {losses['loss_obj']}\n
+				sbj_acc        : {losses['acc_sbj']}\n
+				obj_acc	       : {losses['acc_obj']}\n
 			    rlp_loss   	   : {losses['loss_rlp']}\n					 
 				rlp_acc 	   : {losses['acc_rlp']}"""
 				)
