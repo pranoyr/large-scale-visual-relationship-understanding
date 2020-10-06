@@ -99,6 +99,8 @@ class RoIHeads(torch.nn.Module):
 			# 	)
 			# else:
 			#set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
+			print(sbj_proposals_in_image)
+			print(obj_proposals_in_image)
 			sbj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,0,:], sbj_proposals_in_image)
 			obj_match_quality_matrix = box_ops.box_iou(gt_boxes_in_image[:,1,:], obj_proposals_in_image)
 						
@@ -277,9 +279,6 @@ class RoIHeads(torch.nn.Module):
 
 		# prepare relation proposals   
 		rlp_proposals = []
-		print(pos_sbj_labels)
-		print(pos_obj_labels)
-		print(gt_labels)
 		for img_id in range(num_images):
 			# min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
 			# make subjects and objects sample count equal
