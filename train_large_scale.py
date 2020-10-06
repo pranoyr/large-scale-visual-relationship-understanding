@@ -73,9 +73,9 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 				rlp_acc 	   : {losses['acc_rlp']}\n"""
 				)
 
-		loss = torch.tensor(loss, dtype=torch.float32)
-		print(f'loss : {torch.mean(loss)}')
-		# scheduler.step(torch.mean(loss))
+	loss = torch.tensor(loss, dtype=torch.float32)
+	print(f'loss : {torch.mean(loss)}')
+	# scheduler.step(torch.mean(loss))
 
 	state = {'state_dict': faster_rcnn.state_dict()}
 	torch.save(state, os.path.join('./snapshots', f'faster_rcnn.pth'))
