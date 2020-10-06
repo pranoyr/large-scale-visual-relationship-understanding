@@ -69,7 +69,7 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 				obj_loss	   : {losses['loss_obj']}\n\
 				sbj_acc        : {losses['acc_sbj']}\n\
 				obj_acc	       : {losses['acc_obj']}\n\
-			    rlp_loss   	   : {losses['loss_rlp']}\n\					 
+			    rlp_loss   	   : {losses['loss_rlp']}\n					 
 				rlp_acc 	   : {losses['acc_rlp']}"""
 				)
 
