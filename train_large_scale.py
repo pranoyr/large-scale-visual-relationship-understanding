@@ -70,7 +70,7 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 				sbj_acc        : {losses['acc_sbj']}\n\
 				obj_acc	       : {losses['acc_obj']}\n\
 			    rlp_loss   	   : {losses['loss_rlp']}\n\					 
-				rlp_acc 	   : {losses['acc_rlp']}\n"""
+				rlp_acc 	   : {losses['acc_rlp']}n"""
 				)
 
 	loss = torch.tensor(loss, dtype=torch.float32)
