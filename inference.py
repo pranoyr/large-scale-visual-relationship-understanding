@@ -32,6 +32,7 @@ import torchvision
 import math
 import cv2
 from modelling.model import FasterRCNN
+from config import cfg
 
 from torch.jit.annotations import Optional, List, Dict, Tuple
 from torchvision.models.detection.faster_rcnn import MultiScaleRoIAlign, TwoMLPHead, FastRCNNPredictor 
@@ -39,7 +40,7 @@ from torchvision.models.detection.faster_rcnn import MultiScaleRoIAlign, TwoMLPH
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-with open(os.path.join('/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD', 'json_dataset', 'objects.json'), 'r') as f:
+with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'objects.json'), 'r') as f:
 	objects = json.load(f)
 
 classes = ['__background__']
