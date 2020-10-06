@@ -41,10 +41,10 @@ dataloader = DataLoader(
 	dataset_train, num_workers=0, collate_fn=collater, batch_size=1)
 
 
-to  = FasterRCNN().to(DEVICE)
+faster_rcnn = FasterRCNN().to(DEVICE)
 optimizer = optim.Adam(faster_rcnn.parameters(), lr=1e-5)
-faster_rcnn.train()
 
+faster_rcnn.train()
 for epoch in range(1, cfg.N_EPOCHS+1):
 	loss = []
 	for i, data in enumerate(dataloader):
