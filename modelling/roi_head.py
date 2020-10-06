@@ -194,14 +194,9 @@ class RoIHeads(torch.nn.Module):
 
 		return proposals
 
-	def remove_self_pairs(self, det_size, sbj_inds, obj_inds):
-		mask = np.ones(sbj_inds.shape[0], dtype=bool)
-		for i in range(det_size):
-			mask[i + det_size * i] = False
-		keeps = np.where(mask)[0]
-		sbj_inds = sbj_inds[keeps]
-		obj_inds = obj_inds[keeps]
-		return sbj_inds, obj_inds
+	def remove_self_pairs(self, sbj_inds, obj_inds):
+		mask = sbj_inds != obj_inds
+		return sbj_inds[mask], obj_inds[mask]
 
 	def extract_positive_proposals(self, labels, proposals):
 		n_props = []
@@ -283,17 +278,18 @@ class RoIHeads(torch.nn.Module):
 		# prepare relation proposals   
 		rlp_proposals = []
 		for img_id in range(num_images):
-			min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
+			# min_shape = min(pos_sbj_labels[img_id].shape[0], pos_obj_labels[img_id].shape[0])
 			# make subjects and objects sample count equal
-			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][:min_shape]
-			pos_obj_labels[img_id] = pos_obj_labels[img_id][:min_shape]
-			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][:min_shape,:]
-			pos_obj_proposals[img_id] = pos_obj_proposals[img_id][:min_shape,:]
-			
-			sbj_inds = np.repeat(np.arange(min_shape), min_shape)
-			obj_inds = np.tile(np.arange(min_shape), min_shape)
+			# pos_sbj_labels[img_id] = pos_sbj_labels[img_id][:min_shape]
+			# pos_obj_labels[img_id] = pos_obj_labels[img_id][:min_shape]
+			# pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][:min_shape,:]
+			# pos_obj_proposals[img_id] = pos_obj_proposals[img_id][:min_shape,:]
+			sbj_shape = pos_sbj_labels[img_id].shape[0]
+			obj_shape = pos_obj_labels[img_id].shape[0]
+			sbj_inds = np.repeat(np.arange(sbj_shape), obj_shape)
+			obj_inds = np.tile(np.arange(obj_shape), sbj_shape)
 			# remove same combination
-			sbj_inds, obj_inds = self.remove_self_pairs(min_shape, sbj_inds, obj_inds)
+			sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
 
 			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][sbj_inds]
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
