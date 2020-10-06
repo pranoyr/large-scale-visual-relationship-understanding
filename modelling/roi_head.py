@@ -462,8 +462,6 @@ class RoIHeads(torch.nn.Module):
 
 				print(sb_boxes)
 				print(obj_boxes)
-
-							
 				
 			# for i in range(num_images):
 			# 	result.append(
