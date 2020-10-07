@@ -95,6 +95,9 @@ class FasterRCNN(nn.Module):
 			losses = {}
 			proposals, rpn_losses, fpn_feature_maps = self.rpn(images, fpn_feature_maps)
 			detections, detector_losses = self.roi_heads(fpn_feature_maps, proposals, images.image_sizes)
+			print(detections[0]['boxes'])
+			print(images.image_sizes)
+			print(original_image_sizes)
 			detections = self.transform.postprocess(detections, images.image_sizes, original_image_sizes)
 		return detections, losses
 

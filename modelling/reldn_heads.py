@@ -45,9 +45,9 @@ class reldn_head(nn.Module):
 			nn.Linear(1024, 1024))
 		# self.prd_sem_embeddings = nn.Linear(3 * 1024, 1024)
 		self.prd_sem_embeddings = nn.Sequential(
-                nn.Linear(300, 1024),
-                nn.LeakyReLU(0.1),
-                nn.Linear(1024, 1024))
+				nn.Linear(300, 1024),
+				nn.LeakyReLU(0.1),
+				nn.Linear(1024, 1024))
 		
 		self.so_vis_embeddings = nn.Linear(dim_in // 3, 1024)
 		self.so_sem_embeddings = nn.Sequential(
@@ -104,10 +104,10 @@ class reldn_head(nn.Module):
 		prd_cls_scores = 3 * prd_sim_matrix
 		# else:
 
-		# if not self.training:
-		#     sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
-		#     obj_cls_scores = F.softmax(obj_cls_scores, dim=1)
-			# prd_cls_scores = F.softmax(prd_cls_scores, dim=1)
+		if not self.training:
+			sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
+			obj_cls_scores = F.softmax(obj_cls_scores, dim=1)
+			prd_cls_scores = F.softmax(prd_cls_scores, dim=1)
 		
 		#return prd_cls_scores, sbj_cls_scores, obj_cls_scores
 		return sbj_cls_scores, obj_cls_scores, prd_cls_scores

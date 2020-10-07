@@ -48,14 +48,15 @@ with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'predicates.json'), 'r')
 	predicates = json.load(f)
 
 
+objects.insert(0,'__background__')
 predicates.insert(0,'unknown')
 print(predicates)
 
-classes = ['__background__']
-classes.extend(objects)
-num_classes = len(classes)
-# self._classes.extend(self.predicates)
-ind_to_class = dict(zip(range(num_classes), classes))
+# classes = ['__background__']
+# classes.extend(objects)
+# num_classes = len(classes)
+# # self._classes.extend(self.predicates)
+# ind_to_class = dict(zip(range(num_classes), classes))
 
 
 faster_rcnn = FasterRCNN().to(DEVICE)
@@ -83,32 +84,42 @@ img = img.type(torch.float32)
 
 with torch.no_grad():
 	detections, losses = faster_rcnn([img])
-boxes = detections[0]['boxes']
-# scores = detections[0]['scores']
-labels =  detections[0]['labels']
-# print(scores.shape)
 
-print(boxes.shape)
-for i in range(boxes.size(0)):
-	box = boxes[i]
+sbj_boxes = detections[0]['sbj_boxes']
+obj_boxes = detections[0]['obj_boxes']
+sbj_labels = detections[0]['sbj_labels']
+obj_labels = detections[0]['obj_labels']
+predicates = detections[0]['predicates']
+
+
+for sbj_box, obj_box, sbj_label, obj_label, predicate  \
+		in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, predicates):
+
 	# score = scores[i]
 	# label = f"{ind_to_class[labels[i].item()]}: {scores[i].item():.2f}"
 	# cv2.rectangle(draw, (box[0], box[1]), (box[2], box[3]), (255, 255, 0), 4)
 	# label = f"""{ind_to_class[labels[i].item()]}: {scores[i].item():.2f}"""
 	# label = f"{ind_to_class[labels[i].item()]}: {scores[i].item():.2f}"
 
-	label = f"{ind_to_class[labels[i].item()]}"
-	print(label)
-	cv2.rectangle(draw, (box[0], box[1]), (box[2], box[3]), (255, 255, 0), 4)
-	label = f"""{ind_to_class[labels[i].item()]}"""
-	label = f"{ind_to_class[labels[i].item()]}"
-	
+	label = f"{objects[sbj_label]}"
+	cv2.rectangle(draw, (sbj_box[0], sbj_box[1]), (sbj_box[2], sbj_box[3]), (255, 255, 0), 4)
 	cv2.putText(draw, label,
-				(box[0] + 20, box[1] + 40),
+				(sbj_box[0] + 20, sbj_box[1] + 40),
 				cv2.FONT_HERSHEY_SIMPLEX,
 				1,  # font scale
 				(255, 0, 255),
 				2)  # line type
+	
+	label = f"{objects[obj_label]}"
+	cv2.rectangle(draw, (obj_box[0], obj_box[1]), (obj_box[2], obj_box[3]), (255, 255, 0), 4)
+	cv2.putText(draw, label,
+				(obj_box[0] + 20, obj_box[1] + 40),
+				cv2.FONT_HERSHEY_SIMPLEX,
+				1,  # font scale
+				(255, 0, 255),
+				2)  # line type
+
+
 path = "./results/faster_rcnn_sample.jpg"
 cv2.imwrite(path, draw)
 

@@ -65,7 +65,7 @@ class RPN(nn.Module):
 		# l = torch.FloatTensor([[1,2,3,4],[1,2,3,4]])
 		# targets = [{"boxes":l},{"boxes":l}]
 		# targets = [{i: index for i, index in enumerate(l)}]
-		targets = self.prepare_gt_for_rpn(targets)
+		# targets = self.prepare_gt_for_rpn(targets)
 		
 		if self.training:
 			boxes, losses = self.rpn(images, fpn_feature_maps, targets)
