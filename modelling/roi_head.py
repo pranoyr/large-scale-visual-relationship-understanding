@@ -205,7 +205,6 @@ class RoIHeads(torch.nn.Module):
 			mask = label > 0
 			pos_label = label[mask]
 			pos_proposal = proposal[mask]
-
 			n_labels.append(pos_label)
 			n_props.append(pos_proposal)
 
@@ -257,7 +256,7 @@ class RoIHeads(torch.nn.Module):
 		
 		# get matching gt indices for each proposal
 		_, sbj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="subject")
-		sampled_inds = self.subsample(sbj_labels, sample_for="subject")   			#	size 64 --> 32 pos, 32 neg
+		sampled_inds = self.subsample(sbj_labels, sample_for="subject")   			  # 64 --> 32 pos, 32 neg
 		sbj_proposals = proposals.copy()
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
@@ -267,7 +266,7 @@ class RoIHeads(torch.nn.Module):
 
 		# get matching gt indices for each proposal
 		_, obj_labels = self.assign_targets_to_proposals(proposals, gt_boxes, gt_labels, assign_to="objects")
-		sampled_inds = self.subsample(obj_labels, sample_for="object")   				#size 64 --> 32 pos, 32 neg
+		sampled_inds = self.subsample(obj_labels, sample_for="object")   				# 64 --> 32 pos, 32 neg
 		obj_proposals = proposals.copy()
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
@@ -294,7 +293,7 @@ class RoIHeads(torch.nn.Module):
 		rlp_labels = self.assign_pred_to_rlp_proposals(pos_sbj_proposals, pos_obj_proposals, \
 		gt_boxes, gt_labels, gt_preds)
 
-		sampled_inds = self.subsample(rlp_labels, sample_for="rel")   				#size 64 --> 32 pos, 32 neg)
+		sampled_inds = self.subsample(rlp_labels, sample_for="rel")   				# 128 --> 64 pos, 64 neg)
 		for img_id in range(num_images):
 			img_sampled_inds = sampled_inds[img_id]
 			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][img_sampled_inds]

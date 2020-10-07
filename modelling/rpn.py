@@ -38,7 +38,6 @@ class RPN(nn.Module):
 		# Generate anchor boxes
 		anchor_generator = AnchorGenerator(anchor_sizes, aspect_ratios)
 		# Define RPN Head
-		# rpn_head = RPNHead(256, 9)
 		rpn_head = RPNHead(256, anchor_generator.num_anchors_per_location()[0])
 		RPN_PRE_NMS_TOP_N = dict(training=cfg.RPN_PRE_NMS_TOP_N_TRAIN,
 								 testing=cfg.RPN_PRE_NMS_TOP_N_TEST)
@@ -51,22 +50,8 @@ class RPN(nn.Module):
 			cfg.RPN_FG_IOU_THRESH, cfg.RPN_BG_IOU_THRESH,
 			cfg.RPN_BATCH_SIZE_PER_IMAGE, cfg.RPN_POSITIVE_FRACTION,
 			RPN_PRE_NMS_TOP_N, RPN_POST_NMS_TOP_N, cfg.RPN_NMS_THRESH)
-
-	def prepare_gt_for_rpn(self, targets):
-		gth_list = []
-		for target in targets:
-			gt = {}
-			gt["boxes"] = target["boxes"].view(-1,4)
-			gt["labels"] = target["labels"].view(-1)
-			gth_list.append(gt)
-		return gth_list
 	
 	def forward(self, images, fpn_feature_maps, targets=None):
-		# l = torch.FloatTensor([[1,2,3,4],[1,2,3,4]])
-		# targets = [{"boxes":l},{"boxes":l}]
-		# targets = [{i: index for i, index in enumerate(l)}]
-		# targets = self.prepare_gt_for_rpn(targets)
-		
 		if self.training:
 			boxes, losses = self.rpn(images, fpn_feature_maps, targets)
 		else:
