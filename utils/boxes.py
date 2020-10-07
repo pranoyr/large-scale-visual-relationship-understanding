@@ -416,6 +416,7 @@ def soft_nms(
     )
     return dets, keep
 
+
 def resize_boxes(boxes, original_size, new_size):
     # type: (Tensor, List[int], List[int]) -> Tensor
     ratios = [
@@ -431,3 +432,19 @@ def resize_boxes(boxes, original_size, new_size):
     ymin = ymin * ratio_height
     ymax = ymax * ratio_height
     return torch.stack((xmin, ymin, xmax, ymax), dim=1)
+
+
+def postprocess(result,               # type: List[Dict[str, Tensor]]
+				image_shapes,         # type: List[Tuple[int, int]]
+				original_image_sizes  # type: List[Tuple[int, int]]
+				):
+	# type: (...) -> List[Dict[str, Tensor]]
+	for i, (pred, im_s, o_im_s) in enumerate(zip(result, image_shapes, original_image_sizes)):
+		boxes = pred["sbj_boxes"]
+		boxes = resize_boxes(boxes, im_s, o_im_s)
+		result[i]["sbj_boxes"] = boxes
+
+		boxes = pred["obj_boxes"]
+		boxes = resize_boxes(boxes, im_s, o_im_s)
+		result[i]["obj_boxes"] = boxes
+	return result

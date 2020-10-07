@@ -76,8 +76,8 @@ class RoIHeads(torch.nn.Module):
 			cfg.POSITIVE_FRACTION_SO)
 
 		self.fg_bg_sampler_rlp = det_utils.BalancedPositiveNegativeSampler(
-			128,
-			0.5)
+			cfg.BATCH_SIZE_PER_IMAGE_REL,
+			cfg.POSITIVE_FRACTION_REL)
 			
 		bbox_reg_weights = (10., 10., 5., 5.)
 		self.box_coder = det_utils.BoxCoder(bbox_reg_weights)
@@ -462,6 +462,7 @@ class RoIHeads(torch.nn.Module):
 				all_obj_boxes.append(obj_boxes)
 				all_rlp_boxes.append(rlp_boxes)
 
+			# predicate branch
 			sbj_feat = self.box_roi_pool(features, all_sbj_boxes, image_shapes)
 			sbj_feat = self.box_head(sbj_feat)
 			obj_feat = self.box_roi_pool(features, all_obj_boxes, image_shapes)
@@ -475,9 +476,6 @@ class RoIHeads(torch.nn.Module):
 			sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
 					self.RelDN(concat_feat ,sbj_feat, obj_feat)
 
-			print(sbj_cls_scores.shape)
-			print(obj_cls_scores.shape)
-			print(rlp_cls_scores.shape)
 
 			_, rlp_indices = torch.max(rlp_cls_scores, dim=1)
 			_, sbj_indices = torch.max(sbj_cls_scores, dim=1)
@@ -492,63 +490,14 @@ class RoIHeads(torch.nn.Module):
 			obj_boxes = all_obj_boxes[0][mask]
 			rlp_boxes = all_rlp_boxes[0][mask]
 			
-			
-			# result = [{"sbj_boxes" : resize_boxes(sbj_boxes, image_shapes, original_image_sizes).type(torch.int32),
-			# 		  "obj_boxes" : resize_boxes(obj_boxes, image_shapes, original_image_sizes).type(torch.int32),
-			# 		  'sbj_labels': subjects,
-			# 		  'obj_labels' : objects,
-			# 		  'predicates' : predicates,
-			# 		  }]
-			# losses = {}
-
-			# boxes of shape (n,2,4)
-			# labels of shape (n,3)
-			result = [{"boxes" : torch.cat([sbj_boxes, obj_boxes]),
-					  "labels" : torch.cat([subjects, objects])
+			result = [{"sbj_boxes" : sbj_boxes,
+					  "obj_boxes" : obj_boxes,
+					  'sbj_labels': subjects,
+					  'obj_labels' : objects,
+					  'predicates' : predicates
 					  }]
-
-
-
-			# print( torch.cat([sbj_boxes, obj_boxes]).shape)
-			# print( torch.cat([sbj_boxes, obj_boxes]))
-
-			# print(torch.cat([subjects, objects]).shape)
-			# print(torch.cat([subjects, objects]))
-
-			# result = [{"boxes" : torch.cat([sbj_boxes, obj_boxes]),
-			# 		  "labels" : torch.cat([subjects, objects])}
-
-
-			
-
-    		# #boxes, scores, labels = self.postprocess_detections(class_logits, box_regression, proposals, image_shapes)
-			# boxes, scores, labels = self.postprocess_detections_spo(class_logits, sbj_cls_scores, box_regression, proposals, image_shapes)
-			# num_images = len(boxes)
-			# for i in range(num_images):
-			# 	result.append(
-			# 		{
-			# 			"boxes": boxes[i],
-			# 			"labels": labels[i],
-			# 			"scores": scores[i],
-			# 		}
-			# 	)
 			losses = {}
 		   
 		return result, losses
-
-		
-						
-				
-		# 	# for i in range(num_images):
-		# 	# 	result.append(
-		# 	# 		{
-		# 	# 			"boxes": boxes[i],
-		# 	# 			"labels": labels[i],
-		# 	# 			"scores": scores[i],
-		# 	# 		}
-		# 	# 	)
-		   
-		# return result, losses
-
 
 			

@@ -51,6 +51,8 @@ __C.NUM_CLASSES = 101
 
 __C.BATCH_SIZE_PER_IMAGE_SO = 64
 __C.POSITIVE_FRACTION_SO = 0.5
+__C.BATCH_SIZE_PER_IMAGE_REL = 128,
+__C.POSITIVE_FRACTION_REL = 0.5
 
 
 # RPN parameters,
@@ -67,10 +69,10 @@ __C.RPN_POSITIVE_FRACTION = 0.5
 
 # ------------------------------
 
-# # Data directory
-# __C.DATASET_DIR = '/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD'
-# __C.WORD_VECTORS_DIR = '/Users/pranoyr/Downloads/GoogleNews-vectors-negative300.bin'
-
 # Data directory
-__C.DATASET_DIR = '/home/neuroplex/code/faster-rcnn/data/VRD'
-__C.WORD_VECTORS_DIR = '/home/neuroplex/data/GoogleNews-vectors-negative300.bin'
+__C.DATASET_DIR = '/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD'
+__C.WORD_VECTORS_DIR = '/Users/pranoyr/Downloads/GoogleNews-vectors-negative300.bin'
+
+# # Data directory
+# __C.DATASET_DIR = '/home/neuroplex/code/faster-rcnn/data/VRD'
+# __C.WORD_VECTORS_DIR = '/home/neuroplex/data/GoogleNews-vectors-negative300.bin'
