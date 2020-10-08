@@ -13,7 +13,7 @@ def get_obj_prd_vecs():
     dataset_path = cfg.DATASET_DIR
     word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(
         word_vector_path, binary=True)
-    print('Model loaded.')
+    print('Word Embeddings loaded.')
     # change everything into lowercase
     all_keys = list(word2vec_model.vocab.keys())
     for key in all_keys:
