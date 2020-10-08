@@ -1,32 +1,32 @@
 
 
-from torchvision.models.detection.rpn import RegionProposalNetwork, RPNHead, AnchorGenerator
-from torchvision.models.detection.faster_rcnn import GeneralizedRCNNTransform
-from torchvision.models.detection.backbone_utils import resnet_fpn_backbone 
-from torch.utils.data import DataLoader
-import torch.optim as optim
-import torchvision.models.detection._utils as  det_utils
-from torchvision.ops import boxes as box_ops
+import math
 import os
-
-from collections import OrderedDict
+import pdb
 import random
+import time
+from collections import OrderedDict
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
+import torchvision
+import torchvision.models as models
+import torchvision.models.detection._utils as det_utils
+import torchvision.utils as vutils
+from config import cfg
 from torch.autograd import Variable, gradcheck
 from torch.autograd.gradcheck import gradgradcheck
-import torchvision.models as models
-from torch.autograd import Variable
-import numpy as np
-import torchvision.utils as vutils
-import time
-import pdb
+from torch.jit.annotations import Dict, List, Optional, Tuple
+from torch.utils.data import DataLoader
+from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
+from torchvision.models.detection.faster_rcnn import GeneralizedRCNNTransform
+from torchvision.models.detection.rpn import (AnchorGenerator,
+                                              RegionProposalNetwork, RPNHead)
 from torchvision.models.resnet import resnet101
-import torchvision
-import math
-from torch.jit.annotations import Optional, List, Dict, Tuple
-from config import cfg
+from torchvision.ops import boxes as box_ops
 
 
 class RPN(nn.Module):

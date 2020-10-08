@@ -1,20 +1,18 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-import six
+import copy
 import os
 import os.path as osp
-import copy
 from ast import literal_eval
 
 import numpy as np
-from packaging import version
+import six
 import torch
 import torch.nn as nn
-from torch.nn import init
 import yaml
+from packaging import version
+from torch.nn import init
 
 from utils.collections import AttrDict
 
@@ -67,5 +65,7 @@ __C.RPN_POSITIVE_FRACTION = 0.5
 __C.DEVICE = 'cuda'
 
 # Data directory
-__C.DATASET_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'VRD')
-__C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wordvectors', 'GoogleNews-vectors-negative300.bin')
+__C.DATASET_DIR = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'data', 'VRD')
+__C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(
+    __file__)), 'wordvectors', 'GoogleNews-vectors-negative300.bin')

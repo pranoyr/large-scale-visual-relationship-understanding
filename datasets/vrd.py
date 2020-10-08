@@ -1,17 +1,18 @@
-import numpy as np
+import json
+import os
+
 import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import torch
+from config import cfg
+from PIL import Image
 from shapely.geometry import box
 from shapely.ops import cascaded_union
-from PIL import Image
-import torch
-import pandas as pd
 from skimage import io, transform
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms, utils
-import os
-import json
-from config import cfg
 
 
 def y1y2x1x2_to_x1y1x2y2(y1y2x1x2):

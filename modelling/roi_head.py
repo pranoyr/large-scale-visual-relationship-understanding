@@ -1,33 +1,33 @@
-from torchvision.models.detection.faster_rcnn import GeneralizedRCNNTransform
-from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
-from torch.utils.data import DataLoader
-import torch.optim as optim
-import torchvision.models.detection._utils as det_utils
-from torchvision.ops import boxes as box_ops
-import os
-import utils.boxes as box_utils
 import copy
-from losses import fastrcnn_loss, reldn_losses
-from collections import OrderedDict
+import math
+import os
+import pdb
 import random
+import time
+from collections import OrderedDict
+
+import numpy as np
 import torch
-from . import reldn_heads
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable, gradcheck
-from torch.autograd.gradcheck import gradgradcheck
-import torchvision.models as models
-from torch.autograd import Variable
-import numpy as np
-import torchvision.utils as vutils
-import time
-import pdb
-from torchvision.models.resnet import resnet101
+import torch.optim as optim
 import torchvision
-import math
-from torch.jit.annotations import Optional, List, Dict, Tuple
-from torchvision.models.detection.faster_rcnn import MultiScaleRoIAlign, TwoMLPHead, FastRCNNPredictor
+import torchvision.models as models
+import torchvision.models.detection._utils as det_utils
+import torchvision.utils as vutils
+import utils.boxes as box_utils
 from config import cfg
+from losses import fastrcnn_loss, reldn_losses
+from torch.jit.annotations import Dict, List, Optional, Tuple
+from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
+from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
+                                                      GeneralizedRCNNTransform,
+                                                      MultiScaleRoIAlign,
+                                                      TwoMLPHead)
+from torchvision.models.resnet import resnet101
+from torchvision.ops import boxes as box_ops
+
+from . import reldn_heads
 
 
 class RoIHeads(torch.nn.Module):

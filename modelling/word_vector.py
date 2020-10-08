@@ -1,9 +1,10 @@
-import logging
-import gensim
 import json
+import logging
+
+import gensim
 import numpy as np
-from numpy import linalg as la
 from config import cfg
+from numpy import linalg as la
 
 logger = logging.getLogger(__name__)
 
