@@ -502,5 +502,3 @@ class RoIHeads(torch.nn.Module):
 				losses = {}
 		   
 		return result, losses
-
-			
