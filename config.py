@@ -65,8 +65,6 @@ __C.RPN_BATCH_SIZE_PER_IMAGE = 256
 __C.RPN_POSITIVE_FRACTION = 0.5
 
 
-# ------------------------------
-
 # Data directory
 __C.DATASET_DIR = '/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD'
 __C.WORD_VECTORS_DIR = '/Users/pranoyr/Downloads/GoogleNews-vectors-negative300.bin'
