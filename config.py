@@ -68,4 +68,4 @@ __C.DEVICE = 'cuda'
 __C.DATASET_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'data', 'VRD')
 __C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(
-    __file__)), 'wordvectors', 'GoogleNews-vectors-negative300.bin')
+    __file__)), 'wordvectors', 'data', 'GoogleNews-vectors-negative300.bin')
