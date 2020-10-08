@@ -13,18 +13,20 @@ from PIL import Image
 
 from config import cfg
 from modelling.model import FasterRCNN
+from opts import parse_opts
+
+opt = parse_opts()
 
 with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'objects.json'), 'r') as f:
     objects = json.load(f)
-
 with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'predicates.json'), 'r') as f:
     predicates = json.load(f)
-
 predicates.insert(0, 'unknown')
+
 faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 
 # load pretrained weights
-checkpoint = torch.load(cfg.WEIGHT_FILE, map_location='cpu')
+checkpoint = torch.load(opt.weight_path, map_location='cpu')
 faster_rcnn.load_state_dict(checkpoint['state_dict'])
 print("Model Restored")
 faster_rcnn.eval()
