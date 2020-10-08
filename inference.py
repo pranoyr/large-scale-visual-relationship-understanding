@@ -46,6 +46,7 @@ with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'objects.json'), 'r') as
 with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'predicates.json'), 'r') as f:
 	predicates = json.load(f)
 
+
 predicates.insert(0, 'unknown')
 print(predicates)
 
@@ -60,7 +61,7 @@ print("Model Restored")
 
 faster_rcnn.eval()
 
-im = Image.open('/Users/pranoyr/Downloads/vrd_sample/12239689_0ad9e20e3a_b.jpg')
+im = Image.open('/Users/pranoyr/Downloads/IMG_8487.jpg')
 img = np.array(im)
 draw = img.copy()
 draw = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
