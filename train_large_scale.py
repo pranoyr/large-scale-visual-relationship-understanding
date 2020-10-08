@@ -49,7 +49,7 @@ if __name__ == "__main__":
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 	dataloader = DataLoader(
-		dataset_train, num_workers=0, collate_fn=collater, batch_size=1)
+		dataset_train, num_workers=0, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 	optimizer = optim.Adam(faster_rcnn.parameters(), lr=1e-5)

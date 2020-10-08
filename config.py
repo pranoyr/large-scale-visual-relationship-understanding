@@ -24,14 +24,9 @@ cfg = __C
 # ---------------------------------------------------------------------------- #
 # Training options
 # ---------------------------------------------------------------------------- #
-__C.TRAIN = AttrDict()
-
-# Datasets to train on
-# Available dataset list: datasets.dataset_catalog.DATASETS.keys()
-# If multiple datasets are listed, the model is trained on their union
-__C.TRAIN.DATASETS = ()
 
 __C.N_EPOCHS = 100
+__C.BATCH_SIZE = 1
 
 # Box parameters
 __C.SCORE_THRESH = 0.5
