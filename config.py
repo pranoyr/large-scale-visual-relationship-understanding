@@ -23,10 +23,6 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
-
-# Random note: avoid using '.ON' as a config key since yaml converts it to True;
-# prefer 'ENABLED' instead
-
 # ---------------------------------------------------------------------------- #
 # Training options
 # ---------------------------------------------------------------------------- #
