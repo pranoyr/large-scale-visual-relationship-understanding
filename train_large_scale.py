@@ -73,8 +73,7 @@ if __name__ == "__main__":
 			optimizer.step()
 
 			if (i + 1) % 10 == 0:
-				print(f""" Epoch {epoch} , 
-						RCNN_Loss    : {final_loss.item()}
+				print(f"""RCNN_Loss    : {final_loss.item()}
 						rpn_cls_loss   : {losses['loss_objectness'].item()}
 						rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}
 						box_loss 	   : {losses['loss_box_reg']}
