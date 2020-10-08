@@ -39,7 +39,7 @@ python train_large_scale.py
 
 ## Inference
 ```
-python inference.py
+python inference.py --input_image <path-to-image> --weight_path <path-to-weight-file>
 ```
 
 ## References
