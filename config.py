@@ -64,11 +64,8 @@ __C.RPN_BG_IOU_THRESH = 0.3
 __C.RPN_BATCH_SIZE_PER_IMAGE = 256
 __C.RPN_POSITIVE_FRACTION = 0.5
 
+__C.DEVICE = 'cuda'
 
 # Data directory
-__C.DATASET_DIR = '/Users/pranoyr/code/Pytorch/faster-rcnn.pytorch/data/VRD'
-__C.WORD_VECTORS_DIR = '/Users/pranoyr/Downloads/GoogleNews-vectors-negative300.bin'
-
-# # Data directory
-# __C.DATASET_DIR = '/home/neuroplex/code/faster-rcnn/data/VRD'
-# __C.WORD_VECTORS_DIR = '/home/neuroplex/data/GoogleNews-vectors-negative300.bin'
+__C.DATASET_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'VRD')
+__C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wordvectors', 'GoogleNews-vectors-negative300.bin')
