@@ -33,16 +33,25 @@ from torch.jit.annotations import Optional, List, Dict, Tuple
 from torchvision.models.detection.faster_rcnn import MultiScaleRoIAlign, TwoMLPHead, FastRCNNPredictor 
 from config import cfg
 
+def resume_model(model, optimizer):
+	""" Resume model 
+	"""
+	checkpoint = torch.load(cfg.WEIGHT_PATH)
+	model.load_state_dict(checkpoint['state_dict'])
+	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	print("Loaded Model ...")
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 dataloader = DataLoader(
 	dataset_train, num_workers=0, collate_fn=collater, batch_size=1)
 
-
-faster_rcnn = FasterRCNN().to(DEVICE)
+faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 optimizer = optim.Adam(faster_rcnn.parameters(), lr=1e-5)
+
+# resume model
+if cfg.WEIGHT_PATH:
+	resume_model(faster_rcnn, optimizer)
 
 faster_rcnn.train()
 for epoch in range(1, cfg.N_EPOCHS+1):
@@ -55,27 +64,24 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 			losses["loss_sbj"] + losses["loss_obj"] + losses["loss_rlp"]
 			
 
-		loss.append(final_loss.item())
-
 		optimizer.zero_grad()
 		final_loss.backward()
 		optimizer.step()
-		print(f"""RCNN_Loss    : {final_loss.item()}
-				rpn_cls_loss   : {losses['loss_objectness'].item()}
-				rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}
-				box_loss 	   : {losses['loss_box_reg']}
-				cls_loss       : {losses['loss_classifier']}
-				sbj_loss	   : {losses['loss_sbj']}
-				obj_loss	   : {losses['loss_obj']}
-				sbj_acc        : {losses['acc_sbj']}
-				obj_acc	       : {losses['acc_obj']}
-			    rlp_loss   	   : {losses['loss_rlp']}				 
-				rlp_acc 	   : {losses['acc_rlp']}\n"""
-				)
 
-	loss = torch.tensor(loss, dtype=torch.float32)
-	print(f'loss : {torch.mean(loss)}')
-	# scheduler.step(torch.mean(loss))
+		if (i + 1) % cfg.LOG_INTERVAL == 0:	
+			print(f""" Epoch {epoch} , inter
+					RCNN_Loss    : {final_loss.item()}
+					rpn_cls_loss   : {losses['loss_objectness'].item()}
+					rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}
+					box_loss 	   : {losses['loss_box_reg']}
+					cls_loss       : {losses['loss_classifier']}
+					sbj_loss	   : {losses['loss_sbj']}
+					obj_loss	   : {losses['loss_obj']}
+					sbj_acc        : {losses['acc_sbj']}
+					obj_acc	       : {losses['acc_obj']}
+					rlp_loss   	   : {losses['loss_rlp']}				 
+					rlp_acc 	   : {losses['acc_rlp']}\n"""
+					)
 
 	state = {'state_dict': faster_rcnn.state_dict()}
 	torch.save(state, os.path.join('./snapshots', f'faster_rcnn.pth'))
