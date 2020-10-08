@@ -72,7 +72,7 @@ if __name__ == "__main__":
 			final_loss.backward()
 			optimizer.step()
 
-			if (i + 1) % cfg.LOG_INTERVAL == 0:
+			if (i + 1) % 10 == 0:
 				print(f""" Epoch {epoch} , 
 						RCNN_Loss    : {final_loss.item()}
 						rpn_cls_loss   : {losses['loss_objectness'].item()}
