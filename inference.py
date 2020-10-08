@@ -31,7 +31,7 @@ faster_rcnn.load_state_dict(checkpoint['state_dict'])
 print("Model Restored")
 faster_rcnn.eval()
 
-im = Image.open(cfg.INPUT_IMAGE_PATH)
+im = Image.open(opt.image_path)
 img = np.array(im)
 draw = img.copy()
 draw = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
