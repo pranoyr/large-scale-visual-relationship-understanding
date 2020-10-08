@@ -13,13 +13,13 @@ def get_obj_prd_vecs():
     dataset_path = cfg.DATASET_DIR
     word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(
         word_vector_path, binary=True)
-    logger.info('Model loaded.')
+    print('Model loaded.')
     # change everything into lowercase
     all_keys = list(word2vec_model.vocab.keys())
     for key in all_keys:
         new_key = key.lower()
         word2vec_model.vocab[new_key] = word2vec_model.vocab.pop(key)
-    logger.info('Wiki words converted to lowercase.')
+    print('Wiki words converted to lowercase.')
 
     # if dataset_name.find('vrd') >= 0:
     with open(dataset_path + '/json_dataset/objects.json') as f:
@@ -34,7 +34,6 @@ def get_obj_prd_vecs():
     # else:
     #     raise NotImplementedError
     # represent background with the word 'unknown'
-    # obj_cats.insert(0, 'unknown')
     prd_cats.insert(0, 'unknown')
     all_obj_vecs = np.zeros((len(obj_cats), 300), dtype=np.float32)
     for r, obj_cat in enumerate(obj_cats):
