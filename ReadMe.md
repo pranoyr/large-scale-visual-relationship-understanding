@@ -8,6 +8,11 @@
 Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
 Put it in the data/wordvectors folder. The Structure of the folder is shown below
     
+ 
+## Pretrained Word Vectors
+Download the data VRD dataset from here [here] (https://cs.stanford.edu/people/ranjaykrishna/vrd/)   
+
+
 ### Try on VRD 
 
 ```
