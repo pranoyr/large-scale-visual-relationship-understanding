@@ -18,9 +18,9 @@ Put it in the data/wordvectors folder. Folder structure is shown below.
 ```
 + data 
     + VRD
-        - json_dataset
-        - sg_dataset
-        
+    |   - json_dataset
+    |   - sg_dataset
+    |   
     + wordvectors  
         - GoogleNews-vectors-negative300.bin  
            
