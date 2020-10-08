@@ -49,10 +49,10 @@ if __name__ == "__main__":
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 	dataloader = DataLoader(
-		dataset_train, num_workers=0, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
+		dataset_train, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
-	optimizer = optim.Adam(faster_rcnn.parameters(), lr=1e-5)
+	optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE)
 
 	# resume model
 	if opt.weight_path:
