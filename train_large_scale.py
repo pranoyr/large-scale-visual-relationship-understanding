@@ -87,6 +87,6 @@ if __name__ == "__main__":
 					)
 
 		state = {'state_dict': faster_rcnn.state_dict()}
-		save_folder = 'snapshots'
-		torch.save(state, os.path.join(save_folder, 'large_scale_vrd.pth'))
-		print("MODEL SAVED")
+		state = {'epoch': epoch, 'state_dict': faster_rcnn.state_dict(), 'optimizer_state_dict': optimizer.state_dict()}
+		torch.save(state, os.path.join('snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
+		print("Epoch {} model saved!\n".format(epoch))
