@@ -12,8 +12,7 @@ Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7Xk
 Put it in the data/wordvectors folder. Folder structure is shown below.
     
  
-### Try on VRD 
-
+### Folder Structure
 ```
 + data 
     + VRD
