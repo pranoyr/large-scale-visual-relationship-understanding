@@ -29,7 +29,7 @@ Put it in the data/wordvectors folder. Folder structure is shown below.
 python train_large_scale.py
 ```
 
-## Note 
+### Note 
 * All the weights will be saved to the snapshots folder 
 * To resume Training from any checkpoint, Use
 ```
