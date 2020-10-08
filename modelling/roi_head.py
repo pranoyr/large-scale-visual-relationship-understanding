@@ -303,6 +303,7 @@ class RoIHeads(torch.nn.Module):
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][img_sampled_inds]
 			rlp_labels[img_id] = rlp_labels[img_id][img_sampled_inds]
 		
+		print(pos_sbj_labels)
 		data_sbj = {'proposals':pos_sbj_proposals, 'labels':pos_sbj_labels}
 		data_obj = {'proposals':pos_obj_proposals, 'labels':pos_obj_labels}
 		data_rlp = {'proposals':rlp_proposals, 'labels':rlp_labels}
