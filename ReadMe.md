@@ -41,6 +41,10 @@ python train_large_scale.py
 python inference.py --input_image <path-to-image> --weight_path <path-to-weight-file>
 ```
 
+## TO DO
+Visual Genome Dataset, VGG BackBone, Resnet 152
+
+
 ## References
 * https://github.com/facebookresearch/Large-Scale-VRD
 
