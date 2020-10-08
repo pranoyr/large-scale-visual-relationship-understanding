@@ -453,7 +453,6 @@ class RoIHeads(torch.nn.Module):
 				sbj_inds = np.repeat(np.arange(boxes[img_id].shape[0]), boxes[img_id].shape[0])
 				obj_inds = np.tile(np.arange(boxes[img_id].shape[0]), boxes[img_id].shape[0])
 
-
 				sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
 
 				sbj_boxes = boxes[img_id][sbj_inds]
