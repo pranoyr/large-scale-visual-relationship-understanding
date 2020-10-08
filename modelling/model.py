@@ -1,7 +1,7 @@
 
 # from torchvision.models.detection.faster_rcnn import FasterRCNN
 from torchvision.models.detection.faster_rcnn import GeneralizedRCNNTransform
-from torchvision.models.detection.backbone_utils import resnet_fpn_backbone 
+from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 import torch.optim as optim
 import torchvision.models.detection._utils as  det_utils
 from torchvision.ops import boxes as box_ops
