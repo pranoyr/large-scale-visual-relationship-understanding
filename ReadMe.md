@@ -3,6 +3,8 @@
 ![alt text](https://github.com/pranoyr/lvrd/blob/master/results/Examples.PNG)
 <p align="center">Example results from the VG80K dataset.</p>
 
+Thie Repository is an implementation of the paper https://arxiv.org/pdf/1804.10660.pdf
+
 ## Download the VRD Dataet
 Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjaykrishna/vrd/).
 
@@ -47,6 +49,7 @@ Visual Genome Dataset, VGG BackBone, Resnet 152
 
 ## References
 * https://github.com/facebookresearch/Large-Scale-VRD
+* https://arxiv.org/pdf/1804.10660.pdf
 
 ## License
 This project is licensed under the MIT License 
