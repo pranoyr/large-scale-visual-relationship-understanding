@@ -84,5 +84,5 @@ for epoch in range(1, cfg.N_EPOCHS+1):
 					)
 
 	state = {'state_dict': faster_rcnn.state_dict()}
-	torch.save(state, os.path.join('./snapshots', f'faster_rcnn.pth'))
-	print("model saved")
+	torch.save(state, os.path.join('./snapshots', f'large_scale_vrd.pth'))
+	print("MODEL SAVED")
