@@ -88,4 +88,4 @@ if __name__ == "__main__":
 
 		state = {'epoch': epoch, 'state_dict': faster_rcnn.state_dict(), 'optimizer_state_dict': optimizer.state_dict()}
 		torch.save(state, os.path.join('snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
-		print("Epoch {} model saved!\n".format(epoch))
+		print(f"Epoch {epoch} model saved!\n")
