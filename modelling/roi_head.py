@@ -325,12 +325,12 @@ class RoIHeads(torch.nn.Module):
             pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][img_sampled_inds]
             pos_obj_proposals[img_id] = pos_obj_proposals[img_id][img_sampled_inds]
             rlp_proposals[img_id] = rlp_proposals[img_id][img_sampled_inds]
-            pos_sbj_labels[img_id] = pos_sbj_labels[img_id][img_sampled_inds]
-            pos_obj_labels[img_id] = pos_obj_labels[img_id][img_sampled_inds]
+            pos_sbj_labels[img_id] = pos_sbj_labels[img_id][img_sampled_inds]-1
+            pos_obj_labels[img_id] = pos_obj_labels[img_id][img_sampled_inds]-1
             rlp_labels[img_id] = rlp_labels[img_id][img_sampled_inds]
 
-        data_sbj = {'proposals': pos_sbj_proposals, 'labels': pos_sbj_labels-1}
-        data_obj = {'proposals': pos_obj_proposals, 'labels': pos_obj_labels-1}
+        data_sbj = {'proposals': pos_sbj_proposals, 'labels': pos_sbj_labels}
+        data_obj = {'proposals': pos_obj_proposals, 'labels': pos_obj_labels}
         data_rlp = {'proposals': rlp_proposals, 'labels': rlp_labels}
 
         return all_proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp
