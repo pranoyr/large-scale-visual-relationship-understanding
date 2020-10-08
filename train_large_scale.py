@@ -65,10 +65,9 @@ def main_worker():
 
     faster_rcnn.train()
     for epoch in range(1, cfg.N_EPOCHS+1):
-        loss = []
         for i, data in enumerate(dataloader):
             images, targets = data
-            result, losses = faster_rcnn(images, targets)
+            _, losses = faster_rcnn(images, targets)
             final_loss = losses["loss_objectness"] + losses["loss_rpn_box_reg"] + \
                 losses["loss_classifier"] + losses["loss_box_reg"] + \
                 losses["loss_sbj"] + losses["loss_obj"] + losses["loss_rlp"]
