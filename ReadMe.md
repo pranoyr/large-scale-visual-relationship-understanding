@@ -10,7 +10,7 @@ Put it in the data/wordvectors folder. Folder structure is shown below.
     
  
 ## Download the VRD Dataet
-Download the data VRD dataset from  [here] (https://cs.stanford.edu/people/ranjaykrishna/vrd/).
+Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjaykrishna/vrd/).
 
 
 ### Try on VRD 
