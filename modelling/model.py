@@ -1,5 +1,3 @@
-
-# from torchvision.models.detection.faster_rcnn import FasterRCNN
 from torchvision.models.detection.faster_rcnn import GeneralizedRCNNTransform
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 import torch.optim as optim
@@ -26,12 +24,11 @@ import torchvision
 import math
 import torch
 from .roi_head import RoIHeads
+from config import cfg
 from .rpn import RPN
 
 from torch.jit.annotations import Optional, List, Dict, Tuple
 from torchvision.models.detection.faster_rcnn import MultiScaleRoIAlign, TwoMLPHead, FastRCNNPredictor 
-
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class FasterRCNN(nn.Module):
@@ -82,7 +79,7 @@ class FasterRCNN(nn.Module):
 			targets = self.flatten_targets(targets)
 		images, targets = self.transform(images, targets)
 	
-		fpn_feature_maps = self.fpn(images.tensors.to(DEVICE))
+		fpn_feature_maps = self.fpn(images.tensors.to(cfg.DEVICE))
 		
 		if self.training:
 			proposals, rpn_losses, fpn_feature_maps = self.rpn(images, fpn_feature_maps, targets)

@@ -11,8 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 import os
 import json
-
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+from config import cfg
 
 
 def y1y2x1x2_to_x1y1x2y2(y1y2x1x2):
@@ -142,9 +141,9 @@ class VRDDataset(Dataset):
 
 def collater(data):
 	imgs = [s['img'] for s in data]
-	annotations = [{"boxes": s['boxes'].to(DEVICE)} for s in data]
+	annotations = [{"boxes": s['boxes'].to(cfg.DEVICE)} for s in data]
 	for i, s in enumerate(data):
-		annotations[i]['labels'] = s['labels'].to(DEVICE)
+		annotations[i]['labels'] = s['labels'].to(cfg.DEVICE)
 	for i, s in enumerate(data):
-    		annotations[i]['preds'] = s['preds'].to(DEVICE)
+    		annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
 	return imgs, annotations
