@@ -22,11 +22,11 @@ from torch.jit.annotations import Dict, List, Optional, Tuple
 from torch.utils.data import DataLoader
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
-                                                      GeneralizedRCNNTransform,
-                                                      MultiScaleRoIAlign,
-                                                      TwoMLPHead)
+													  GeneralizedRCNNTransform,
+													  MultiScaleRoIAlign,
+													  TwoMLPHead)
 from torchvision.models.detection.rpn import (AnchorGenerator,
-                                              RegionProposalNetwork, RPNHead)
+											  RegionProposalNetwork, RPNHead)
 from torchvision.models.resnet import resnet101
 from torchvision.ops import boxes as box_ops
 
@@ -37,15 +37,20 @@ from opts import parse_opts
 
 
 def resume_model(opt, model, optimizer):
-    """ Resume model 
-    """
-    checkpoint = torch.load(opt.weight_path)
-    model.load_state_dict(checkpoint['state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    print("Loaded Model ...")
+	""" Resume model 
+	"""
+	checkpoint = torch.load(opt.weight_path)
+	model.load_state_dict(checkpoint['state_dict'])
+	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	print("Loaded Model ...")
 
 
 if __name__ == "__main__":
+	seed = 1
+	random.seed(seed)
+	np.random.seed(seed)
+	torch.manual_seed(seed)
+	
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 	dataloader = DataLoader(
