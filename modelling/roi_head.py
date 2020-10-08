@@ -435,6 +435,7 @@ class RoIHeads(torch.nn.Module):
 			labels = None
 			regression_targets = None
 			matched_idxs = None
+			result = []
 
 			# faster_rcnn branch
 			box_features = self.box_roi_pool(features, proposals, image_shapes)
@@ -447,9 +448,11 @@ class RoIHeads(torch.nn.Module):
 			all_sbj_boxes = []
 			all_obj_boxes = []
 			all_rlp_boxes = []
+			all_shapes = []
 			for img_id in range(num_images):
 				sbj_inds = np.repeat(np.arange(boxes[img_id].shape[0]), boxes[img_id].shape[0])
 				obj_inds = np.tile(np.arange(boxes[img_id].shape[0]), boxes[img_id].shape[0])
+
 
 				sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
 
@@ -460,42 +463,43 @@ class RoIHeads(torch.nn.Module):
 				all_sbj_boxes.append(sbj_boxes)
 				all_obj_boxes.append(obj_boxes)
 				all_rlp_boxes.append(rlp_boxes)
+				all_shapes.append(rlp_boxes.shape[0])
 
 			# predicate branch
 			sbj_feat = self.box_roi_pool(features, all_sbj_boxes, image_shapes)
 			sbj_feat = self.box_head(sbj_feat)
 			obj_feat = self.box_roi_pool(features, all_obj_boxes, image_shapes)
 			obj_feat = self.box_head(obj_feat)
-
 			rel_feat = self.box_roi_pool(features, all_rlp_boxes, image_shapes)
 			rel_feat = self.rlp_box_head(rel_feat)
-			
 			concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
-
 			sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
 					self.RelDN(concat_feat ,sbj_feat, obj_feat)
 
+			sbj_cls_scores_list, obj_cls_scores_list, rlp_cls_scores_list= \
+					sbj_cls_scores.split(all_shapes), obj_cls_scores.split(all_shapes), rlp_cls_scores.split(all_shapes)
+					
+			for i, _ in enumerate(sbj_cls_scores_list):
+				_, sbj_indices = torch.max(sbj_cls_scores_list[i], dim=1)
+				_, obj_indices = torch.max(obj_cls_scores_list[i], dim=1)
+				_, rel_indices = torch.max(rlp_cls_scores_list[i], dim=1)
+				# filter "unknown"
+				mask = rel_indices > 0
+				predicates = rel_indices[mask]
+				subjects = sbj_indices[mask]
+				objects = obj_indices[mask]
 
-			_, rlp_indices = torch.max(rlp_cls_scores, dim=1)
-			_, sbj_indices = torch.max(sbj_cls_scores, dim=1)
-			_, obj_indices = torch.max(obj_cls_scores, dim=1)
-			# filter "unknown"
-			mask = rlp_indices > 0
-			predicates = rlp_indices[mask]
-			subjects = sbj_indices[mask]
-			objects = obj_indices[mask]
+				sbj_boxes = all_sbj_boxes[i][mask]
+				obj_boxes = all_obj_boxes[i][mask]
+				rlp_boxes = all_rlp_boxes[i][mask]
 
-			sbj_boxes = all_sbj_boxes[0][mask]
-			obj_boxes = all_obj_boxes[0][mask]
-			rlp_boxes = all_rlp_boxes[0][mask]
-			
-			result = [{"sbj_boxes" : sbj_boxes,
-					  "obj_boxes" : obj_boxes,
-					  'sbj_labels': subjects,
-					  'obj_labels' : objects,
-					  'predicates' : predicates
-					  }]
-			losses = {}
+				result = [{"sbj_boxes" : sbj_boxes,
+						"obj_boxes" : obj_boxes,
+						'sbj_labels': subjects,
+						'obj_labels' : objects,
+						'predicates' : predicates
+						}]
+				losses = {}
 		   
 		return result, losses
 

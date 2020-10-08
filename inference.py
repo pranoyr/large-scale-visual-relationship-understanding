@@ -63,7 +63,7 @@ print("Model Restored")
 faster_rcnn.eval()
 
 
-im = Image.open('/Users/pranoyr/Downloads/vrd_sample/sf.jpg')
+im = Image.open('/Users/pranoyr/Downloads/IMG_8487-scaled.jpg')
 img = np.array(im)
 draw = img.copy()
 draw = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
