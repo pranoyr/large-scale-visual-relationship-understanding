@@ -3,16 +3,15 @@
 ![alt text](https://github.com/pranoyr/lvrd/blob/master/results/Examples.PNG)
 <p align="center">Example results from the VG80K dataset.</p>
 
+## Download the VRD Dataet
+Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjaykrishna/vrd/).
+
 
 ## Pretrained Word Vectors
 Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
 Put it in the data/wordvectors folder. Folder structure is shown below.
     
  
-## Download the VRD Dataet
-Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjaykrishna/vrd/).
-
-
 ### Try on VRD 
 
 ```
