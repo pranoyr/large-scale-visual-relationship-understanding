@@ -86,7 +86,6 @@ if __name__ == "__main__":
 						rlp_acc 	   : {losses['acc_rlp']}\n"""
 					)
 
-		state = {'state_dict': faster_rcnn.state_dict()}
 		state = {'epoch': epoch, 'state_dict': faster_rcnn.state_dict(), 'optimizer_state_dict': optimizer.state_dict()}
 		torch.save(state, os.path.join('snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
 		print("Epoch {} model saved!\n".format(epoch))
