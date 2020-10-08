@@ -70,7 +70,7 @@ for epoch in range(1, cfg.N_EPOCHS+1):
         optimizer.step()
 
         if (i + 1) % cfg.LOG_INTERVAL == 0:
-            print(f""" Epoch {epoch} , inter
+            print(f""" Epoch {epoch} , 
 					RCNN_Loss    : {final_loss.item()}
 					rpn_cls_loss   : {losses['loss_objectness'].item()}
 					rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}
