@@ -46,8 +46,6 @@ with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'objects.json'), 'r') as
 with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'predicates.json'), 'r') as f:
 	predicates = json.load(f)
 
-
-objects.insert(0, '__background__')
 predicates.insert(0, 'unknown')
 print(predicates)
 
