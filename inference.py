@@ -79,5 +79,5 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
                 (0, 0, 255), lineThickness, cv2.LINE_AA)
 
 
-path = "./results/result1.jpg"
+path = "./results/result2.jpg"
 cv2.imwrite(path, draw)
