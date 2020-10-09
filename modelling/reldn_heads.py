@@ -5,6 +5,7 @@ import math
 import numpy as np
 import torch
 import torch.nn.functional as F
+from config import cfg
 from numpy import linalg as la
 from torch import nn
 from torch.autograd import Variable
