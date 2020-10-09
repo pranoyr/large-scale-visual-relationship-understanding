@@ -23,7 +23,7 @@ cfg = __C
 
 # Training options
 __C.N_EPOCHS = 100
-__C.BATCH_SIZE = 1
+__C.BATCH_SIZE = 8
 __C.LR_RATE = 1e-5
 __C.WORKERS = 0
 
@@ -43,7 +43,7 @@ __C.POSITIVE_FRACTION_SO = 0.5
 # Relationship Branch Parameters
 __C.BATCH_SIZE_PER_IMAGE_REL = 128
 __C.POSITIVE_FRACTION_REL = 0.5
-__C.NORM_SCALE = 3.0
+__C.NORM_SCALE = 5.0
 
 
 # RPN parameters,
@@ -55,7 +55,7 @@ __C.RPN_NMS_THRESH = 0.7
 __C.RPN_FG_IOU_THRESH = 0.7
 __C.RPN_BG_IOU_THRESH = 0.3
 __C.RPN_BATCH_SIZE_PER_IMAGE = 256
-__C.RPN_POSITIVE_FRACTION = 0.5
+__C.RPN_POSITIVE_FRACTION = 0.25
 
 __C.DEVICE = 'cuda'
 
