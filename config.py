@@ -56,7 +56,7 @@ __C.RPN_BG_IOU_THRESH = 0.3
 __C.RPN_BATCH_SIZE_PER_IMAGE = 256
 __C.RPN_POSITIVE_FRACTION = 0.5
 
-__C.DEVICE = 'cpu'
+__C.DEVICE = 'cuda'
 
 # Data directory
 __C.DATASET_DIR = os.path.join(os.path.dirname(
