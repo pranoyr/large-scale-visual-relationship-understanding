@@ -23,7 +23,7 @@ cfg = __C
 
 # Training options
 __C.N_EPOCHS = 100
-__C.BATCH_SIZE = 8
+__C.BATCH_SIZE = 4
 __C.LR_RATE = 1e-5
 __C.WORKERS = 0
 
