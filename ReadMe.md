@@ -13,7 +13,10 @@ Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjayk
 Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
 Put it in the data/wordvectors folder. Folder structure is shown below.
     
- 
+## Pretrained Weights
+Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
+    
+
 ### Folder Structure
 ```
 + data 

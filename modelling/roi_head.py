@@ -519,7 +519,6 @@ class RoIHeads(torch.nn.Module):
                 _, sbj_indices = torch.max(sbj_cls_scores_list[i], dim=1)
                 _, obj_indices = torch.max(obj_cls_scores_list[i], dim=1)
                 rel_scores, rel_indices = torch.max(rlp_cls_scores_list[i], dim=1)
-                print(rel_scores)
                 # filter "unknown"
                 mask = rel_indices > 0
                 predicates = rel_indices[mask]
