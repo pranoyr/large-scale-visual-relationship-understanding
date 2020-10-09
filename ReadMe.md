@@ -14,7 +14,7 @@ Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7Xk
 Put it in the data/wordvectors folder. Folder structure is shown below.
     
 ## Pretrained Weights
-Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
+Download pretrained weights from [here](https://drive.google.com/file/d/1kQaGPiNUdzRpPJw9EU64cV93x3Hl2MlL/view?usp=sharing).
     
 
 ### Folder Structure
