@@ -14,10 +14,10 @@ class AverageMeter(object):
         self.sum = 0
         self.count = 0
 
-    def update(self, val, n=1):
+    def update(self, val):
         self.val = val
-        self.sum += val * n
-        self.count += n
+        self.sum += val 
+        self.count += 1
         self.avg = self.sum / self.count
 
 
@@ -66,11 +66,9 @@ class Metrics():
         self.summary_writer = tensorboardX.SummaryWriter(log_dir=log_dir)
 
     def log_metrics(self, train_metrics, val_metrics, epoch):
-        train_tot_loss, train_sbj_loss, train_obj_loss, train_rel_loss, \
-            train_sbj_acc, train_obj_acc, train_rel_acc = train_metrics
+        train_tot_loss, train_sbj_loss, train_obj_loss, train_rel_loss = train_metrics
 
-        val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss, \
-            val_sbj_acc, val_obj_acc, val_rel_acc = val_metrics
+        val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss = val_metrics
 
         # write summary
         self. summary_writer.add_scalar(
@@ -81,12 +79,6 @@ class Metrics():
             'losses/train_obj_loss', train_obj_loss, global_step=epoch)
         self.summary_writer.add_scalar(
             'losses/train_rel_loss', train_rel_loss, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'acc/train_sbj_acc', train_sbj_acc * 100, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'acc/train_obj_acc', train_obj_acc * 100, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'acc/train_rel_acc', train_rel_acc * 100, global_step=epoch)
 
         self.summary_writer.add_scalar(
             'losses/val_tot_loss', val_tot_loss, global_step=epoch)
@@ -96,9 +88,4 @@ class Metrics():
             'losses/val_obj_loss', val_obj_loss, global_step=epoch)
         self.summary_writer.add_scalar(
             'losses/val_rel_loss', val_rel_loss, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'acc/val_sbj_acc', val_sbj_acc * 100, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'acc/val_obj_acc', val_obj_acc * 100, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'acc/val_rel_acc', val_rel_acc * 100, global_step=epoch)
+

@@ -43,10 +43,6 @@ def train_epoch(model, dataloader, optimizer, epoch):
 	losses_rel = AverageMeter()
 	losses_total = AverageMeter()
 
-	acc_sbj = AverageMeter()
-	acc_obj = AverageMeter()
-	acc_rel = AverageMeter()
-
 	model.train()
 	for i, data in enumerate(dataloader):
 		images, targets = data
@@ -59,13 +55,10 @@ def train_epoch(model, dataloader, optimizer, epoch):
 		final_loss.backward()
 		optimizer.step()
 
-		losses_sbj.update(metrics["loss_sbj"].item(), images.size(0))
-		losses_obj.update(metrics["loss_obj"].item(), images.size(0))
-		losses_rel.update(metrics["loss_rlp"].item(), images.size(0))
-		losses_total.update(final_loss.item(), images.size(0))
-		acc_sbj.update(metrics["acc_sbj"], images.size(0))
-		acc_obj.update(metrics["acc_obj"], images.size(0))
-		acc_rel.update(metrics["acc_rlp"], images.size(0))
+		losses_sbj.update(metrics["loss_sbj"].item())
+		losses_obj.update(metrics["loss_obj"].item())
+		losses_rel.update(metrics["loss_rlp"].item())
+		losses_total.update(final_loss.item())
 
 		if (i + 1) % 10 == 0:
 			print(f"""RCNN_Loss    : {final_loss.item()}
@@ -81,8 +74,7 @@ def train_epoch(model, dataloader, optimizer, epoch):
 					rlp_acc 	   : {metrics['acc_rlp']}\n"""
 				  )
 
-	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg, \
-		acc_sbj.avg, acc_obj.avg, acc_rel.avg
+	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
 
 
 def val_epoch(model, dataloader):
@@ -91,10 +83,6 @@ def val_epoch(model, dataloader):
 	losses_rel = AverageMeter()
 	losses_total = AverageMeter()
 
-	acc_sbj = AverageMeter()
-	acc_obj = AverageMeter()
-	acc_rel = AverageMeter()
-	
 	model.eval()
 	for _, data in enumerate(dataloader):
 		images, targets = data
@@ -103,17 +91,12 @@ def val_epoch(model, dataloader):
 			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
 			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
 
-		losses_sbj.update(metrics["loss_sbj"].item(), images.size(0))
-		losses_obj.update(metrics["loss_obj"].item(), images.size(0))
-		losses_rel.update(metrics["loss_rlp"].item(), images.size(0))
-		losses_total.update(final_loss.item(), images.size(0))
-		acc_sbj.update(metrics["acc_sbj"], images.size(0))
-		acc_obj.update(metrics["acc_obj"], images.size(0))
-		acc_rel.update(metrics["acc_rlp"], images.size(0))
+		losses_sbj.update(metrics["loss_sbj"].item())
+		losses_obj.update(metrics["loss_obj"].item())
+		losses_rel.update(metrics["loss_rlp"].item())
+		losses_total.update(final_loss.item())
 
-	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg, \
-		acc_sbj.avg, acc_obj.avg, acc_rel.avg
-
+	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
 
 def resume_model(opt, model, optimizer):
 	""" Resume model 
