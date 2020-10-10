@@ -38,7 +38,6 @@ from utils.util import AverageMeter, Metrics, calculate_accuracy
 
 
 def train_epoch(model, dataloader, optimizer, epoch):
-	model.train()
 	losses_sbj = AverageMeter()
 	losses_obj = AverageMeter()
 	losses_rel = AverageMeter()
@@ -47,6 +46,8 @@ def train_epoch(model, dataloader, optimizer, epoch):
 	acc_sbj = AverageMeter()
 	acc_obj = AverageMeter()
 	acc_rel = AverageMeter()
+
+	model.train()
 	for i, data in enumerate(dataloader):
 		images, targets = data
 		_, metrics = model(images, targets)
