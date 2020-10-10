@@ -413,7 +413,7 @@ class RoIHeads(torch.nn.Module):
                 floating_point_types = (torch.float, torch.double, torch.half)
                 assert t["boxes"].dtype in floating_point_types, 'target boxes must of float type'
                 assert t["labels"].dtype == torch.int64, 'target labels must of int64 type'
-        if targets is not None:
+        if self.training:
             proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp = self.select_training_samples(
                 proposals, targets)
 
@@ -510,10 +510,6 @@ class RoIHeads(torch.nn.Module):
             concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
             sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
                 self.RelDN(concat_feat, sbj_feat, obj_feat)
-
-            sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
-            obj_cls_scores = F.softmax(obj_cls_scores, dim=1)
-            rlp_cls_scores = F.softmax(rlp_cls_scores, dim=1)
 
             sbj_cls_scores_list, obj_cls_scores_list, rlp_cls_scores_list = \
                 sbj_cls_scores.split(all_shapes), obj_cls_scores.split(

@@ -65,10 +65,10 @@ class Metrics():
     def __init__(self, log_dir):
         self.summary_writer = tensorboardX.SummaryWriter(log_dir=log_dir)
 
-    def log_metrics(self, train_metrics, val_metrics, epoch):
+    def log_metrics(self, train_metrics, epoch):
         train_tot_loss, train_sbj_loss, train_obj_loss, train_rel_loss = train_metrics
 
-        val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss = val_metrics
+        # val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss = val_metrics
 
         # write summary
         self. summary_writer.add_scalar(
@@ -80,12 +80,12 @@ class Metrics():
         self.summary_writer.add_scalar(
             'losses/train_rel_loss', train_rel_loss, global_step=epoch)
 
-        self.summary_writer.add_scalar(
-            'losses/val_tot_loss', val_tot_loss, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'losses/val_sbj_loss', val_sbj_loss, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'losses/val_obj_loss', val_obj_loss, global_step=epoch)
-        self.summary_writer.add_scalar(
-            'losses/val_rel_loss', val_rel_loss, global_step=epoch)
+        # self.summary_writer.add_scalar(
+        #     'losses/val_tot_loss', val_tot_loss, global_step=epoch)
+        # self.summary_writer.add_scalar(
+        #     'losses/val_sbj_loss', val_sbj_loss, global_step=epoch)
+        # self.summary_writer.add_scalar(
+        #     'losses/val_obj_loss', val_obj_loss, global_step=epoch)
+        # self.summary_writer.add_scalar(
+        #     'losses/val_rel_loss', val_rel_loss, global_step=epoch)
 

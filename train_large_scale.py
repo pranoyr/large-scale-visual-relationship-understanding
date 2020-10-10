@@ -59,7 +59,7 @@ def train_epoch(model, dataloader, optimizer, epoch):
 		losses_obj.update(metrics["loss_obj"].item())
 		losses_rel.update(metrics["loss_rlp"].item())
 		losses_total.update(final_loss.item())
-
+		break
 		if (i + 1) % 10 == 0:
 			print(f"""RCNN_Loss    : {final_loss.item()}
 					rpn_cls_loss   : {metrics['loss_objectness'].item()}
@@ -77,27 +77,27 @@ def train_epoch(model, dataloader, optimizer, epoch):
 	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
 
 
-def val_epoch(model, dataloader):
-	losses_sbj = AverageMeter()
-	losses_obj = AverageMeter()
-	losses_rel = AverageMeter()
-	losses_total = AverageMeter()
+# def val_epoch(model, dataloader):
+# 	losses_sbj = AverageMeter()
+# 	losses_obj = AverageMeter()
+# 	losses_rel = AverageMeter()
+# 	losses_total = AverageMeter()
 
-	model.eval()
-	for _, data in enumerate(dataloader):
-		images, targets = data
-		with torch.no_grad():
-			_, metrics = model(images, targets)
-		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
-			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
-			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
+# 	model.eval()
+# 	for _, data in enumerate(dataloader):
+# 		images, targets = data
+# 		with torch.no_grad():
+# 			_, metrics = model(images, targets)
+# 		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
+# 			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
+# 			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
 
-		losses_sbj.update(metrics["loss_sbj"].item())
-		losses_obj.update(metrics["loss_obj"].item())
-		losses_rel.update(metrics["loss_rlp"].item())
-		losses_total.update(final_loss.item())
+# 		losses_sbj.update(metrics["loss_sbj"].item())
+# 		losses_obj.update(metrics["loss_obj"].item())
+# 		losses_rel.update(metrics["loss_rlp"].item())
+# 		losses_total.update(final_loss.item())
 
-	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
+# 	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
 
 def resume_model(opt, model, optimizer):
 	""" Resume model 
@@ -116,11 +116,11 @@ def main_worker():
 
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
-	dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
+	# dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	train_loader = DataLoader(
 		dataset_train, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
-	val_loader = DataLoader(
-		dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
+	# val_loader = DataLoader(
+	# 	dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 	optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE, weight_decay=cfg.WEIGHT_DECAY)
@@ -135,8 +135,7 @@ def main_worker():
 				faster_rcnn, train_loader, optimizer, epoch)
 
 		if epoch % 1 == 0:
-			val_metrics = val_epoch(faster_rcnn, val_loader)
-			metrics.log_metrics(train_metrics, val_metrics, epoch)
+			metrics.log_metrics(train_metrics, epoch)
 
 			state = {'epoch': epoch, 'state_dict': faster_rcnn.state_dict(
 			), 'optimizer_state_dict': optimizer.state_dict()}
