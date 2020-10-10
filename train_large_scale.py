@@ -86,7 +86,8 @@ def val_epoch(model, dataloader):
 	model.eval()
 	for _, data in enumerate(dataloader):
 		images, targets = data
-		_, metrics = model(images, targets)
+		with torch.no_grad():
+			_, metrics = model(images, targets)
 		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
 			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
 			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
