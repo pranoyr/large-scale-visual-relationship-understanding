@@ -24,9 +24,9 @@ cfg = __C
 # Training options
 __C.N_EPOCHS = 100
 __C.BATCH_SIZE = 4
-__C.LR_RATE = 1e-3
+__C.LR_RATE = 1e-5
 __C.WORKERS = 0
-__C.WEIGHT_DECAY = 5e-4
+__C.WEIGHT_DECAY = 0.0
 
 # Box parameters
 __C.SCORE_THRESH = 0.5
@@ -44,7 +44,7 @@ __C.POSITIVE_FRACTION_SO = 0.5
 # Relationship Branch Parameters
 __C.BATCH_SIZE_PER_IMAGE_REL = 128
 __C.POSITIVE_FRACTION_REL = 0.25
-__C.NORM_SCALE = 5.0
+__C.NORM_SCALE = 3.0
 
 
 # RPN parameters,
