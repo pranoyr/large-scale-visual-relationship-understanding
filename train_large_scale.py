@@ -59,7 +59,7 @@ def train_epoch(model, dataloader, optimizer, epoch):
 		losses_obj.update(metrics["loss_obj"].item())
 		losses_rel.update(metrics["loss_rlp"].item())
 		losses_total.update(final_loss.item())
-		break
+		
 		if (i + 1) % 10 == 0:
 			print(f"""RCNN_Loss    : {final_loss.item()}
 					rpn_cls_loss   : {metrics['loss_objectness'].item()}
