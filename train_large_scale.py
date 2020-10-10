@@ -34,72 +34,131 @@ from config import cfg
 from datasets.vrd import VRDDataset, collater
 from modelling.model import FasterRCNN
 from opts import parse_opts
+from utils.util import AverageMeter, Metrics, calculate_accuracy
 
 
 def train_epoch(model, dataloader, optimizer, epoch):
-    model.train()
-    for i, data in enumerate(dataloader):
-        images, targets = data
-        _, losses = model(images, targets)
-        final_loss = losses["loss_objectness"] + losses["loss_rpn_box_reg"] + \
-            losses["loss_classifier"] + losses["loss_box_reg"] + \
-            losses["loss_sbj"] + losses["loss_obj"] + losses["loss_rlp"]
+	model.train()
+	losses_sbj = AverageMeter()
+	losses_obj = AverageMeter()
+	losses_rel = AverageMeter()
+	losses_total = AverageMeter()
 
-        optimizer.zero_grad()
-        final_loss.backward()
-        optimizer.step()
+	acc_sbj = AverageMeter()
+	acc_obj = AverageMeter()
+	acc_rel = AverageMeter()
+	for i, data in enumerate(dataloader):
+		images, targets = data
+		_, metrics = model(images, targets)
+		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
+			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
+			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
 
-        if (i + 1) % 10 == 0:
-            print(f"""RCNN_Loss    : {final_loss.item()}
-					rpn_cls_loss   : {losses['loss_objectness'].item()}
-					rpn_reg_loss   : {losses['loss_rpn_box_reg'].item()}
-					box_loss 	   : {losses['loss_box_reg']}
-					cls_loss       : {losses['loss_classifier']}
-					sbj_loss	   : {losses['loss_sbj']}
-					obj_loss	   : {losses['loss_obj']}
-					sbj_acc        : {losses['acc_sbj']}
-					obj_acc	       : {losses['acc_obj']}
-					rlp_loss   	   : {losses['loss_rlp']}				 
-					rlp_acc 	   : {losses['acc_rlp']}\n"""
-                  )
+		optimizer.zero_grad()
+		final_loss.backward()
+		optimizer.step()
 
-    state = {'epoch': epoch, 'state_dict': model.state_dict(
-    ), 'optimizer_state_dict': optimizer.state_dict()}
-    torch.save(state, os.path.join(
-        'snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
-    print(f"Epoch {epoch} model saved!\n")
+		losses_sbj.update(metrics["loss_sbj"].item(), images.size(0))
+		losses_obj.update(metrics["loss_obj"].item(), images.size(0))
+		losses_rel.update(metrics["loss_rlp"].item(), images.size(0))
+		losses_total.update(final_loss.item(), images.size(0))
+		acc_sbj.update(metrics["acc_sbj"], images.size(0))
+		acc_obj.update(metrics["acc_obj"], images.size(0))
+		acc_rel.update(metrics["acc_rlp"], images.size(0))
+
+		if (i + 1) % 10 == 0:
+			print(f"""RCNN_Loss    : {final_loss.item()}
+					rpn_cls_loss   : {metrics['loss_objectness'].item()}
+					rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
+					box_loss 	   : {metrics['loss_box_reg']}
+					cls_loss       : {metrics['loss_classifier']}
+					sbj_loss	   : {metrics['loss_sbj']}
+					obj_loss	   : {metrics['loss_obj']}
+					sbj_acc        : {metrics['acc_sbj']}
+					obj_acc	       : {metrics['acc_obj']}
+					rlp_loss   	   : {metrics['loss_rlp']}				 
+					rlp_acc 	   : {metrics['acc_rlp']}\n"""
+				  )
+
+	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg, \
+		acc_sbj.avg, acc_obj.avg, acc_rel.avg
+
+
+def val_epoch(model, dataloader):
+	losses_sbj = AverageMeter()
+	losses_obj = AverageMeter()
+	losses_rel = AverageMeter()
+	losses_total = AverageMeter()
+
+	acc_sbj = AverageMeter()
+	acc_obj = AverageMeter()
+	acc_rel = AverageMeter()
+	
+	model.eval()
+	for _, data in enumerate(dataloader):
+		images, targets = data
+		_, metrics = model(images, targets)
+		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
+			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
+			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
+
+		losses_sbj.update(metrics["loss_sbj"].item(), images.size(0))
+		losses_obj.update(metrics["loss_obj"].item(), images.size(0))
+		losses_rel.update(metrics["loss_rlp"].item(), images.size(0))
+		losses_total.update(final_loss.item(), images.size(0))
+		acc_sbj.update(metrics["acc_sbj"], images.size(0))
+		acc_obj.update(metrics["acc_obj"], images.size(0))
+		acc_rel.update(metrics["acc_rlp"], images.size(0))
+
+	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg, \
+		acc_sbj.avg, acc_obj.avg, acc_rel.avg
 
 
 def resume_model(opt, model, optimizer):
-    """ Resume model 
-    """
-    checkpoint = torch.load(opt.weight_path)
-    model.load_state_dict(checkpoint['state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    print("Loaded Model ...")
+	""" Resume model 
+	"""
+	checkpoint = torch.load(opt.weight_path)
+	model.load_state_dict(checkpoint['state_dict'])
+	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	print("Loaded Model ...")
 
 
 def main_worker():
-    seed = 1
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
+	seed = 1
+	random.seed(seed)
+	np.random.seed(seed)
+	torch.manual_seed(seed)
 
-    opt = parse_opts()
-    dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
-    dataloader = DataLoader(
-        dataset_train, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
+	opt = parse_opts()
+	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
+	dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
+	train_loader = DataLoader(
+		dataset_train, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
+	val_loader = DataLoader(
+		dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
-    faster_rcnn = FasterRCNN().to(cfg.DEVICE)
-    optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE)
+	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
+	optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE)
+	metrics = Metrics(log_dir='tf_logs')
 
-    # resume model
-    if opt.weight_path:
-        resume_model(opt, faster_rcnn, optimizer)
+	# resume model
+	if opt.weight_path:
+		resume_model(opt, faster_rcnn, optimizer)
 
-    for epoch in range(1, cfg.N_EPOCHS+1):
-        train_epoch(faster_rcnn, dataloader, optimizer, epoch)
+	for epoch in range(1, cfg.N_EPOCHS+1):
+		train_metrics = train_epoch(
+				faster_rcnn, train_loader, optimizer, epoch)
+
+		if epoch % 5 == 0:
+			val_metrics = val_epoch(faster_rcnn, val_loader)
+			metrics.log_metrics(train_metrics, val_metrics, epoch)
+
+			state = {'epoch': epoch, 'state_dict': faster_rcnn.state_dict(
+			), 'optimizer_state_dict': optimizer.state_dict()}
+			torch.save(state, os.path.join(
+				'snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
+			print(f"Epoch {epoch} model saved!\n")
 
 
 if __name__ == "__main__":
-    main_worker()
+	main_worker()

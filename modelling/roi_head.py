@@ -440,7 +440,6 @@ class RoIHeads(torch.nn.Module):
                 self.RelDN(concat_feat, sbj_feat, obj_feat)
 
             result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
-            losses = {}
 
             assert labels is not None and regression_targets is not None
 
@@ -453,7 +452,7 @@ class RoIHeads(torch.nn.Module):
 
             loss_classifier, loss_box_reg = fastrcnn_loss(
                 class_logits, box_regression, labels, regression_targets)
-            losses = {
+            metrics = {
                 "loss_classifier": loss_classifier,
                 "loss_box_reg": loss_box_reg,
                 "loss_sbj": loss_cls_sbj,
@@ -543,6 +542,6 @@ class RoIHeads(torch.nn.Module):
                            'obj_labels': objects,
                            'predicates': predicates,
                            }]
-                losses = {}
+                metrics = {}
 
-        return result, losses
+        return result, metrics
