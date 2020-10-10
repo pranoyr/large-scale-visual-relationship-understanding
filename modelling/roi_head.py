@@ -521,6 +521,7 @@ class RoIHeads(torch.nn.Module):
                 rel_scores, rel_indices = torch.max(rlp_cls_scores_list[i], dim=1)
                 # filter "unknown"
                 mask = rel_indices > 0
+                rel_scores = rel_scores[mask]
                 predicates = rel_indices[mask]
                 subjects = sbj_indices[mask]
                 objects = obj_indices[mask]
@@ -529,11 +530,18 @@ class RoIHeads(torch.nn.Module):
                 obj_boxes = all_obj_boxes[i][mask]
                 rlp_boxes = all_rlp_boxes[i][mask]
 
+                # score_mask = rel_scores > 0.6
+                # result = [{"sbj_boxes": sbj_boxes[score_mask],
+                #            "obj_boxes": obj_boxes[score_mask],
+                #            'sbj_labels': subjects[score_mask],
+                #            'obj_labels': objects[score_mask],
+                #            'predicates': predicates[score_mask],
+                #            }]
                 result = [{"sbj_boxes": sbj_boxes,
                            "obj_boxes": obj_boxes,
                            'sbj_labels': subjects,
                            'obj_labels': objects,
-                           'predicates': predicates
+                           'predicates': predicates,
                            }]
                 losses = {}
 
