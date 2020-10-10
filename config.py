@@ -26,6 +26,7 @@ __C.N_EPOCHS = 100
 __C.BATCH_SIZE = 4
 __C.LR_RATE = 1e-5
 __C.WORKERS = 0
+__C.WEIGHT_DECAY = 1e-4
 
 # Box parameters
 __C.SCORE_THRESH = 0.5

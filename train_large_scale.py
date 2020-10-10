@@ -139,7 +139,7 @@ def main_worker():
 		dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
-	optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE)
+	optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE, weight_decay=cfg.WEIGHT_DECAY)
 	metrics = Metrics(log_dir='tf_logs')
 
 	# resume model
