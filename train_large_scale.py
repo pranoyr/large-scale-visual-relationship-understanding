@@ -83,7 +83,7 @@ def val_epoch(model, dataloader):
 	losses_rel = AverageMeter()
 	losses_total = AverageMeter()
 
-	model.eval()
+	model.train()
 	for _, data in enumerate(dataloader):
 		images, targets = data
 		_, metrics = model(images, targets)
