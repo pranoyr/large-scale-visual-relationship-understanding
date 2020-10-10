@@ -87,9 +87,4 @@ class reldn_head(nn.Module):
             prd_vis_embeddings, prd_sem_embeddings.t_())  # (#bs, #prd)
         prd_cls_scores = cfg.NORM_SCALE * prd_sim_matrix
 
-        if not self.training:
-            sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
-            obj_cls_scores = F.softmax(obj_cls_scores, dim=1)
-            prd_cls_scores = F.softmax(prd_cls_scores, dim=1)
-
         return sbj_cls_scores, obj_cls_scores, prd_cls_scores

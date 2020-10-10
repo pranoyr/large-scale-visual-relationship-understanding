@@ -52,7 +52,7 @@ class RPN(nn.Module):
 			RPN_PRE_NMS_TOP_N, RPN_POST_NMS_TOP_N, cfg.RPN_NMS_THRESH)
 	
 	def forward(self, images, fpn_feature_maps, targets=None):
-		if self.training:
+		if targets is not None:
 			boxes, losses = self.rpn(images, fpn_feature_maps, targets)
 		else:
 			boxes, losses = self.rpn(images, fpn_feature_maps)

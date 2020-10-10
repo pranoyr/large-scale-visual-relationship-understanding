@@ -133,7 +133,7 @@ def main_worker():
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
 
-		if epoch % 5 == 0:
+		if epoch % 1 == 0:
 			val_metrics = val_epoch(faster_rcnn, val_loader)
 			metrics.log_metrics(train_metrics, val_metrics, epoch)
 

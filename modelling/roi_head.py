@@ -413,7 +413,7 @@ class RoIHeads(torch.nn.Module):
                 floating_point_types = (torch.float, torch.double, torch.half)
                 assert t["boxes"].dtype in floating_point_types, 'target boxes must of float type'
                 assert t["labels"].dtype == torch.int64, 'target labels must of int64 type'
-        if self.training:
+        if targets is not None:
             proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp = self.select_training_samples(
                 proposals, targets)
 
@@ -440,6 +440,7 @@ class RoIHeads(torch.nn.Module):
                 self.RelDN(concat_feat, sbj_feat, obj_feat)
 
             result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
+            losses = {}
 
             assert labels is not None and regression_targets is not None
 
@@ -452,7 +453,7 @@ class RoIHeads(torch.nn.Module):
 
             loss_classifier, loss_box_reg = fastrcnn_loss(
                 class_logits, box_regression, labels, regression_targets)
-            metrics = {
+            losses = {
                 "loss_classifier": loss_classifier,
                 "loss_box_reg": loss_box_reg,
                 "loss_sbj": loss_cls_sbj,
@@ -510,6 +511,10 @@ class RoIHeads(torch.nn.Module):
             sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
                 self.RelDN(concat_feat, sbj_feat, obj_feat)
 
+            sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
+            obj_cls_scores = F.softmax(obj_cls_scores, dim=1)
+            rlp_cls_scores = F.softmax(rlp_cls_scores, dim=1)
+
             sbj_cls_scores_list, obj_cls_scores_list, rlp_cls_scores_list = \
                 sbj_cls_scores.split(all_shapes), obj_cls_scores.split(
                     all_shapes), rlp_cls_scores.split(all_shapes)
@@ -542,6 +547,6 @@ class RoIHeads(torch.nn.Module):
                            'obj_labels': objects,
                            'predicates': predicates,
                            }]
-                metrics = {}
+                losses = {}
 
-        return result, metrics
+        return result, losses
