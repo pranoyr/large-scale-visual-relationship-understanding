@@ -55,7 +55,7 @@ __C.TRAIN.BATCH_SIZE = 2
 __C.TRAIN.WORKERS = 0
 
 # Number of epochs
-N_EPOCHS = 100
+__C.N_EPOCHS = 100
 
 
 
