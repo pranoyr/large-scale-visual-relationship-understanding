@@ -20,6 +20,7 @@ from torch.autograd import Variable, gradcheck
 from torch.autograd.gradcheck import gradgradcheck
 from torch.jit.annotations import Dict, List, Optional, Tuple
 from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import StepLR
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
                                                       GeneralizedRCNNTransform,
@@ -59,7 +60,6 @@ def train_epoch(model, dataloader, optimizer, epoch):
 		losses_obj.update(metrics["loss_obj"].item())
 		losses_rel.update(metrics["loss_rlp"].item())
 		losses_total.update(final_loss.item())
-		break
 		if (i + 1) % 10 == 0:
 			print(f"""RCNN_Loss    : {final_loss.item()}
 					rpn_cls_loss   : {metrics['loss_objectness'].item()}
@@ -124,7 +124,29 @@ def main_worker():
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 	faster_rcnn.train()
-	optimizer = optim.Adam(faster_rcnn.parameters(), lr=cfg.LR_RATE, weight_decay=cfg.WEIGHT_DECAY)
+	
+	lr = cfg.TRAIN.LEARNING_RATE
+	#tr_momentum = cfg.TRAIN.MOMENTUM
+	#tr_momentum = args.momentum
+
+	params = []
+	for key, value in dict(faster_rcnn.named_parameters()).items():
+		if value.requires_grad:
+			if 'bias' in key:
+				params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
+						'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
+			else:
+				params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+
+
+	# if args.optimizer == "adam":
+	optimizer = torch.optim.Adam(params)
+	# scheduler 
+	scheduler = StepLR(optimizer, 5, gamma=0.1, last_epoch=-1, verbose=False)
+
+	# elif args.optimizer == "sgd":
+	# 	optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
+
 	metrics = Metrics(log_dir='tf_logs')
 
 	# resume model
@@ -134,6 +156,7 @@ def main_worker():
 	for epoch in range(1, cfg.N_EPOCHS+1):
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
+		scheduler.step()
 
 		if epoch % 1 == 0:
 			metrics.log_metrics(train_metrics, epoch)

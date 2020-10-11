@@ -22,11 +22,33 @@ __C = AttrDict()
 cfg = __C
 
 # Training options
-__C.N_EPOCHS = 100
-__C.BATCH_SIZE = 4
-__C.LR_RATE = 1e-3
-__C.WORKERS = 0
-__C.WEIGHT_DECAY = 5e-4
+__C.TRAIN = AttrDict()
+
+# Initial learning rate
+__C.TRAIN.LEARNING_RATE = 0.001
+
+# Momentum
+__C.TRAIN.MOMENTUM = 0.9
+
+# Weight decay, for regularization
+__C.TRAIN.WEIGHT_DECAY = 0.0005
+
+# Factor for reducing the learning rate
+__C.TRAIN.GAMMA = 0.1
+
+# Step size for reducing the learning rate, currently only support one step
+__C.TRAIN.STEPSIZE = [30000]
+
+# Iteration intervals for showing the loss during training, on command line interface
+__C.TRAIN.DISPLAY = 10
+
+# Whether to double the learning rate for bias
+__C.TRAIN.DOUBLE_BIAS = True
+
+# Whether to have weight decay on bias as well
+__C.TRAIN.BIAS_DECAY = False
+
+
 
 # Box parameters
 __C.SCORE_THRESH = 0.5
