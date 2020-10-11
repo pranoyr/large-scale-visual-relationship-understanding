@@ -8,19 +8,6 @@ def parse_opts():
     parser.add_argument('--image_path', type=str,
                         help='input image path')
     parser = argparse.ArgumentParser(description='Train a X-RCNN network')
-
-    parser.add_argument(
-        '--dataset', dest='dataset', required=True,
-        help='Dataset to use')
-    parser.add_argument(
-        '--cfg', dest='cfg_file', required=True,
-        help='Config file for training (and optionally testing)')
-    parser.add_argument(
-        '--set', dest='set_cfgs',
-        help='Set config keys. Key value sequence seperate by whitespace.'
-             'e.g. [key] [value] [key] [value]',
-        default=[], nargs='+')
-
     parser.add_argument(
         '--disp_interval',
         help='Display training info every N iterations',
@@ -78,7 +65,7 @@ def parse_opts():
     parser.add_argument(
         '--use_tfboard', help='Use tensorflow tensorboard to log training info',
         action='store_true')
-        
+
     args = parser.parse_args()
 
     return args
