@@ -25,7 +25,7 @@ __C.SOLVER = AttrDict()
 
 # Training options
 __C.SOLVER.N_EPOCHS = 100
-__C.SOLVER.BATCH_SIZE = 4
+__C.SOLVER.BATCH_SIZE = 2
 __C.SOLVER.WORKERS = 0
 
 # e.g 'SGD', 'Adam'
