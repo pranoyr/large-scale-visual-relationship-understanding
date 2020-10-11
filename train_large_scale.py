@@ -23,11 +23,11 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import StepLR
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
-                                                      GeneralizedRCNNTransform,
-                                                      MultiScaleRoIAlign,
-                                                      TwoMLPHead)
+													  GeneralizedRCNNTransform,
+													  MultiScaleRoIAlign,
+													  TwoMLPHead)
 from torchvision.models.detection.rpn import (AnchorGenerator,
-                                              RegionProposalNetwork, RPNHead)
+											  RegionProposalNetwork, RPNHead)
 from torchvision.models.resnet import resnet101
 from torchvision.ops import boxes as box_ops
 
@@ -108,6 +108,14 @@ def resume_model(opt, model, optimizer):
 	print("Loaded Model ...")
 
 
+def save_model(model, optimizer, epoch):
+	state = {'epoch': epoch, 'state_dict': model.state_dict(
+			), 'optimizer_state_dict': optimizer.state_dict()}
+	torch.save(state, os.path.join(
+		'snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
+	print(f"Epoch {epoch} model saved!\n")
+
+		
 def main_worker():
 	seed = 1
 	random.seed(seed)
@@ -160,13 +168,7 @@ def main_worker():
 
 		if epoch % 1 == 0:
 			metrics.log_metrics(train_metrics, epoch)
-
-			state = {'epoch': epoch, 'state_dict': faster_rcnn.state_dict(
-			), 'optimizer_state_dict': optimizer.state_dict()}
-			torch.save(state, os.path.join(
-				'snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
-			print(f"Epoch {epoch} model saved!\n")
-
-
+			save_model(faster_rcnn, optimizer, epoch)
+			
 if __name__ == "__main__":
 	main_worker()
