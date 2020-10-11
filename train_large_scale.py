@@ -271,7 +271,8 @@ def main_worker():
 				metrics["loss_sbj"] + \
 				metrics["loss_obj"] + metrics["loss_rlp"]
 
-			print(f"""RCNN_Loss    : {loss.item()}
+			print(f""" Iteration {step}/{cfg.SOLVER.MAX_ITER}
+					RCNN_Loss      : {loss.item()}
 					rpn_cls_loss   : {metrics['loss_objectness'].item()}
 					rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
 					box_loss 	   : {metrics['loss_box_reg']}
