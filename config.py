@@ -98,6 +98,16 @@ __C.SOLVER.WARM_UP_METHOD = 'linear'
 # learning rate (this is correct given MomentumSGDUpdateOp)
 __C.SOLVER.SCALE_MOMENTUM = True
 
+# Only apply the correction if the relative LR change exceeds this threshold
+# (prevents ever change in linear warm up from scaling the momentum by a tiny
+# amount; momentum scaling is only important if the LR change is large)
+__C.SOLVER.SCALE_MOMENTUM_THRESHOLD = 1.1
+
+# Suppress logging of changes to LR unless the relative change exceeds this
+# threshold (prevents linear warm up from spamming the training log)
+__C.SOLVER.LOG_LR_CHANGE_THRESHOLD = 1.1
+
+
 
 # Box parameters
 __C.SCORE_THRESH = 0.5
