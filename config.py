@@ -48,6 +48,12 @@ __C.TRAIN.DOUBLE_BIAS = True
 # Whether to have weight decay on bias as well
 __C.TRAIN.BIAS_DECAY = False
 
+# Training batch size 
+__C.TRAIN.BATCH_SIZE = 2
+
+# Number of workers for train loader
+__C.TRAIN.WORKERS = 0
+
 
 
 # Box parameters
