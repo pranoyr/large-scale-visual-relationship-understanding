@@ -133,6 +133,7 @@ def main_worker():
 	# 	dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
+	faster_rcnn.train()
 
 	### Optimizer ###
 	# record backbone params, i.e., conv_body and box_head params
