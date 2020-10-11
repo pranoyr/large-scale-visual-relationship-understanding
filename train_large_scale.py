@@ -150,7 +150,7 @@ def main_worker():
 	# if args.optimizer == "adam":
 	optimizer = torch.optim.Adam(params)
 	# scheduler 
-	scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1, verbose=False)
+	scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 
 	# elif args.optimizer == "sgd":
 	# 	optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
