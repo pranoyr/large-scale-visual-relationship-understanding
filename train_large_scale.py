@@ -113,7 +113,7 @@ def save_ckpt(step, faster_rcnn, optimizer):
 	state = {'epoch': step, 'state_dict': faster_rcnn.state_dict(
 	), 'optimizer_state_dict': optimizer.state_dict()}
 	torch.save(state, os.path.join(
-		'snapshots', f'large_scale_vrd-Epoch-{step}.pth'))
+		'snapshots', f'large_scale_vrd.pth'))
 	print(f"Epoch {step} model saved!\n")
 
 
