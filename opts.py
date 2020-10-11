@@ -7,7 +7,6 @@ def parse_opts():
                         help='path to weight file')
     parser.add_argument('--image_path', type=str,
                         help='input image path')
-    parser = argparse.ArgumentParser(description='Train a X-RCNN network')
     parser.add_argument(
         '--disp_interval',
         help='Display training info every N iterations',
