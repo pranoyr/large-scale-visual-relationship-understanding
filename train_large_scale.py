@@ -198,7 +198,7 @@ def main_worker():
 	backbone_lr = optimizer.param_groups[0]['lr']
 
 	# CHECKPOINT_PERIOD = int(cfg.TRAIN.SNAPSHOT_ITERS / cfg.NUM_GPUS)
-	CHECKPOINT_PERIOD = cfg.SOLVER.MAX_ITER / cfg.TRAIN.SNAPSHOT_FREQ
+	CHECKPOINT_PERIOD = cfg.SOLVER.MAX_ITER / 20000
 
 	# Set index for decay steps
 	decay_steps_ind = None
