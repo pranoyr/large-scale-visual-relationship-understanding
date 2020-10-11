@@ -290,7 +290,7 @@ def main_worker():
 
 		# training_stats.LogIterStats(step, lr, backbone_lr)
 
-		if (step+1) % CHECKPOINT_PERIOD == 0:
+		if (step+1) % 20 == 0:
 			save_ckpt(step, faster_rcnn, optimizer)
 
 	# ---- Training ends ----
