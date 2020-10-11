@@ -127,7 +127,7 @@ def main_worker():
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 	# dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	dataloader = DataLoader(
-		dataset_train, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
+		dataset_train, num_workers=cfg.SOLVER.WORKERS, collate_fn=collater, batch_size=cfg.SOLVER.BATCH_SIZE)
 	# val_loader = DataLoader(
 	# 	dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
