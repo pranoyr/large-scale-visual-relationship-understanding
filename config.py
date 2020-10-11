@@ -54,6 +54,9 @@ __C.TRAIN.BATCH_SIZE = 2
 # Number of workers for train loader
 __C.TRAIN.WORKERS = 0
 
+# Number of epochs
+N_EPOCHS = 100
+
 
 
 # Box parameters
