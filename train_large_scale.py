@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import util.net as net_utils 
+import utils.net as net_utils 
 import torchvision
 import torchvision.models as models
 import torchvision.models.detection._utils as det_utils
