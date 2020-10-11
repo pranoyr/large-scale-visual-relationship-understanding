@@ -29,7 +29,7 @@ __C.SOLVER.BATCH_SIZE = 4
 __C.SOLVER.WORKERS = 0
 
 # e.g 'SGD', 'Adam'
-__C.SOLVER.TYPE = 'SGD'
+__C.SOLVER.TYPE = 'Adam'
 
 # Base learning rate for the specified schedule
 __C.SOLVER.BASE_LR = 0.001
