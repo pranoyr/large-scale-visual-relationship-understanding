@@ -270,6 +270,19 @@ def main_worker():
 				metrics["loss_sbj"] + \
 				metrics["loss_obj"] + metrics["loss_rlp"]
 
+			print(f"""RCNN_Loss    : {loss.item()}
+					rpn_cls_loss   : {metrics['loss_objectness'].item()}
+					rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
+					box_loss 	   : {metrics['loss_box_reg']}
+					cls_loss       : {metrics['loss_classifier']}
+					sbj_loss	   : {metrics['loss_sbj']}
+					obj_loss	   : {metrics['loss_obj']}
+					sbj_acc        : {metrics['acc_sbj']}
+					obj_acc	       : {metrics['acc_obj']}
+					rlp_loss   	   : {metrics['loss_rlp']}
+					rlp_acc 	   : {metrics['acc_rlp']}\n"""
+				)
+
 			# training_stats.UpdateIterStats(net_outputs, inner_iter)
 			loss.backward()
 		optimizer.step()
