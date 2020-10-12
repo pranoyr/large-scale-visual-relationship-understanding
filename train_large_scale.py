@@ -146,7 +146,7 @@ def main_worker():
 	# 			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
 	for key, value in dict(faster_rcnn.named_parameters()).items():
 		if value.requires_grad:
-			params += [{'params':[value],'lr':lr}]
+			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
 
 
 	# if args.optimizer == "adam":
