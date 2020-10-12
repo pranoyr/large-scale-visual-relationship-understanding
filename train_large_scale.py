@@ -136,12 +136,14 @@ def main_worker():
 	#tr_momentum = cfg.TRAIN.MOMENTUM
 	#tr_momentum = args.momentum
 
-	# params = []
+	params = []
 	# for key, value in dict(faster_rcnn.named_parameters()).items():
 	# 	if value.requires_grad:
-	# 		params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
-
-	params = []
+	# 		if 'bias' in key:
+	# 			params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
+	# 					'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
+	# 		else:
+	# 			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
 	for key, value in dict(faster_rcnn.named_parameters()).items():
 		if value.requires_grad:
 			params += [{'params':[value],'lr':lr}]
@@ -164,7 +166,7 @@ def main_worker():
 	for epoch in range(1, cfg.N_EPOCHS+1):
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
-		#scheduler.step()
+		scheduler.step()
 
 		if epoch % 1 == 0:
 			metrics.log_metrics(train_metrics, epoch)
