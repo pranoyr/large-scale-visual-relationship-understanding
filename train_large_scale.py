@@ -136,10 +136,15 @@ def main_worker():
 	#tr_momentum = cfg.TRAIN.MOMENTUM
 	#tr_momentum = args.momentum
 
+	# params = []
+	# for key, value in dict(faster_rcnn.named_parameters()).items():
+	# 	if value.requires_grad:
+	# 		params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+
 	params = []
 	for key, value in dict(faster_rcnn.named_parameters()).items():
 		if value.requires_grad:
-			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+			params += [{'params':[value],'lr':lr}]
 
 
 	# if args.optimizer == "adam":
