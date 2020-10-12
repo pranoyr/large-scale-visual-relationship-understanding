@@ -75,6 +75,9 @@ class VRDDataset(Dataset):
 			zip(self.preds, range(len(self.preds))))
 		self.imgs_list = make_image_list(self.dataset_path, self.image_set)
 
+		self.transform = transforms.Compose([
+			transforms.ToTensor()])
+
 	def __len__(self):
 		return len(self.imgs_list)
 
@@ -126,10 +129,8 @@ class VRDDataset(Dataset):
 		boxes, labels, preds = self.load_pascal_annotation(img_name)
 		img_path = self.image_path_from_index(img_name)
 		img = Image.open(img_path)
-		img = torch.from_numpy(np.array(img))
-		img = img.permute(2, 0, 1)
-		img = img.type(torch.float32)
-
+		img = self.transform(img)
+	
 		assert len(boxes) == len(
 			labels), "boxes and labels should be of equal length"
 
