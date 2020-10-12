@@ -131,7 +131,6 @@ def main_worker():
 	# 	dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
-	faster_rcnn.train()
 	
 	lr = cfg.TRAIN.LEARNING_RATE
 	#tr_momentum = cfg.TRAIN.MOMENTUM
@@ -140,11 +139,7 @@ def main_worker():
 	params = []
 	for key, value in dict(faster_rcnn.named_parameters()).items():
 		if value.requires_grad:
-			if 'bias' in key:
-				params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
-						'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
-			else:
-				params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
 
 
 	# if args.optimizer == "adam":
@@ -164,7 +159,7 @@ def main_worker():
 	for epoch in range(1, cfg.N_EPOCHS+1):
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
-		scheduler.step()
+		#scheduler.step()
 
 		if epoch % 1 == 0:
 			metrics.log_metrics(train_metrics, epoch)
