@@ -166,7 +166,7 @@ def main_worker():
 	for epoch in range(1, cfg.N_EPOCHS+1):
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
-		scheduler.step()
+		# scheduler.step()
 
 		if epoch % 1 == 0:
 			metrics.log_metrics(train_metrics, epoch)
