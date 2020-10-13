@@ -50,7 +50,7 @@ class RoIHeads(torch.nn.Module):
         self.box_head = TwoMLPHead(
             256 * resolution ** 2,
             representation_size)
-        self.rlp_box_head = copy.deepcopy(self.box_head)
+        self.rlp_head = copy.deepcopy(self.box_head)
 
         representation_size = 1024
         self.box_predictor = FastRCNNPredictor(
@@ -432,7 +432,7 @@ class RoIHeads(torch.nn.Module):
 
             rel_feat = self.box_roi_pool(
                 features, data_rlp["proposals"], image_shapes)
-            rel_feat = self.rlp_box_head(rel_feat)
+            rel_feat = self.rlp_head(rel_feat)
 
             concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
 
