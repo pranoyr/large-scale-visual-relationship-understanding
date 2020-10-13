@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 from PIL import Image
+from torchvision import transforms, utils
 
 from config import cfg
 from modelling.model import FasterRCNN
@@ -31,16 +32,22 @@ faster_rcnn.load_state_dict(checkpoint['state_dict'])
 print("Model Restored")
 faster_rcnn.eval()
 
+transform = transforms.Compose([
+			transforms.ToTensor()])
+
 im = Image.open(opt.image_path)
 img = np.array(im)
 draw = img.copy()
-draw = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
-img = torch.from_numpy(img)
-img = img.permute(2, 0, 1)
-img = img.type(torch.float32)
+
+im = transform(im)
+
+# draw = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
+# img = torch.from_numpy(img)
+# img = img.permute(2, 0, 1)
+# img = img.type(torch.float32)
 
 with torch.no_grad():
-    detections, losses = faster_rcnn([img])
+    detections, losses = faster_rcnn([im])
 
 sbj_boxes = detections[0]['sbj_boxes']
 obj_boxes = detections[0]['obj_boxes']

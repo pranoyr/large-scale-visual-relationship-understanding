@@ -506,7 +506,7 @@ class RoIHeads(torch.nn.Module):
             obj_feat = self.box_roi_pool(features, all_obj_boxes, image_shapes)
             obj_feat = self.box_head(obj_feat)
             rel_feat = self.box_roi_pool(features, all_rlp_boxes, image_shapes)
-            rel_feat = self.rlp_box_head(rel_feat)
+            rel_feat = self.rlp_head(rel_feat)
             concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
             sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
                 self.RelDN(concat_feat, sbj_feat, obj_feat)
