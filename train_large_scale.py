@@ -126,7 +126,7 @@ def main_worker():
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 	# dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	train_loader = DataLoader(
-		dataset_train, num_workers=cfg.TRAIN.WORKERS, collate_fn=collater, batch_size=cfg.TRAIN.BATCH_SIZE)
+		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
 	# val_loader = DataLoader(
 	# 	dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
@@ -178,7 +178,7 @@ def main_worker():
 	if opt.weight_path:
 		resume_model(opt, faster_rcnn, optimizer)
 
-	for epoch in range(1, cfg.N_EPOCHS+1):
+	for epoch in range(1, opt.n_epochs):
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
 		# scheduler.step()

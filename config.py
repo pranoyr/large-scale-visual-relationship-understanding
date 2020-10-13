@@ -21,7 +21,11 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
+__C.DEVICE = 'cuda'
+
+#
 # Training options
+#
 __C.TRAIN = AttrDict()
 
 # Initial learning rate
@@ -48,51 +52,78 @@ __C.TRAIN.DOUBLE_BIAS = True
 # Whether to have weight decay on bias as well
 __C.TRAIN.BIAS_DECAY = False
 
-# Training batch size 
-__C.TRAIN.BATCH_SIZE = 2
 
-# Number of workers for train loader
-__C.TRAIN.WORKERS = 0
+#
+# Box Paramters
+#
 
-# Number of epochs
-__C.N_EPOCHS = 100
+__C.BOX = AttrDict()
 
+__C.BOX.SCORE_THRESH = 0.5
 
+__C.BOX.NMS_THRESH = 0.5
 
-# Box parameters
-__C.SCORE_THRESH = 0.5
-__C.NMS_THRESH = 0.5
-__C.BOX_DETECTIONS_PER_IMG = 100
-__C.FG_IOU_THRESH = 0.5
-__C.BG_IOU_THRESH = 0.5
-__C.BATCH_SIZE_PER_IMAGE = 512
-__C.POSITIVE_FRACTION = 0.25
-__C.NUM_CLASSES = 101
+__C.BOX.DETECTIONS_PER_IMG = 100
 
-# Subject/Object Branch Paramaters
-__C.BATCH_SIZE_PER_IMAGE_SO = 64
-__C.POSITIVE_FRACTION_SO = 0.5
-# Relationship Branch Parameters
-__C.BATCH_SIZE_PER_IMAGE_REL = 128
-__C.POSITIVE_FRACTION_REL = 0.25
-__C.NORM_SCALE = 5.0
+__C.BOX.FG_IOU_THRESH = 0.5
+
+__C.BOX.BG_IOU_THRESH = 0.5
+
+__C.BOX.BATCH_SIZE_PER_IMAGE = 512
+
+__C.BOX.POSITIVE_FRACTION = 0.25
+
+__C.BOX.NUM_CLASSES = 101
 
 
-# RPN parameters,
-__C.RPN_PRE_NMS_TOP_N_TRAIN = 2000
-__C.RPN_PRE_NMS_TOP_N_TEST = 1000
-__C.RPN_POST_NMS_TOP_N_TRAIN = 2000
-__C.RPN_POST_NMS_TOP_N_TEST = 1000
-__C.RPN_NMS_THRESH = 0.7
-__C.RPN_FG_IOU_THRESH = 0.7
-__C.RPN_BG_IOU_THRESH = 0.3
-__C.RPN_BATCH_SIZE_PER_IMAGE = 256
-__C.RPN_POSITIVE_FRACTION = 0.5
+#
+# Subject, Object, Relation Branch Paramaters
+#
 
-__C.DEVICE = 'cuda'
+__C.MODEL = AttrDict()
 
-# Data directory
+__C.MODEL.BATCH_SIZE_PER_IMAGE_SO = 64
+
+__C.MODEL.POSITIVE_FRACTION_SO = 0.5
+
+__C.MODEL.BATCH_SIZE_PER_IMAGE_REL = 128
+
+__C.MODEL.POSITIVE_FRACTION_REL = 0.25
+
+__C.MODEL.NORM_SCALE = 3.0
+
+
+#
+# RPN Paramaters
+#
+
+__C.RPN = AttrDict()
+
+__C.RPN.PRE_NMS_TOP_N_TRAIN = 2000
+
+__C.RPN.PRE_NMS_TOP_N_TEST = 1000
+
+__C.RPN.POST_NMS_TOP_N_TRAIN = 2000
+
+__C.RPN.POST_NMS_TOP_N_TEST = 1000
+
+__C.RPN.NMS_THRESH = 0.7
+
+__C.RPN.FG_IOU_THRESH = 0.7
+
+__C.RPN.BG_IOU_THRESH = 0.3
+
+__C.RPN.BATCH_SIZE_PER_IMAGE = 256
+
+__C.RPN.POSITIVE_FRACTION = 0.5
+
+
+#
+# Dataset, Word Vectors Directory
+#
+
 __C.DATASET_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'data', 'VRD')
+
 __C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(
     __file__)), 'data', 'wordvectors', 'GoogleNews-vectors-negative300.bin')

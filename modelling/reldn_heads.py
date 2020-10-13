@@ -67,13 +67,13 @@ class reldn_head(nn.Module):
             sbj_vis_embeddings, p=2, dim=1)  # (#bs, 1024)
         sbj_sim_matrix = torch.mm(
             sbj_vis_embeddings, so_sem_embeddings)  # (#bs, #prd)
-        sbj_cls_scores = cfg.NORM_SCALE * sbj_sim_matrix
+        sbj_cls_scores = cfg.MODEL.NORM_SCALE * sbj_sim_matrix
 
         obj_vis_embeddings = F.normalize(
             obj_vis_embeddings, p=2, dim=1)  # (#bs, 1024)
         obj_sim_matrix = torch.mm(
             obj_vis_embeddings, so_sem_embeddings)  # (#bs, #prd)
-        obj_cls_scores = cfg.NORM_SCALE * obj_sim_matrix
+        obj_cls_scores = cfg.MODEL.NORM_SCALE * obj_sim_matrix
 
         ds_prd_vecs = self.prd_vecs
         ds_prd_vecs = Variable(torch.from_numpy(
@@ -85,7 +85,7 @@ class reldn_head(nn.Module):
             prd_vis_embeddings, p=2, dim=1)  # (#bs, 1024)
         prd_sim_matrix = torch.mm(
             prd_vis_embeddings, prd_sem_embeddings.t_())  # (#bs, #prd)
-        prd_cls_scores = cfg.NORM_SCALE * prd_sim_matrix
+        prd_cls_scores = cfg.MODEL.NORM_SCALE * prd_sim_matrix
 
         if not self.training:
             sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
