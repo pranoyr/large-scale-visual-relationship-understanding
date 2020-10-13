@@ -144,9 +144,24 @@ def main_worker():
 	# 					'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
 	# 		else:
 	# 			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+
+	params = []
 	for key, value in dict(faster_rcnn.named_parameters()).items():
 		if value.requires_grad:
-			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+			# Faster RCNN Branch Parameters
+			if 'rpn' in key or 'fpn' in key or 'box_head' in key or 'box_predictor' in key:
+				if 'bias' in key:
+					params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
+						'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
+				else:
+					params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+			# Predicate Branch
+			else: 
+				if 'bias' in key:
+					params += [{'params':[value],'lr':lr, \
+						'weight_decay': 0}]
+				else: 
+					params += [{'params':[value],'lr':lr, 'weight_decay': 0}]
 
 
 	# if args.optimizer == "adam":
