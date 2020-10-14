@@ -136,32 +136,60 @@ def main_worker():
 	#tr_momentum = cfg.TRAIN.MOMENTUM
 	#tr_momentum = args.momentum
 
-	params = []
-	# for key, value in dict(faster_rcnn.named_parameters()).items():
-	# 	if value.requires_grad:
-	# 		if 'bias' in key:
-	# 			params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
-	# 					'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
-	# 		else:
-	# 			params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
+	### Optimizer ###
+    # record backbone params, i.e., conv_body and box_head params
+    backbone_bias_params = []
+    backbone_bias_param_names = []
+    prd_branch_bias_params = []
+    prd_branch_bias_param_names = []
+    backbone_nonbias_params = []
+    backbone_nonbias_param_names = []
+    prd_branch_nonbias_params = []
+    prd_branch_nonbias_param_names = []
+    for key, value in dict(maskRCNN.named_parameters()).items():
+        if value.requires_grad:
+            elif 'fpn' in key or 'box_head' in key or 'box_predictor' in key or 'rpn' in key:
+                if 'bias' in key:
+                    backbone_bias_params.append(value)
+                    backbone_bias_param_names.append(key)
+                else:
+                    backbone_nonbias_params.append(value)
+                    backbone_nonbias_param_names.append(key)
+            else:
+                if 'bias' in key:
+                    prd_branch_bias_params.append(value)
+                    prd_branch_bias_param_names.append(key)
+                else:
+                    prd_branch_nonbias_params.append(value)
+                    prd_branch_nonbias_param_names.append(key)
+	params = [
+        {'params': nonbias_params,
+         'lr': cfg.TRAIN.LEARNING_RATE,
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY},
+        {'params': bias_params,
+         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.BIAS_DOUBLE_LR + 1),
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_WEIGHT_DECAY else 0},
+        {'params': gn_params,
+         'lr': cfg.TRAIN.LEARNING_RATE,
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY_GN}
+    ]
 
-	params = []
-	for key, value in dict(faster_rcnn.named_parameters()).items():
-		if value.requires_grad:
-			# Faster RCNN Branch Parameters
-			if 'rpn' in key or 'fpn' in key or 'box_head' in key or 'box_predictor' in key:
-				if 'bias' in key:
-					params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
-						'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
-				else:
-					params += [{'params':[value],'lr':lr, 'weight_decay': cfg.TRAIN.WEIGHT_DECAY}]
-			# Predicate Branch
-			else: 
-				if 'bias' in key:
-					params += [{'params':[value],'lr':lr*(cfg.TRAIN.DOUBLE_BIAS + 1), \
-						'weight_decay': cfg.TRAIN.BIAS_DECAY and cfg.TRAIN.WEIGHT_DECAY or 0}]
-				else: 
-					params += [{'params':[value],'lr':lr, 'weight_decay': 0}]
+
+    params = [
+        {'params': backbone_nonbias_params,
+         'lr': cfg.TRAIN.LEARNING_RATE,
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY},
+        {'params': backbone_bias_params,
+         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.BIAS_DOUBLE_LR + 1),
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_WEIGHT_DECAY else 0},
+        {'params': prd_branch_nonbias_params,
+         'lr': cfg.TRAIN.LEARNING_RATE,
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY},
+        {'params': prd_branch_bias_params,
+         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.BIAS_DOUBLE_LR + 1),
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_WEIGHT_DECAY else 0},
+    ]
+
 
 
 	# if args.optimizer == "adam":
