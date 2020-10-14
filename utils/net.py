@@ -7,7 +7,6 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 from config import cfg
-import nn as mynn
 
 logger = logging.getLogger(__name__)
 
