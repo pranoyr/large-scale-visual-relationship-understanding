@@ -177,14 +177,15 @@ def main_worker():
 		 'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_DECAY else 0},
 	]
 
-
-	# if args.optimizer == "adam":
-	optimizer = torch.optim.Adam(params)
+	optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 	# scheduler 
-	scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
+	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 
-	# elif args.optimizer == "sgd":
-	# 	optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
+	if cfg.TRAIN.optimizer == "adam":
+		optimizer = torch.optim.Adam(params)
+		
+	elif cfg.TRAIN.optimizer == "sgd":
+		optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 
 	metrics = Metrics(log_dir='tf_logs')
 
@@ -195,7 +196,10 @@ def main_worker():
 	for epoch in range(1, opt.n_epochs):
 		train_metrics = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
-		scheduler.step()
+
+		if epoch % 5 == 0:
+			lr_new = lr * cfg.TRAIN.GAMMA
+			net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
 
 		if epoch % 1 == 0:
 			metrics.log_metrics(train_metrics, epoch)

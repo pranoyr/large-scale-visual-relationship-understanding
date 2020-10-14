@@ -29,13 +29,13 @@ __C.DEVICE = 'cuda'
 __C.TRAIN = AttrDict()
 
 # Initial learning rate
-__C.TRAIN.LEARNING_RATE = 0.0001
+__C.TRAIN.LEARNING_RATE = 0.001
 
 # Momentum
 __C.TRAIN.MOMENTUM = 0.9
 
 # Weight decay, for regularization
-__C.TRAIN.WEIGHT_DECAY = 0
+__C.TRAIN.WEIGHT_DECAY = 0.0005
 
 # Factor for reducing the learning rate
 __C.TRAIN.GAMMA = 0.1
