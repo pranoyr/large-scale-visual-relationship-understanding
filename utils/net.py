@@ -69,34 +69,34 @@ def decay_learning_rate(optimizer, cur_lr, decay_rate):
     new_lr = cur_lr * decay_rate
     # ratio = _get_lr_change_ratio(cur_lr, new_lr)
     ratio = 1 / decay_rate
-    if ratio > cfg.SOLVER.LOG_LR_CHANGE_THRESHOLD:
+    if ratio > cfg.TRAIN.LOG_LR_CHANGE_THRESHOLD:
         logger.info('Changing learning rate %.6f -> %.6f', cur_lr, new_lr)
     # Update learning rate, note that different parameter may have different learning rate
     for param_group in optimizer.param_groups:
         cur_lr = param_group['lr']
         new_lr = decay_rate * param_group['lr']
         param_group['lr'] = new_lr
-        if cfg.SOLVER.TYPE in ['SGD']:
-            if cfg.SOLVER.SCALE_MOMENTUM and cur_lr > 1e-7 and \
-                    ratio > cfg.SOLVER.SCALE_MOMENTUM_THRESHOLD:
+        if cfg.TRAIN.TYPE in ['SGD']:
+            if cfg.TRAIN.SCALE_MOMENTUM and cur_lr > 1e-7 and \
+                    ratio > cfg.TRAIN.SCALE_MOMENTUM_THRESHOLD:
                 _CorrectMomentum(optimizer, param_group['params'], new_lr / cur_lr)
 
 def update_learning_rate(optimizer, cur_lr, new_lr):
     """Update learning rate"""
     if cur_lr != new_lr:
         ratio = _get_lr_change_ratio(cur_lr, new_lr)
-        if ratio > cfg.SOLVER.LOG_LR_CHANGE_THRESHOLD:
+        if ratio > cfg.TRAIN.LOG_LR_CHANGE_THRESHOLD:
             logger.info('Changing learning rate %.6f -> %.6f', cur_lr, new_lr)
         # Update learning rate, note that different parameter may have different learning rate
         param_keys = []
         for ind, param_group in enumerate(optimizer.param_groups):
-            if ind == 1 and cfg.SOLVER.BIAS_DOUBLE_LR:  # bias params
+            if ind == 1 and cfg.TRAIN.DOUBLE_BIAS:  # bias params
                 param_group['lr'] = new_lr * 2
             else:
                 param_group['lr'] = new_lr
             param_keys += param_group['params']
-        if cfg.SOLVER.TYPE in ['SGD'] and cfg.SOLVER.SCALE_MOMENTUM and cur_lr > 1e-7 and \
-                ratio > cfg.SOLVER.SCALE_MOMENTUM_THRESHOLD:
+        if cfg.TRAIN.TYPE in ['SGD'] and cfg.TRAIN.SCALE_MOMENTUM and cur_lr > 1e-7 and \
+                ratio > cfg.TRAIN.SCALE_MOMENTUM_THRESHOLD:
             _CorrectMomentum(optimizer, param_keys, new_lr / cur_lr)
 
 
@@ -104,20 +104,20 @@ def update_learning_rate_att(optimizer, cur_lr, new_lr):
     """Update learning rate"""
     if cur_lr != new_lr:
         ratio = _get_lr_change_ratio(cur_lr, new_lr)
-        if ratio > cfg.SOLVER.LOG_LR_CHANGE_THRESHOLD:
+        if ratio > cfg.TRAIN.LOG_LR_CHANGE_THRESHOLD:
             logger.info('Changing learning rate %.6f -> %.6f', cur_lr, new_lr)
         # Update learning rate, note that different parameter may have different learning rate
         param_keys = []
         for ind, param_group in enumerate(optimizer.param_groups):
-            if (ind == 1 or ind == 3) and cfg.SOLVER.BIAS_DOUBLE_LR:  # bias params
+            if (ind == 1 or ind == 3) and cfg.TRAIN.DOUBLE_BIAS:  # bias params
                 param_group['lr'] = new_lr * 2
             else:
                 param_group['lr'] = new_lr
             if ind <= 1:  # backbone params
-                param_group['lr'] = cfg.SOLVER.BACKBONE_LR_SCALAR * param_group['lr']  # 0.1 * param_group['lr']
+                param_group['lr'] = cfg.TRAIN.BACKBONE_LR_SCALAR * param_group['lr']  # 0.1 * param_group['lr']
             param_keys += param_group['params']
-        if cfg.SOLVER.TYPE in ['SGD'] and cfg.SOLVER.SCALE_MOMENTUM and cur_lr > 1e-7 and \
-                ratio > cfg.SOLVER.SCALE_MOMENTUM_THRESHOLD:
+        if cfg.TRAIN.TYPE in ['SGD'] and cfg.TRAIN.SCALE_MOMENTUM and cur_lr > 1e-7 and \
+                ratio > cfg.TRAIN.SCALE_MOMENTUM_THRESHOLD:
             _CorrectMomentum(optimizer, param_keys, new_lr / cur_lr)
             
 
@@ -125,20 +125,20 @@ def update_learning_rate_rel(optimizer, cur_lr, new_lr):
     """Update learning rate"""
     if cur_lr != new_lr:
         ratio = _get_lr_change_ratio(cur_lr, new_lr)
-        if ratio > cfg.SOLVER.LOG_LR_CHANGE_THRESHOLD:
-            logger.info('Changing learning rate %.6f -> %.6f', cur_lr, new_lr)
+        if ratio > cfg.TRAIN.LOG_LR_CHANGE_THRESHOLD:
+            print('Changing learning rate %.6f -> %.6f', cur_lr, new_lr)
         # Update learning rate, note that different parameter may have different learning rate
         param_keys = []
         for ind, param_group in enumerate(optimizer.param_groups):
-            if (ind == 1 or ind == 3) and cfg.SOLVER.BIAS_DOUBLE_LR:  # bias params
+            if (ind == 1 or ind == 3) and cfg.TRAIN.DOUBLE_BIAS:  # bias params
                 param_group['lr'] = new_lr * 2
             else:
                 param_group['lr'] = new_lr
             if ind <= 1:  # backbone params
-                param_group['lr'] = cfg.SOLVER.BACKBONE_LR_SCALAR * param_group['lr']  # 0.1 * param_group['lr']
+                param_group['lr'] = cfg.TRAIN.BACKBONE_LR_SCALAR * param_group['lr']  # 0.1 * param_group['lr']
             param_keys += param_group['params']
-        if cfg.SOLVER.TYPE in ['SGD'] and cfg.SOLVER.SCALE_MOMENTUM and cur_lr > 1e-7 and \
-                ratio > cfg.SOLVER.SCALE_MOMENTUM_THRESHOLD:
+        if cfg.TRAIN.TYPE in ['SGD'] and cfg.TRAIN.SCALE_MOMENTUM and cur_lr > 1e-7 and \
+                ratio > cfg.TRAIN.SCALE_MOMENTUM_THRESHOLD:
             _CorrectMomentum(optimizer, param_keys, new_lr / cur_lr)
 
 
@@ -191,54 +191,4 @@ def affine_grid_gen(rois, input_size, grid_size):
     return grid
 
 
-def save_ckpt(output_dir, args, model, optimizer):
-    """Save checkpoint"""
-    if args.no_save:
-        return
-    ckpt_dir = os.path.join(output_dir, 'ckpt')
-    if not os.path.exists(ckpt_dir):
-        os.makedirs(ckpt_dir)
-    save_name = os.path.join(ckpt_dir, 'model_{}_{}.pth'.format(args.epoch, args.step))
-    if isinstance(model, mynn.DataParallel):
-        model = model.module
-    # TODO: (maybe) Do not save redundant shared params
-    # model_state_dict = model.state_dict()
-    torch.save({
-        'epoch': args.epoch,
-        'step': args.step,
-        'iters_per_epoch': args.iters_per_epoch,
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict()}, save_name)
-    logger.info('save model: %s', save_name)
 
-
-def load_ckpt(model, ckpt):
-    """Load checkpoint"""
-    # print(ckpt.keys())
-    # mapping, _ = model.detectron_weight_mapping
-    # state_dict = {}
-    # for name in ckpt:
-    #     if mapping[name]:
-    #         state_dict[name] = ckpt[name]
-    # model.load_state_dict(state_dict, strict=False)
-
-    model.load_state_dict(ckpt, strict=False)
-
-
-def get_group_gn(dim):
-    """
-    get number of groups used by GroupNorm, based on number of channels
-    """
-    dim_per_gp = cfg.GROUP_NORM.DIM_PER_GP
-    num_groups = cfg.GROUP_NORM.NUM_GROUPS
-
-    assert dim_per_gp == -1 or num_groups == -1, \
-        "GroupNorm: can only specify G or C/G."
-
-    if dim_per_gp > 0:
-        assert dim % dim_per_gp == 0
-        group_gn = dim // dim_per_gp
-    else:
-        assert dim % num_groups == 0
-        group_gn = num_groups
-    return group_gn

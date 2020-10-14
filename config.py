@@ -28,6 +28,9 @@ __C.DEVICE = 'cuda'
 #
 __C.TRAIN = AttrDict()
 
+# Optmization Algorithm
+__C.TRAIN.TYPE = "SGD"
+
 # Initial learning rate
 __C.TRAIN.LEARNING_RATE = 0.001
 
@@ -51,6 +54,28 @@ __C.TRAIN.DOUBLE_BIAS = True
 
 # Whether to have weight decay on bias as well
 __C.TRAIN.BIAS_DECAY = False
+
+# Warm up to TRAIN.BASE_LR over this number of SGD iterations
+__C.TRAIN.WARM_UP_ITERS = 500
+
+# Start the warm up from TRAIN.BASE_LR * TRAIN.WARM_UP_FACTOR
+__C.TRAIN.WARM_UP_FACTOR = 1.0 / 3.0
+
+# WARM_UP_METHOD can be either 'constant' or 'linear' (i.e., gradual)
+__C.TRAIN.WARM_UP_METHOD = 'linear'
+
+# Scale the momentum update history by new_lr / old_lr when updating the
+# learning rate (this is correct given MomentumSGDUpdateOp)
+__C.TRAIN.SCALE_MOMENTUM = True
+# Only apply the correction if the relative LR change exceeds this threshold
+# (prevents ever change in linear warm up from scaling the momentum by a tiny
+# amount; momentum scaling is only important if the LR change is large)
+__C.TRAIN.SCALE_MOMENTUM_THRESHOLD = 1.1
+
+# Suppress logging of changes to LR unless the relative change exceeds this
+# threshold (prevents linear warm up from spamming the training log)
+__C.TRAIN.LOG_LR_CHANGE_THRESHOLD = 1.1
+
 
 
 #
