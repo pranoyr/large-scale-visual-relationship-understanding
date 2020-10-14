@@ -146,7 +146,7 @@ def main_worker():
     backbone_nonbias_param_names = []
     prd_branch_nonbias_params = []
     prd_branch_nonbias_param_names = []
-    for key, value in dict(maskRCNN.named_parameters()).items():
+    for key, value in dict(FasterRCNN.named_parameters()).items():
         if value.requires_grad:
             elif 'fpn' in key or 'box_head' in key or 'box_predictor' in key or 'rpn' in key:
                 if 'bias' in key:
@@ -163,33 +163,19 @@ def main_worker():
                     prd_branch_nonbias_params.append(value)
                     prd_branch_nonbias_param_names.append(key)
 	params = [
-        {'params': nonbias_params,
-         'lr': cfg.TRAIN.LEARNING_RATE,
-         'weight_decay': cfg.TRAIN.WEIGHT_DECAY},
-        {'params': bias_params,
-         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.BIAS_DOUBLE_LR + 1),
-         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_WEIGHT_DECAY else 0},
-        {'params': gn_params,
-         'lr': cfg.TRAIN.LEARNING_RATE,
-         'weight_decay': cfg.TRAIN.WEIGHT_DECAY_GN}
-    ]
-
-
-    params = [
-        {'params': backbone_nonbias_params,
+         {'params': backbone_nonbias_params,
          'lr': cfg.TRAIN.LEARNING_RATE,
          'weight_decay': cfg.TRAIN.WEIGHT_DECAY},
         {'params': backbone_bias_params,
-         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.BIAS_DOUBLE_LR + 1),
-         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_WEIGHT_DECAY else 0},
+         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.DOUBLE_BIAS + 1),
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_DECAY else 0},
         {'params': prd_branch_nonbias_params,
          'lr': cfg.TRAIN.LEARNING_RATE,
          'weight_decay': cfg.TRAIN.WEIGHT_DECAY},
         {'params': prd_branch_bias_params,
-         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.BIAS_DOUBLE_LR + 1),
-         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_WEIGHT_DECAY else 0},
+         'lr': cfg.TRAIN.LEARNING_RATE * (cfg.TRAIN.DOUBLE_BIAS + 1),
+         'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_DECAY else 0},
     ]
-
 
 
 	# if args.optimizer == "adam":
