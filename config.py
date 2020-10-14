@@ -31,23 +31,51 @@ __C.TRAIN = AttrDict()
 # Optmization Algorithm
 __C.TRAIN.TYPE = "SGD"
 
-# Initial learning rate
+# Base learning rate for the specified schedule
 __C.TRAIN.LEARNING_RATE = 0.001
 
-# Momentum
-__C.TRAIN.MOMENTUM = 0.9
+__C.TRAIN.BACKBONE_LR_SCALAR = 0.1
 
-# Weight decay, for regularization
-__C.TRAIN.WEIGHT_DECAY = 0.0005
+# Schedule type (see functions in utils.lr_policy for options)
+# E.g., 'step', 'steps_with_decay', ...
+__C.TRAIN.LR_POLICY = 'step'
 
-# Factor for reducing the learning rate
+# Some LR Policies (by example):
+# 'step'
+#   lr = TRAIN.BASE_LR * TRAIN.GAMMA ** (cur_iter // TRAIN.STEP_SIZE)
+# 'steps_with_decay'
+#   TRAIN.STEPS = [0, 60000, 80000]
+#   TRAIN.GAMMA = 0.1
+#   lr = TRAIN.BASE_LR * TRAIN.GAMMA ** current_step
+#   iters [0, 59999] are in current_step = 0, iters [60000, 79999] are in
+#   current_step = 1, and so on
+# 'steps_with_lrs'
+#   TRAIN.STEPS = [0, 60000, 80000]
+#   TRAIN.LRS = [0.02, 0.002, 0.0002]
+#   lr = LRS[current_step]
+
+# Hyperparameter used by the specified policy
+# For 'step', the current LR is multiplied by TRAIN.GAMMA at each step
 __C.TRAIN.GAMMA = 0.1
 
-# Step size for reducing the learning rate, currently only support one step
-__C.TRAIN.STEPSIZE = [30000]
+# Uniform step size for 'steps' policy
+__C.TRAIN.STEP_SIZE = 30000
 
-# Iteration intervals for showing the loss during training, on command line interface
-__C.TRAIN.DISPLAY = 10
+# Non-uniform step iterations for 'steps_with_decay' or 'steps_with_lrs'
+# policies
+__C.TRAIN.STEPS = []
+
+# Learning rates to use with 'steps_with_lrs' policy
+__C.TRAIN.LRS = []
+
+# Maximum number of SGD iterations
+__C.TRAIN.MAX_ITER = 40000
+
+# Momentum to use with SGD
+__C.TRAIN.MOMENTUM = 0.9
+
+# L2 regularization hyperparameter
+__C.TRAIN.WEIGHT_DECAY = 0.0005
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
@@ -75,7 +103,6 @@ __C.TRAIN.SCALE_MOMENTUM_THRESHOLD = 1.1
 # Suppress logging of changes to LR unless the relative change exceeds this
 # threshold (prevents linear warm up from spamming the training log)
 __C.TRAIN.LOG_LR_CHANGE_THRESHOLD = 1.1
-
 
 
 #
