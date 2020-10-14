@@ -52,7 +52,7 @@ def save_model(model, optimizer, epoch):
 	state = {'epoch': epoch, 'state_dict': model.state_dict(
 			), 'optimizer_state_dict': optimizer.state_dict()}
 	torch.save(state, os.path.join(
-		'snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
+		'snapshots', f'large_scale_vrd.pth'))
 	print(f"Epoch {epoch} model saved!\n")
 
 		
@@ -64,7 +64,6 @@ def main_worker():
 
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
-	# dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	dataloader = DataLoader(
 		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
 	dataiterator = iter(dataloader)
