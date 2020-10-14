@@ -146,7 +146,7 @@ def main_worker():
 	backbone_nonbias_param_names = []
 	prd_branch_nonbias_params = []
 	prd_branch_nonbias_param_names = []
-	for key, value in dict(FasterRCNN.named_parameters()).items():
+	for key, value in dict(faster_rcnn.named_parameters()).items():
 		if value.requires_grad:
 			if 'fpn' in key or 'box_head' in key or 'box_predictor' in key or 'rpn' in key:
 				if 'bias' in key:
