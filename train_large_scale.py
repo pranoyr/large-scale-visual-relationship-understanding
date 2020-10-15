@@ -187,10 +187,10 @@ def main_worker():
 	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 	scheduler = ReduceLROnPlateau(optimizer, 'min', patience=2)
 
-	if cfg.TRAIN.optimizer == "ADAM":
+	if cfg.TRAIN.TYPE == "ADAM":
 		optimizer = torch.optim.Adam(params)
 		
-	elif cfg.TRAIN.optimizer == "SGD":
+	elif cfg.TRAIN.TYPE == "SGD":
 		optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 
 	metrics = Metrics(log_dir='tf_logs')
