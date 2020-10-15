@@ -94,7 +94,7 @@ __C.TRAIN.WARM_UP_METHOD = 'linear'
 
 # Scale the momentum update history by new_lr / old_lr when updating the
 # learning rate (this is correct given MomentumSGDUpdateOp)
-__C.TRAIN.SCALE_MOMENTUM = True
+__C.TRAIN.SCALE_MOMENTUM = False
 # Only apply the correction if the relative LR change exceeds this threshold
 # (prevents ever change in linear warm up from scaling the momentum by a tiny
 # amount; momentum scaling is only important if the LR change is large)
