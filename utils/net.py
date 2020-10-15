@@ -189,5 +189,3 @@ def affine_grid_gen(rois, input_size, grid_size):
 
     return grid
 
-
-

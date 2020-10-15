@@ -18,6 +18,7 @@ import torchvision.models.detection._utils as det_utils
 import torchvision.utils as vutils
 from torch.autograd import Variable, gradcheck
 from torch.autograd.gradcheck import gradgradcheck
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.jit.annotations import Dict, List, Optional, Tuple
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import StepLR
@@ -73,8 +74,12 @@ def train_epoch(model, dataloader, optimizer, epoch):
 					rlp_loss   	   : {metrics['loss_rlp']}				 
 					rlp_acc 	   : {metrics['acc_rlp']}\n"""
 				  )
-
-	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
+	losses = {}
+	losses['total_loss'] = losses_total.avg
+	losses['sbj_loss'] = losses_sbj.avg
+	losses['obj_loss'] = losses_obj.avg
+	losses['rel_loss'] = losses_rel.avg
+	return losses
 
 
 # def val_epoch(model, dataloader):
@@ -180,11 +185,12 @@ def main_worker():
 	optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 	# scheduler 
 	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
+	scheduler = ReduceLROnPlateau(optimizer, 'min', patience=2)
 
-	if cfg.TRAIN.optimizer == "adam":
+	if cfg.TRAIN.optimizer == "ADAM":
 		optimizer = torch.optim.Adam(params)
 		
-	elif cfg.TRAIN.optimizer == "sgd":
+	elif cfg.TRAIN.optimizer == "SGD":
 		optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 
 	metrics = Metrics(log_dir='tf_logs')
@@ -194,15 +200,16 @@ def main_worker():
 		resume_model(opt, faster_rcnn, optimizer)
 
 	for epoch in range(1, opt.n_epochs):
-		train_metrics = train_epoch(
+		losses = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
+		scheduler.step(losses['total_loss'])
 
-		if epoch % 5 == 0:
-			lr_new = lr * cfg.TRAIN.GAMMA
-			net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
+		# if epoch % 5 == 0:
+			# lr_new = lr * cfg.TRAIN.GAMMA
+			# net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
 
 		if epoch % 1 == 0:
-			metrics.log_metrics(train_metrics, epoch)
+			metrics.log_metrics(losses, epoch)
 			save_model(faster_rcnn, optimizer, epoch)
 			
 if __name__ == "__main__":

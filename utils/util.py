@@ -65,8 +65,11 @@ class Metrics():
     def __init__(self, log_dir):
         self.summary_writer = tensorboardX.SummaryWriter(log_dir=log_dir)
 
-    def log_metrics(self, train_metrics, epoch):
-        train_tot_loss, train_sbj_loss, train_obj_loss, train_rel_loss = train_metrics
+    def log_metrics(self, losses, epoch):
+        train_tot_loss = losses['total_loss'] 
+        train_sbj_loss = losses['sbj_loss']
+        train_obj_loss = losses['obj_loss'] 
+        train_rel_loss = losses['rel_loss']
 
         # val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss = val_metrics
 
