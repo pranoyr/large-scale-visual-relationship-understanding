@@ -19,7 +19,7 @@ import torchvision.utils as vutils
 from torch.autograd import Variable, gradcheck
 from torch.autograd.gradcheck import gradgradcheck
 from torch.jit.annotations import Dict, List, Optional, Tuple
-from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
+from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
@@ -195,7 +195,7 @@ def main_worker():
 
 	# scheduler 
 	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
-	scheduler = ReduceLROnPlateau(optimizer, 'min', patience=2)
+	scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 20])
 
 	metrics = Metrics(log_dir='tf_logs')
 
@@ -209,9 +209,9 @@ def main_worker():
 				
 		val_losses = val_epoch(faster_rcnn, val_loader)
 				
+		scheduler.step()
 
 		lr = optimizer.param_groups[2]['lr']  
-		# scheduler.step(losses['total_loss'])
 
 		# if epoch % 5 == 0:
 			# lr_new = lr * cfg.TRAIN.GAMMA
