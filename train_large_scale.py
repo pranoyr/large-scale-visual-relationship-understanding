@@ -210,7 +210,7 @@ def main_worker():
 		val_losses = val_epoch(faster_rcnn, val_loader)
 				
 
-		lr = optimizer.param_groups[0]['lr']  
+		lr = optimizer.param_groups[2]['lr']  
 		# scheduler.step(losses['total_loss'])
 
 		# if epoch % 5 == 0:
