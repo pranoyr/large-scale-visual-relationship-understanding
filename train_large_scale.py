@@ -218,7 +218,7 @@ def main_worker():
 			# net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
 
 		if epoch % 1 == 0:
-			metrics.log_metrics(train_losses, val_losses ,epoch, lr)
+			metrics.log_metrics(train_losses, val_losses, epoch, lr)
 			save_model(faster_rcnn, optimizer, epoch)
 		
 if __name__ == "__main__":
