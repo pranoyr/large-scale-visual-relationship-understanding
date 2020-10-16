@@ -44,6 +44,17 @@ class reldn_head(nn.Module):
             nn.Linear(300, 1024),
             nn.LeakyReLU(0.1),
             nn.Linear(1024, 1024))
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
 
     def forward(self, spo_feat=None, sbj_feat=None, obj_feat=None):
         device = sbj_feat.device
