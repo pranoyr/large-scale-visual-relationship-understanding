@@ -29,7 +29,7 @@ __C.DEVICE = 'cuda'
 __C.TRAIN = AttrDict()
 
 # Optmization Algorithm
-__C.TRAIN.TYPE = "SGD"
+__C.TRAIN.TYPE = "ADAM"
 
 # Base learning rate for the specified schedule
 __C.TRAIN.LEARNING_RATE = 0.00001
@@ -75,7 +75,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0.0005
+__C.TRAIN.WEIGHT_DECAY = 0
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True

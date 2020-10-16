@@ -65,23 +65,41 @@ class Metrics():
     def __init__(self, log_dir):
         self.summary_writer = tensorboardX.SummaryWriter(log_dir=log_dir)
 
-    def log_metrics(self, losses, epoch):
-        train_tot_loss = losses['total_loss'] 
-        train_sbj_loss = losses['sbj_loss']
-        train_obj_loss = losses['obj_loss'] 
-        train_rel_loss = losses['rel_loss']
+    def log_metrics(self, train_losses, val_losses, epoch, lr):
+        train_tot_loss = train_losses['total_loss'] 
+        train_sbj_loss = train_losses['sbj_loss']
+        train_obj_loss = train_losses['obj_loss'] 
+        train_rel_loss = train_losses['rel_loss']
+
+        val_tot_loss = val_losses['total_loss'] 
+        val_sbj_loss = val_losses['sbj_loss']
+        val_obj_loss = val_losses['obj_loss'] 
+        val_rel_loss = val_losses['rel_loss']
 
         # val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss = val_metrics
 
         # write summary
         self. summary_writer.add_scalar(
-            'losses/train_tot_loss', train_tot_loss, global_step=epoch)
+            'train_losses/train_tot_loss', train_tot_loss, global_step=epoch)
         self.summary_writer.add_scalar(
-            'losses/train_sbj_loss', train_sbj_loss, global_step=epoch)
+            'train_losses/train_sbj_loss', train_sbj_loss, global_step=epoch)
         self.summary_writer.add_scalar(
-            'losses/train_obj_loss', train_obj_loss, global_step=epoch)
+            'train_losses/train_obj_loss', train_obj_loss, global_step=epoch)
         self.summary_writer.add_scalar(
-            'losses/train_rel_loss', train_rel_loss, global_step=epoch)
+            'train_losses/train_rel_loss', train_rel_loss, global_step=epoch)
+
+        # write summary
+        self. summary_writer.add_scalar(
+            'val_losses/val_tot_loss', val_tot_loss, global_step=epoch)
+        self.summary_writer.add_scalar(
+            'val_losses/val_sbj_loss', val_sbj_loss, global_step=epoch)
+        self.summary_writer.add_scalar(
+            'val_losses/val_obj_loss', val_obj_loss, global_step=epoch)
+        self.summary_writer.add_scalar(
+            'val_losses/val_rel_loss', val_rel_loss, global_step=epoch)
+
+        self.summary_writer.add_scalar(
+            'lr_rate', lr, global_step=epoch)
 
         # self.summary_writer.add_scalar(
         #     'losses/val_tot_loss', val_tot_loss, global_step=epoch)
