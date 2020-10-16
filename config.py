@@ -32,7 +32,7 @@ __C.TRAIN = AttrDict()
 __C.TRAIN.TYPE = "SGD"
 
 # Base learning rate for the specified schedule
-__C.TRAIN.LEARNING_RATE = 0.001
+__C.TRAIN.LEARNING_RATE = 0.00001
 
 __C.TRAIN.BACKBONE_LR_SCALAR = 0.1
 

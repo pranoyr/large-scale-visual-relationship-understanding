@@ -201,7 +201,7 @@ def main_worker():
 
 		if epoch % 5 == 0:
 			lr_new = lr * cfg.TRAIN.GAMMA
-			net_utils.update_learning_rate_att(optimizer, lr, lr_new)
+			net_utils.update_learning_rate(optimizer, lr, lr_new)
 			lr = optimizer.param_groups[2]['lr']
 
 		if epoch % 1 == 0:
