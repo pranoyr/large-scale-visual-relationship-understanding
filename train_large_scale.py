@@ -133,7 +133,7 @@ def main_worker():
 
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
-	# dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
+	dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	train_loader = DataLoader(
 		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
 	val_loader = DataLoader(
