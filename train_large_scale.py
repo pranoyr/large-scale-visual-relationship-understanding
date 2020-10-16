@@ -113,7 +113,7 @@ def resume_model(opt, model, optimizer):
 	"""
 	checkpoint = torch.load(opt.weight_path)
 	model.load_state_dict(checkpoint['state_dict'])
-	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	# optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 	print("Loaded Model ...")
 
 
