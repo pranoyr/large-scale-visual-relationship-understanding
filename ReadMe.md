@@ -47,7 +47,7 @@ python inference.py --input_image <path-to-image> --weight_path <path-to-weight-
 Visual Genome Dataset, VGG BackBone, Resnet 152
 
 ## Results
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/play.jpg)
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/1.jpg)
 
 ## Graph Plot
 ![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/tf_logs/Screenshot%202020-10-17%20at%209.56.51%20PM.png)
