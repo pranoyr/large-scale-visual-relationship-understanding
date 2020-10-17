@@ -50,11 +50,7 @@ python inference.py --input_image <path-to-image> --weight_path <path-to-weight-
 Visual Genome Dataset, VGG BackBone, Resnet 152
 
 ## Results
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/result.jpg)
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/result1.jpg)
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/result2.jpg)
-
-
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/play.jpg)
 
 ## References
 * https://github.com/facebookresearch/Large-Scale-VRD
