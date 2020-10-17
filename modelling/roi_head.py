@@ -50,12 +50,12 @@ class RoIHeads(torch.nn.Module):
         self.box_head = TwoMLPHead(
             256 * resolution ** 2,
             representation_size)
-        self.rlp_box_head = copy.deepcopy(self.box_head)
+        self.rlp_head = copy.deepcopy(self.box_head)
 
         representation_size = 1024
         self.box_predictor = FastRCNNPredictor(
             representation_size,
-            cfg.NUM_CLASSES)
+            cfg.BOX.NUM_CLASSES)
 
         self.RelDN = reldn_heads.reldn_head(
             self.box_head.fc7.out_features * 3)  # concat of SPO
@@ -63,21 +63,21 @@ class RoIHeads(torch.nn.Module):
         self.box_similarity = box_ops.box_iou
         # assign ground-truth boxes for each proposal
         self.proposal_matcher = det_utils.Matcher(
-            cfg.FG_IOU_THRESH,
-            cfg.BG_IOU_THRESH,
+            cfg.BOX.FG_IOU_THRESH,
+            cfg.BOX.BG_IOU_THRESH,
             allow_low_quality_matches=False)
 
         self.fg_bg_sampler = det_utils.BalancedPositiveNegativeSampler(
-            cfg.BATCH_SIZE_PER_IMAGE,
-            cfg.POSITIVE_FRACTION)
+            cfg.BOX.BATCH_SIZE_PER_IMAGE,
+            cfg.BOX.POSITIVE_FRACTION)
 
         self.fg_bg_sampler_so = det_utils.BalancedPositiveNegativeSampler(
-            cfg.BATCH_SIZE_PER_IMAGE_SO,
-            cfg.POSITIVE_FRACTION_SO)
+            cfg.MODEL.BATCH_SIZE_PER_IMAGE_SO,
+            cfg.MODEL.POSITIVE_FRACTION_SO)
 
         self.fg_bg_sampler_rlp = det_utils.BalancedPositiveNegativeSampler(
-            cfg.BATCH_SIZE_PER_IMAGE_REL,
-            cfg.POSITIVE_FRACTION_REL)
+            cfg.MODEL.BATCH_SIZE_PER_IMAGE_REL,
+            cfg.MODEL.POSITIVE_FRACTION_REL)
 
         bbox_reg_weights = (10., 10., 5., 5.)
         self.box_coder = det_utils.BoxCoder(bbox_reg_weights)
@@ -374,7 +374,7 @@ class RoIHeads(torch.nn.Module):
             labels = labels.reshape(-1)
 
             # remove low scoring boxes
-            inds = torch.nonzero(scores > cfg.SCORE_THRESH).squeeze(1)
+            inds = torch.nonzero(scores > cfg.BOX.SCORE_THRESH).squeeze(1)
             boxes, scores, labels = boxes[inds], scores[inds], labels[inds]
 
             # remove empty boxes
@@ -382,9 +382,9 @@ class RoIHeads(torch.nn.Module):
             boxes, scores, labels = boxes[keep], scores[keep], labels[keep]
 
             # non-maximum suppression, independently done per class
-            keep = box_ops.batched_nms(boxes, scores, labels, cfg.NMS_THRESH)
+            keep = box_ops.batched_nms(boxes, scores, labels, cfg.BOX.NMS_THRESH)
             # keep only topk scoring predictions
-            keep = keep[:cfg.BOX_DETECTIONS_PER_IMG]
+            keep = keep[:cfg.BOX.DETECTIONS_PER_IMG]
             boxes, scores, labels = boxes[keep], scores[keep], labels[keep]
 
             all_boxes.append(boxes)
@@ -432,7 +432,7 @@ class RoIHeads(torch.nn.Module):
 
             rel_feat = self.box_roi_pool(
                 features, data_rlp["proposals"], image_shapes)
-            rel_feat = self.rlp_box_head(rel_feat)
+            rel_feat = self.rlp_head(rel_feat)
 
             concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
 
@@ -506,7 +506,7 @@ class RoIHeads(torch.nn.Module):
             obj_feat = self.box_roi_pool(features, all_obj_boxes, image_shapes)
             obj_feat = self.box_head(obj_feat)
             rel_feat = self.box_roi_pool(features, all_rlp_boxes, image_shapes)
-            rel_feat = self.rlp_box_head(rel_feat)
+            rel_feat = self.rlp_head(rel_feat)
             concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
             sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
                 self.RelDN(concat_feat, sbj_feat, obj_feat)
@@ -521,6 +521,7 @@ class RoIHeads(torch.nn.Module):
                 rel_scores, rel_indices = torch.max(rlp_cls_scores_list[i], dim=1)
                 # filter "unknown"
                 mask = rel_indices > 0
+                rel_scores = rel_scores[mask]
                 predicates = rel_indices[mask]
                 subjects = sbj_indices[mask]
                 objects = obj_indices[mask]
@@ -529,11 +530,18 @@ class RoIHeads(torch.nn.Module):
                 obj_boxes = all_obj_boxes[i][mask]
                 rlp_boxes = all_rlp_boxes[i][mask]
 
+                # score_mask = rel_scores > 0.6
+                # result = [{"sbj_boxes": sbj_boxes[score_mask],
+                #            "obj_boxes": obj_boxes[score_mask],
+                #            'sbj_labels': subjects[score_mask],
+                #            'obj_labels': objects[score_mask],
+                #            'predicates': predicates[score_mask],
+                #            }]
                 result = [{"sbj_boxes": sbj_boxes,
                            "obj_boxes": obj_boxes,
                            'sbj_labels': subjects,
                            'obj_labels': objects,
-                           'predicates': predicates
+                           'predicates': predicates,
                            }]
                 losses = {}
 

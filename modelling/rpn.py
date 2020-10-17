@@ -39,17 +39,17 @@ class RPN(nn.Module):
 		anchor_generator = AnchorGenerator(anchor_sizes, aspect_ratios)
 		# Define RPN Head
 		rpn_head = RPNHead(256, anchor_generator.num_anchors_per_location()[0])
-		RPN_PRE_NMS_TOP_N = dict(training=cfg.RPN_PRE_NMS_TOP_N_TRAIN,
-								 testing=cfg.RPN_PRE_NMS_TOP_N_TEST)
+		RPN_PRE_NMS_TOP_N = dict(training=cfg.RPN.PRE_NMS_TOP_N_TRAIN,
+								 testing=cfg.RPN.PRE_NMS_TOP_N_TEST)
 		RPN_POST_NMS_TOP_N = dict(
-			training=cfg.RPN_POST_NMS_TOP_N_TRAIN, testing=cfg.RPN_POST_NMS_TOP_N_TEST)
+			training=cfg.RPN.POST_NMS_TOP_N_TRAIN, testing=cfg.RPN.POST_NMS_TOP_N_TEST)
 
 		# Create RPN
 		self.rpn = RegionProposalNetwork(
 			anchor_generator, rpn_head,
-			cfg.RPN_FG_IOU_THRESH, cfg.RPN_BG_IOU_THRESH,
-			cfg.RPN_BATCH_SIZE_PER_IMAGE, cfg.RPN_POSITIVE_FRACTION,
-			RPN_PRE_NMS_TOP_N, RPN_POST_NMS_TOP_N, cfg.RPN_NMS_THRESH)
+			cfg.RPN.FG_IOU_THRESH, cfg.RPN.BG_IOU_THRESH,
+			cfg.RPN.BATCH_SIZE_PER_IMAGE, cfg.RPN.POSITIVE_FRACTION,
+			RPN_PRE_NMS_TOP_N, RPN_POST_NMS_TOP_N, cfg.RPN.NMS_THRESH)
 	
 	def forward(self, images, fpn_feature_maps, targets=None):
 		if self.training:

@@ -14,13 +14,15 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.models as models
+import utils.net as net_utils
 import torchvision.models.detection._utils as det_utils
 import torchvision.utils as vutils
 from torch.autograd import Variable, gradcheck
 from torch.autograd.gradcheck import gradgradcheck
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.jit.annotations import Dict, List, Optional, Tuple
-from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import StepLR
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
 													  GeneralizedRCNNTransform,
@@ -81,39 +83,34 @@ def train_epoch(model, dataloader, optimizer, epoch):
 	return losses
 
 
+# def val_epoch(model, dataloader):
+# 	losses_sbj = AverageMeter()
+# 	losses_obj = AverageMeter()
+# 	losses_rel = AverageMeter()
+# 	losses_total = AverageMeter()
 
-def val_epoch(model, dataloader):
-	losses_sbj = AverageMeter()
-	losses_obj = AverageMeter()
-	losses_rel = AverageMeter()
-	losses_total = AverageMeter()
+# 	model.eval()
+# 	for _, data in enumerate(dataloader):
+# 		images, targets = data
+# 		with torch.no_grad():
+# 			_, metrics = model(images, targets)
+# 		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
+# 			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
+# 			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
 
-	model.train()
-	for i, data in enumerate(dataloader):
-		images, targets = data
-		_, metrics = model(images, targets)
-		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
-			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
-			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
+# 		losses_sbj.update(metrics["loss_sbj"].item())
+# 		losses_obj.update(metrics["loss_obj"].item())
+# 		losses_rel.update(metrics["loss_rlp"].item())
+# 		losses_total.update(final_loss.item())
 
-		losses_sbj.update(metrics["loss_sbj"].item())
-		losses_obj.update(metrics["loss_obj"].item())
-		losses_rel.update(metrics["loss_rlp"].item())
-		losses_total.update(final_loss.item())
-
-	losses = {}
-	losses['total_loss'] = losses_total.avg
-	losses['sbj_loss'] = losses_sbj.avg
-	losses['obj_loss'] = losses_obj.avg
-	losses['rel_loss'] = losses_rel.avg
-	return losses
+# 	return losses_total.avg, losses_sbj.avg, losses_obj.avg, losses_rel.avg
 
 def resume_model(opt, model, optimizer):
 	""" Resume model 
 	"""
 	checkpoint = torch.load(opt.weight_path)
 	model.load_state_dict(checkpoint['state_dict'])
-	# optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 	print("Loaded Model ...")
 
 
@@ -133,18 +130,14 @@ def main_worker():
 
 	opt = parse_opts()
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
-	dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
+	# dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	train_loader = DataLoader(
 		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
-	val_loader = DataLoader(
-		dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
+	# val_loader = DataLoader(
+	# 	dataset_val, num_workers=cfg.WORKERS, collate_fn=collater, batch_size=cfg.BATCH_SIZE)
 
 	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 	
-	lr = cfg.TRAIN.LEARNING_RATE
-	#tr_momentum = cfg.TRAIN.MOMENTUM
-	#tr_momentum = args.momentum
-
 	### Optimizer ###
 	# record backbone params, i.e., conv_body and box_head params
 	backbone_bias_params = []
@@ -186,16 +179,15 @@ def main_worker():
 		 'weight_decay': cfg.TRAIN.WEIGHT_DECAY if cfg.TRAIN.BIAS_DECAY else 0},
 	]
 
+	optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
+
+	lr = optimizer.param_groups[2]['lr']  # lr of non-backbone parameters, for commmand line outputs.
+
 	if cfg.TRAIN.TYPE == "ADAM":
 		optimizer = torch.optim.Adam(params)
 		
 	elif cfg.TRAIN.TYPE == "SGD":
 		optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
-
-
-	# scheduler 
-	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
-	scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 10])
 
 	metrics = Metrics(log_dir='tf_logs')
 
@@ -204,22 +196,17 @@ def main_worker():
 		resume_model(opt, faster_rcnn, optimizer)
 
 	for epoch in range(1, opt.n_epochs):
-		train_losses = train_epoch(
+		losses = train_epoch(
 				faster_rcnn, train_loader, optimizer, epoch)
-				
-		val_losses = val_epoch(faster_rcnn, val_loader)
-				
-		scheduler.step()
 
-		lr = optimizer.param_groups[2]['lr']  
-
-		# if epoch % 5 == 0:
-			# lr_new = lr * cfg.TRAIN.GAMMA
-			# net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
+		if epoch % 5 == 0:
+			lr_new = lr * cfg.TRAIN.GAMMA
+			net_utils.update_learning_rate(optimizer, lr, lr_new)
+			lr = optimizer.param_groups[2]['lr']
 
 		if epoch % 1 == 0:
-			metrics.log_metrics(train_losses, val_losses, epoch, lr)
+			metrics.log_metrics(losses, epoch)
 			save_model(faster_rcnn, optimizer, epoch)
-		
+			
 if __name__ == "__main__":
 	main_worker()
