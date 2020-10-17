@@ -49,6 +49,9 @@ Visual Genome Dataset, VGG BackBone, Resnet 152
 ## Results
 ![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/play.jpg)
 
+## Graph Plot
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/tf_logs/Screenshot%202020-10-17%20at%209.56.51%20PM.png)
+
 ## References
 * https://github.com/facebookresearch/Large-Scale-VRD
 * https://arxiv.org/pdf/1804.10660.pdf
