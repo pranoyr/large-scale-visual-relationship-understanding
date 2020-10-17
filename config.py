@@ -21,7 +21,7 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
-__C.DEVICE = 'cuda'
+__C.DEVICE = 'cpu'
 
 #
 # Training options
@@ -111,7 +111,7 @@ __C.TRAIN.LOG_LR_CHANGE_THRESHOLD = 1.1
 
 __C.BOX = AttrDict()
 
-__C.BOX.SCORE_THRESH = 0.5
+__C.BOX.SCORE_THRESH = 0.6
 
 __C.BOX.NMS_THRESH = 0.5
 
@@ -140,9 +140,9 @@ __C.MODEL.POSITIVE_FRACTION_SO = 0.5
 
 __C.MODEL.BATCH_SIZE_PER_IMAGE_REL = 128
 
-__C.MODEL.POSITIVE_FRACTION_REL = 0.25
+__C.MODEL.POSITIVE_FRACTION_REL = 0.5
 
-__C.MODEL.NORM_SCALE = 3.0
+__C.MODEL.NORM_SCALE = 5.0
 
 
 #
