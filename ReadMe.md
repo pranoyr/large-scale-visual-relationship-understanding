@@ -5,6 +5,11 @@
 
 Thie Repository is an implementation of the paper https://arxiv.org/pdf/1804.10660.pdf
 
+
+## Download Pre-trained Model
+Download the model from [here](https://drive.google.com/file/d/1uNisRSwajVLIj-56okui7q5EskBZ_OE6/view?usp=sharing).
+
+
 ## Download the VRD Dataet
 Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjaykrishna/vrd/).
 
@@ -12,6 +17,9 @@ Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjayk
 ## Pretrained Word Vectors
 Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
 Put it in the data/wordvectors folder. Folder structure is shown below.
+    
+## Pretrained Weights
+Download pretrained weights from [here](https://drive.google.com/file/d/1kQaGPiNUdzRpPJw9EU64cV93x3Hl2MlL/view?usp=sharing).
     
 
 ### Folder Structure
@@ -47,13 +55,11 @@ python inference.py --input_image <path-to-image> --weight_path <path-to-weight-
 Visual Genome Dataset, VGG BackBone, Resnet 152
 
 ## Results
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/1.jpg)
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/result.jpg)
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/result1.jpg)
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/result2.jpg)
 
-## Graph Plot
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/tf_logs/Screenshot%202020-10-17%20at%209.56.51%20PM.png)
 
-
-![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/tf_logs/Screenshot%202020-10-17%20at%209.57.03%20PM.png)
 
 ## References
 * https://github.com/facebookresearch/Large-Scale-VRD
