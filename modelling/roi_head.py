@@ -530,19 +530,19 @@ class RoIHeads(torch.nn.Module):
                 obj_boxes = all_obj_boxes[i][mask]
                 rlp_boxes = all_rlp_boxes[i][mask]
 
-                # score_mask = rel_scores > 0.6
-                # result = [{"sbj_boxes": sbj_boxes[score_mask],
-                #            "obj_boxes": obj_boxes[score_mask],
-                #            'sbj_labels': subjects[score_mask],
-                #            'obj_labels': objects[score_mask],
-                #            'predicates': predicates[score_mask],
-                #            }]
-                result = [{"sbj_boxes": sbj_boxes,
-                           "obj_boxes": obj_boxes,
-                           'sbj_labels': subjects,
-                           'obj_labels': objects,
-                           'predicates': predicates,
+                score_mask = rel_scores > 0.5
+                result = [{"sbj_boxes": sbj_boxes[score_mask],
+                           "obj_boxes": obj_boxes[score_mask],
+                           'sbj_labels': subjects[score_mask],
+                           'obj_labels': objects[score_mask],
+                           'predicates': predicates[score_mask],
                            }]
+                # result = [{"sbj_boxes": sbj_boxes,
+                #            "obj_boxes": obj_boxes,
+                #            'sbj_labels': subjects,
+                #            'obj_labels': objects,
+                #            'predicates': predicates,
+                #            }]
                 losses = {}
 
         return result, losses
