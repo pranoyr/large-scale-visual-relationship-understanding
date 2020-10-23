@@ -108,13 +108,19 @@ def val_epoch(model, dataloader):
 	losses['rel_loss'] = losses_rel.avg
 	return losses
 
-def resume_model(opt, model, optimizer):
-	""" Resume model 
+def load_from_ckpt(opt, model):
+	""" Loading model from checkpoint
 	"""
 	checkpoint = torch.load(opt.weight_path)
 	model.load_state_dict(checkpoint['state_dict'])
-	# optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 	print("Loaded Model ...")
+
+def load_optmizer(opt, optimizer):
+	""" loading optmizer 
+	"""
+	checkpoint = torch.load(opt.weight_path)
+	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	print("Loaded Optimizer ...")
 
 
 def save_model(model, optimizer, epoch):
@@ -139,7 +145,13 @@ def main_worker():
 	val_loader = DataLoader(
 		dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
 
-	faster_rcnn = FasterRCNN().to(cfg.DEVICE)
+	faster_rcnn = FasterRCNN()
+
+	# loading model from a ckpt
+	if opt.weight_path:
+		load_from_ckpt(opt, faster_rcnn)
+	faster_rcnn.to(cfg.DEVICE)
+
 	
 	lr = cfg.TRAIN.LEARNING_RATE
 	#tr_momentum = cfg.TRAIN.MOMENTUM
@@ -192,16 +204,15 @@ def main_worker():
 	elif cfg.TRAIN.TYPE == "SGD":
 		optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 
+	if opt.weight_path:
+		load_optmizer(opt, optimizer)
 
 	# scheduler 
 	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
-	scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 10])
+	# scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 10])
+	scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2)
 
 	metrics = Metrics(log_dir='tf_logs')
-
-	# resume model
-	if opt.weight_path:
-		resume_model(opt, faster_rcnn, optimizer)
 
 	for epoch in range(1, opt.n_epochs):
 		train_losses = train_epoch(
@@ -209,7 +220,7 @@ def main_worker():
 				
 		val_losses = val_epoch(faster_rcnn, val_loader)
 				
-		scheduler.step()
+		scheduler.step(val_losses['total_loss'])
 
 		lr = optimizer.param_groups[2]['lr']  
 
