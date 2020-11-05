@@ -208,9 +208,12 @@ def main_worker():
 		load_optmizer(opt, optimizer)
 
 	# scheduler 
-	# scheduler = StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
-	# scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 10])
-	scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2)
+	if opt.scheduler == "plateau":
+		scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2)
+	elif opt.scheduler == "multi_step":
+		scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 10])
+	elif opt.scheduler == "step_lr":
+		scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 
 	metrics = Metrics(log_dir='tf_logs')
 
