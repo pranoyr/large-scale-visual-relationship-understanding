@@ -222,9 +222,12 @@ def main_worker():
 				faster_rcnn, train_loader, optimizer, epoch)
 				
 		val_losses = val_epoch(faster_rcnn, val_loader)
-				
-		scheduler.step(val_losses['total_loss'])
 
+		if opt.scheduler == "plateau":
+			scheduler.step(val_losses['total_loss'])
+		else:
+			scheduler.step()
+    			
 		lr = optimizer.param_groups[2]['lr']  
 
 		# if epoch % 5 == 0:
