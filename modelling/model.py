@@ -36,7 +36,7 @@ class FasterRCNN(nn.Module):
         super(FasterRCNN, self).__init__()
         # Define FPN
         self.fpn = resnet_fpn_backbone(
-            backbone_name='resnet152', pretrained=True, trainable_layers=5)
+            backbone_name='resnet101', pretrained=True, trainable_layers=5)
         self.rpn = RPN()
         self.roi_heads = RoIHeads()
 
