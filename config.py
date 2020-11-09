@@ -32,7 +32,7 @@ __C.TRAIN = AttrDict()
 __C.TRAIN.TYPE = "ADAM"
 
 # Base learning rate for the specified schedule
-__C.TRAIN.LEARNING_RATE = 0.001
+__C.TRAIN.LEARNING_RATE = 0.0001
 
 __C.TRAIN.BACKBONE_LR_SCALAR = 0.1
 
@@ -75,7 +75,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0.0001
+__C.TRAIN.WEIGHT_DECAY = 0.001
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
