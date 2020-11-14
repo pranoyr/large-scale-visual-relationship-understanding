@@ -211,7 +211,7 @@ def main_worker():
 	if opt.scheduler == "plateau":
 		scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=1)
 	elif opt.scheduler == "multi_step":
-		scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8])
+		scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 12])
 	elif opt.scheduler == "step_lr":
 		scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 
