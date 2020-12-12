@@ -140,9 +140,9 @@ def main_worker():
 	dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
 	dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
 	train_loader = DataLoader(
-		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
+		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=True)
 	val_loader = DataLoader(
-		dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
+		dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=False)
 
 	print(f"Training dataset size : {len(train_loader.dataset)}")
 	print(f"Validation dataset size : {len(val_loader.dataset)}")
