@@ -267,7 +267,7 @@ def main_worker():
 				  )
 
 
-		if step % 1 == 0:
+		if step % 500 == 0:
 			train_losses = {}
 			train_losses['total_loss'] = losses_total.avg
 			train_losses['sbj_loss'] = losses_sbj.avg
