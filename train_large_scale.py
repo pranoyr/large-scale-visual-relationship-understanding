@@ -283,7 +283,9 @@ def main_worker():
 			save_model(faster_rcnn, optimizer, step)
 			print(f"Saved model")
 
-	
+
+			print(f"Average training loss : {train_losses['total_loss']}")
+			print(f"Average validation loss : {val_losses['total_loss']}")
 			# avg_loss.reset()
 			# avg_clf_loss.reset()
 			# avg_reg_loss.reset()
