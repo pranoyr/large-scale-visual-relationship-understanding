@@ -220,7 +220,7 @@ def main_worker():
 	elif opt.scheduler == "step_lr":
 		scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 
-	metrics = Metrics(log_dir='tf_logs')
+	summary_writer = Metrics(log_dir='tf_logs')
 
 	losses_sbj = AverageMeter()
 	losses_obj = AverageMeter()
@@ -267,7 +267,7 @@ def main_worker():
 				  )
 
 
-		if step % 500 == 0:
+		if step % 1 == 0:
 			train_losses = {}
 			train_losses['total_loss'] = losses_total.avg
 			train_losses['sbj_loss'] = losses_sbj.avg
@@ -279,7 +279,7 @@ def main_worker():
 			lr = optimizer.param_groups[0]['lr']  
 
 			# write summary
-			metrics.log_metrics(train_losses, val_losses, step, lr)
+			summary_writer.log_metrics(train_losses, val_losses, step, lr)
 			save_model(faster_rcnn, optimizer, step)
 			print(f"Saved model")
 
