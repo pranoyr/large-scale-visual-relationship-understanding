@@ -246,9 +246,8 @@ def main_worker():
 		final_loss.backward()
 		optimizer.step()
 
-		if args.scheduler != 'plateau':
+		if opt.scheduler != 'plateau':
 			scheduler.step()
-
 
 		losses_sbj.update(metrics["loss_sbj"].item())
 		losses_obj.update(metrics["loss_obj"].item())
