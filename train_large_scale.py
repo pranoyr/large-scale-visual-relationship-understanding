@@ -144,8 +144,8 @@ def main_worker():
 	val_loader = DataLoader(
 		dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
 
-	print("Training dataset size : {len(train_loader.dataset)}")
-	print("Validation dataset size : {len(val_loader.dataset)}")
+	print(f"Training dataset size : {len(train_loader.dataset)}")
+	print(f"Validation dataset size : {len(val_loader.dataset)}")
 
 	dataiterator = iter(train_loader)
 
