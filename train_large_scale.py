@@ -123,14 +123,13 @@ def load_optmizer(opt, optimizer):
 	print("Loaded Optimizer ...")
 
 
-def save_model(model, optimizer, epoch):
-	state = {'epoch': epoch, 'state_dict': model.state_dict(
+def save_model(model, optimizer, step):
+	state = {'step': step, 'state_dict': model.state_dict(
 			), 'optimizer_state_dict': optimizer.state_dict()}
 	torch.save(state, os.path.join(
-		'snapshots', f'large_scale_vrd-Epoch-{epoch}.pth'))
-	print(f"Epoch {epoch} model saved!\n")
-
-		
+		'snapshots', f'large_scale_vrd-iter-{step}.pth'))
+	
+	
 def main_worker():
 	seed = 1
 	random.seed(seed)
@@ -144,6 +143,11 @@ def main_worker():
 		dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
 	val_loader = DataLoader(
 		dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size)
+
+	print("Training dataset size : {len(train_loader.dataset)}")
+	print("Validation dataset size : {len(val_loader.dataset)}")
+
+	dataiterator = iter(train_loader)
 
 	faster_rcnn = FasterRCNN()
 
@@ -209,7 +213,7 @@ def main_worker():
 
 	# scheduler 
 	if opt.scheduler == "plateau":
-		scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=1)
+		scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5)
 	elif opt.scheduler == "multi_step":
 		scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[8, 12])
 	elif opt.scheduler == "step_lr":
@@ -217,26 +221,176 @@ def main_worker():
 
 	metrics = Metrics(log_dir='tf_logs')
 
-	for epoch in range(1, opt.n_epochs):
-		train_losses = train_epoch(
-				faster_rcnn, train_loader, optimizer, epoch)
-				
-		val_losses = val_epoch(faster_rcnn, val_loader)
+	losses_sbj = AverageMeter()
+	losses_obj = AverageMeter()
+	losses_rel = AverageMeter()
+	losses_total = AverageMeter()
 
-		if opt.scheduler == "plateau":
+	faster_rcnn.train()
+	max_iter = 125446
+	for step in range(1, max_iter):
+		try:
+			input_data = next(dataiterator)
+		except StopIteration:
+			dataiterator = iter(train_loader)
+			input_data = next(dataiterator)
+
+		images, targets = input_data
+		_, metrics = faster_rcnn(images, targets)
+		final_loss = metrics["loss_objectness"] + metrics["loss_rpn_box_reg"] + \
+			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
+			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
+
+		optimizer.zero_grad()
+		final_loss.backward()
+		optimizer.step()
+
+		losses_sbj.update(metrics["loss_sbj"].item())
+		losses_obj.update(metrics["loss_obj"].item())
+		losses_rel.update(metrics["loss_rlp"].item())
+		losses_total.update(final_loss.item())
+
+		if (step) % 10 == 0:
+			print(f"""RCNN_Loss    : {final_loss.item()}
+					rpn_cls_loss   : {metrics['loss_objectness'].item()}
+					rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
+					box_loss 	   : {metrics['loss_box_reg']}
+					cls_loss       : {metrics['loss_classifier']}
+					sbj_loss	   : {metrics['loss_sbj']}
+					obj_loss	   : {metrics['loss_obj']}
+					sbj_acc        : {metrics['acc_sbj']}
+					obj_acc	       : {metrics['acc_obj']}
+					rlp_loss   	   : {metrics['loss_rlp']}				 
+					rlp_acc 	   : {metrics['acc_rlp']}\n"""
+				  )
+
+
+		if step % 2500 == 0:
+			train_losses = {}
+			train_losses['total_loss'] = losses_total.avg
+			train_losses['sbj_loss'] = losses_sbj.avg
+			train_losses['obj_loss'] = losses_obj.avg
+			train_losses['rel_loss'] = losses_rel.avg
+			val_losses = val_epoch(faster_rcnn, val_loader)
+
 			scheduler.step(val_losses['total_loss'])
-		else:
-			scheduler.step()
-    			
-		lr = optimizer.param_groups[2]['lr']  
+			lr = optimizer.param_groups[0]['lr']  
 
-		# if epoch % 5 == 0:
-			# lr_new = lr * cfg.TRAIN.GAMMA
-			# net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
+			# write summary
+			metrics.log_metrics(train_losses, val_losses, step, lr)
+			save_model(faster_rcnn, optimizer, step)
+			print(f"Saved model")
 
-		if epoch % 1 == 0:
-			metrics.log_metrics(train_losses, val_losses, epoch, lr)
-			save_model(faster_rcnn, optimizer, epoch)
+	
+			# avg_loss.reset()
+			# avg_clf_loss.reset()
+			# avg_reg_loss.reset()
+			
+
+	# for step in range(1, max_iter):
+	# 	try:
+	# 		input_data = next(dataiterator)
+	# 	except StopIteration:
+	# 		dataiterator = iter(train_loader)
+	# 		input_data = next(dataiterator)
+
+	# 	images, targets = input_data
+		
+
+	# 	confidence, locations = net(images)
+
+	# 	regression_loss, classification_loss = criterion(confidence, locations, labels, boxes)  # TODO CHANGE BOXES
+	# 	loss = regression_loss + classification_loss
+
+	# 	avg_loss.update(loss.item(), images.size(0))
+	# 	avg_clf_loss.update(classification_loss.item(), images.size(0))
+	# 	avg_reg_loss.update(regression_loss.item(), images.size(0))
+
+	# 	optimizer.zero_grad()
+	# 	loss.backward()
+	# 	optimizer.step()
+	# 	if args.scheduler != 'plateau':
+	# 			scheduler.step()
+
+
+	# 	if step % 10 == 0:
+	# 		logging.info(
+	# 			f"Iter: {step}, " +
+	# 			f"Loss: {avg_loss.avg:.4f}, " +
+	# 			f"Regression Loss {avg_reg_loss.avg:.4f}, " +
+	# 			f"Classification Loss: {avg_clf_loss.avg:.4f}"
+	# 		)
+
+
+	# 	if (step) % 1000 == 0:
+	# 		val_loss, val_regression_loss, val_classification_loss = test(val_loader, net, criterion, device)
+	# 		if args.scheduler == 'plateau':
+	# 			scheduler.step(val_loss)
+
+	# 		logging.info(
+	# 			f"Iter: {step}, " +
+	# 			f"Average Loss: {avg_loss.avg:.4f}, " +
+	# 			f"Average Regression Loss {avg_reg_loss.avg:.4f}, " +
+	# 			f"Average Classification Loss: {avg_clf_loss.avg:.4f}"
+	# 		)
+
+	# 		logging.info(
+	# 			f"Iter: {step}, " +
+	# 			f"Validation Loss: {val_loss:.4f}, " +
+	# 			f"Validation Regression Loss {val_regression_loss:.4f}, " +
+	# 			f"Validation Classification Loss: {val_classification_loss:.4f}"
+	# 		)
+
+	# 		lr = optimizer.param_groups[0]['lr']  
+
+	# 		# write summary
+	# 		summary_writer.add_scalar(
+	# 			'losses/val_loss', val_loss, global_step=step)
+	# 		summary_writer.add_scalar(
+	# 			'losses/val_regression_loss', val_regression_loss, global_step=step)
+	# 		summary_writer.add_scalar(
+	# 			'losses/val_classification_loss', val_classification_loss, global_step=step)
+	# 		summary_writer.add_scalar(
+	# 			'losses/train_loss', avg_loss.avg, global_step=step)
+	# 		summary_writer.add_scalar(
+	# 			'losses/train_regression_loss', avg_reg_loss.avg, global_step=step)
+	# 		summary_writer.add_scalar(
+	# 			'losses/train_classification_loss', avg_clf_loss.avg, global_step=step)
+	# 		summary_writer.add_scalar(
+	# 			'lr', lr, global_step=step)
+
+	# 		avg_loss.reset()
+	# 		avg_clf_loss.reset()
+	# 		avg_reg_loss.reset()
+	# 		net.train()
+
+	# 		model_path = os.path.join(args.checkpoint_folder, f"{args.net}-Iter-{step}-Loss-{val_loss}.pth")
+
+	# 		net.save(model_path)
+	# 		logging.info(f"Saved model {model_path}")
+
+
+
+	# for epoch in range(1, opt.n_epochs):
+	# 	train_losses = train_epoch(
+	# 			faster_rcnn, train_loader, optimizer, epoch)
+				
+	# 	val_losses = val_epoch(faster_rcnn, val_loader)
+
+	# 	if opt.scheduler == "plateau":
+	# 		scheduler.step(val_losses['total_loss'])
+	# 	else:
+	# 		scheduler.step()
+				
+	# 	lr = optimizer.param_groups[2]['lr']  
+
+	# 	# if epoch % 5 == 0:
+	# 		# lr_new = lr * cfg.TRAIN.GAMMA
+	# 		# net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
+
+	# 	if epoch % 1 == 0:
+	# 		metrics.log_metrics(train_losses, val_losses, epoch, lr)
+	# 		save_model(faster_rcnn, optimizer, epoch)
 		
 if __name__ == "__main__":
 	main_worker()
