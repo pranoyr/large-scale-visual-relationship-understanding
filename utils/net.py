@@ -134,7 +134,7 @@ def update_learning_rate_rel(optimizer, cur_lr, new_lr):
             else:
                 param_group['lr'] = new_lr
             if ind <= 1:  # backbone params
-                param_group['lr'] = cfg.TRAIN.BACKBONE_LR_SCALAR * param_group['lr']  # 0.1 * param_group['lr']
+                param_group['lr'] = 0.1 * param_group['lr']  # 0.1 * param_group['lr']
             param_keys += param_group['params']
         if cfg.TRAIN.TYPE in ['SGD'] and cfg.TRAIN.SCALE_MOMENTUM and cur_lr > 1e-7 and \
                 ratio > cfg.TRAIN.SCALE_MOMENTUM_THRESHOLD:

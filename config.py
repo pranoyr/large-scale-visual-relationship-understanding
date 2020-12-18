@@ -29,7 +29,7 @@ __C.DEVICE = 'cuda:1'
 __C.TRAIN = AttrDict()
 
 # Optmization Algorithm
-__C.TRAIN.TYPE = "ADAM"
+__C.TRAIN.TYPE = "SGD"
 
 # Base learning rate for the specified schedule
 __C.TRAIN.LEARNING_RATE = 0.0001
