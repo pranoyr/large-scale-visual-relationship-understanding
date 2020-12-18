@@ -206,11 +206,11 @@ def main_worker():
 
 		# if opt.scheduler != 'plateau':
 		# 	scheduler.step()
-		if step in [83631, 111508]:
-			lr_new = lr * 0.1
-			net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
-			lr = optimizer.param_groups[2]['lr']
-			backbone_lr = optimizer.param_groups[0]['lr']
+		# if step in [83631, 111508]:
+		lr_new = lr * 0.1
+		net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
+		lr = optimizer.param_groups[2]['lr']
+		backbone_lr = optimizer.param_groups[0]['lr']
 
 		losses_sbj.update(metrics["loss_sbj"].item())
 		losses_obj.update(metrics["loss_obj"].item())
