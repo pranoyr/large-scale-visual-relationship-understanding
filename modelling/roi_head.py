@@ -193,7 +193,7 @@ class RoIHeads(torch.nn.Module):
             zip(sampled_pos_inds, sampled_neg_inds)
         ):
             img_sampled_inds = torch.nonzero(
-                pos_inds_img | neg_inds_img).squeeze(1)
+                pos_inds_img | neg_inds_img, as_tuple=True).squeeze(1)
             sampled_inds.append(img_sampled_inds)
         return sampled_inds
 
