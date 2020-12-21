@@ -204,13 +204,11 @@ def main_worker():
 		final_loss.backward()
 		optimizer.step()
 
-		# if opt.scheduler != 'plateau':
-		# 	scheduler.step()
-		if step in [83631, 111508]:
-			lr_new = lr * 0.1
-			net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
-			lr = optimizer.param_groups[2]['lr']
-			backbone_lr = optimizer.param_groups[0]['lr']
+		# if step in [83631, 111508]:
+		# 	lr_new = lr * 0.1
+		# 	net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
+		# 	lr = optimizer.param_groups[2]['lr']
+		# 	backbone_lr = optimizer.param_groups[0]['lr']
 
 		losses_sbj.update(metrics["loss_sbj"].item())
 		losses_obj.update(metrics["loss_obj"].item())
@@ -241,9 +239,9 @@ def main_worker():
 			train_losses['rel_loss'] = losses_rel.avg
 			val_losses = val_epoch(faster_rcnn, val_loader)
 
-			# if opt.scheduler == "plateau":
-			# 	scheduler.step(val_losses['total_loss'])
-			# lr = optimizer.param_groups[0]['lr']  
+			if opt.scheduler == "plateau":
+				scheduler.step(val_losses['total_loss'])
+			lr = optimizer.param_groups[0]['lr']  
 
 			# write summary
 			summary_writer.log_metrics(train_losses, val_losses, step, lr)
