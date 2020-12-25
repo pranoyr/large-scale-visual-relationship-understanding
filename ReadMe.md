@@ -7,7 +7,7 @@ Thie Repository is an implementation of the paper https://arxiv.org/pdf/1804.106
 
 
 ## Download Pre-trained Model
-Download the model from [here](https://drive.google.com/file/d/1uNisRSwajVLIj-56okui7q5EskBZ_OE6/view?usp=sharing).
+Download the model from [here](https://drive.google.com/file/d/1maSQiJryt9VdO9fmYy7IGzIqT0WsXbbZ/view?usp=sharing).
 
 
 ## Download the VRD Dataet
