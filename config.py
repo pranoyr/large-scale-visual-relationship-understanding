@@ -21,7 +21,7 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
-__C.DEVICE = 'cpu'
+__C.DEVICE = 'cuda'
 
 #
 # Training options
@@ -138,7 +138,7 @@ __C.MODEL.BATCH_SIZE_PER_IMAGE_SO = 64
 
 __C.MODEL.POSITIVE_FRACTION_SO = 0.5
 
-__C.MODEL.BATCH_SIZE_PER_IMAGE_REL = 128
+__C.MODEL.BATCH_SIZE_PER_IMAGE_REL = 64
 
 __C.MODEL.POSITIVE_FRACTION_REL = 0.5
 
