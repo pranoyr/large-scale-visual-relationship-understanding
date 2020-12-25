@@ -530,7 +530,11 @@ class RoIHeads(torch.nn.Module):
                 obj_boxes = all_obj_boxes[i][mask]
                 rlp_boxes = all_rlp_boxes[i][mask]
 
+<<<<<<< HEAD
                 score_mask = rel_scores > 0.4
+=======
+                score_mask = rel_scores > cfg.TEST.THRESHOLD
+>>>>>>> vrd
                 result = [{"sbj_boxes": sbj_boxes[score_mask],
                            "obj_boxes": obj_boxes[score_mask],
                            'sbj_labels': subjects[score_mask],

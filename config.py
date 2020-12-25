@@ -29,10 +29,10 @@ __C.DEVICE = 'cuda'
 __C.TRAIN = AttrDict()
 
 # Optmization Algorithm
-__C.TRAIN.TYPE = "ADAM"
+__C.TRAIN.TYPE = "SGD"
 
 # Base learning rate for the specified schedule
-__C.TRAIN.LEARNING_RATE = 0.00001
+__C.TRAIN.LEARNING_RATE = 0.0001
 
 __C.TRAIN.BACKBONE_LR_SCALAR = 0.1
 
@@ -75,7 +75,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0
+__C.TRAIN.WEIGHT_DECAY = 0.001
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
@@ -142,7 +142,7 @@ __C.MODEL.BATCH_SIZE_PER_IMAGE_REL = 128
 
 __C.MODEL.POSITIVE_FRACTION_REL = 0.5
 
-__C.MODEL.NORM_SCALE = 5.0
+__C.MODEL.NORM_SCALE = 10.0
 
 
 #
@@ -168,6 +168,14 @@ __C.RPN.BG_IOU_THRESH = 0.3
 __C.RPN.BATCH_SIZE_PER_IMAGE = 256
 
 __C.RPN.POSITIVE_FRACTION = 0.5
+
+
+#
+# Test Paramaters
+#
+
+__C.TEST = AttrDict()
+__C.TEST.THRESHOLD = 0.0
 
 
 #
