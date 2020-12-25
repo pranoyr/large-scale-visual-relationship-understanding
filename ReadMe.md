@@ -55,6 +55,13 @@ Visual Genome Dataset, VGG BackBone, Resnet 152
 ## Results
 ![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/1.jpg)
 
+* person wear shirt
+* person next to person
+* person wear shirt
+* plate on table
+* plate on table
+* plate next to plate
+
 ## References
 * https://github.com/facebookresearch/Large-Scale-VRD
 * https://arxiv.org/pdf/1804.10660.pdf
