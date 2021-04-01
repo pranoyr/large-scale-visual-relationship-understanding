@@ -181,10 +181,10 @@ def main_worker():
 
 	summary_writer = Metrics(log_dir='tf_logs')
 
-	losses_sbj = AverageMeter('Loss', ':.4e')
-	losses_obj = AverageMeter('Loss', ':.4e')
-	losses_rel = AverageMeter('Loss', ':.4e')
-	losses_total = AverageMeter('Loss', ':.4e')
+	losses_sbj = AverageMeter('Sbj loss', ':.4e')
+	losses_obj = AverageMeter('Obj loss', ':.4e')
+	losses_rel = AverageMeter('Rel loss', ':.4e')
+	losses_total = AverageMeter('Total loss', ':.4e')
 	progress = ProgressMeter([losses_sbj, losses_obj, losses_rel, losses_total],
         prefix='Train: ')
 
