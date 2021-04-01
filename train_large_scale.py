@@ -36,14 +36,14 @@ from config import cfg
 from datasets.vrd import VRDDataset, collater
 from modelling.model import FasterRCNN
 from opts import parse_opts
-from utils.util import AverageMeter, Metrics, calculate_accuracy
+from utils.util import AverageMeter, Metrics, ProgressMeter
 
 
 def val_epoch(model, dataloader):
-	losses_sbj = AverageMeter()
-	losses_obj = AverageMeter()
-	losses_rel = AverageMeter()
-	losses_total = AverageMeter()
+	losses_sbj = AverageMeter('Loss', ':.4e')
+	losses_obj = AverageMeter('Loss', ':.4e')
+	losses_rel = AverageMeter('Loss', ':.4e')
+	losses_total = AverageMeter('Loss', ':.4e')
 
 	for i, data in enumerate(dataloader):
 		images, targets = data
@@ -181,10 +181,12 @@ def main_worker():
 
 	summary_writer = Metrics(log_dir='tf_logs')
 
-	losses_sbj = AverageMeter()
-	losses_obj = AverageMeter()
-	losses_rel = AverageMeter()
-	losses_total = AverageMeter()
+	losses_sbj = AverageMeter('Loss', ':.4e')
+	losses_obj = AverageMeter('Loss', ':.4e')
+	losses_rel = AverageMeter('Loss', ':.4e')
+	losses_total = AverageMeter('Loss', ':.4e')
+	progress = ProgressMeter([losses_sbj, losses_obj, losses_rel, losses_rel, losses_total],
+        prefix='Train: ')
 
 	faster_rcnn.train()
 	for step in range(1, opt.max_iter):
@@ -216,19 +218,22 @@ def main_worker():
 		losses_total.update(final_loss.item())
 
 		if (step) % 10 == 0:
-			print(f"""Iteration    : {step}
-					RCNN_Loss	   : {final_loss.item()}
-					rpn_cls_loss   : {metrics['loss_objectness'].item()}
-					rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
-					box_loss 	   : {metrics['loss_box_reg']}
-					cls_loss       : {metrics['loss_classifier']}
-					sbj_loss	   : {metrics['loss_sbj']}
-					obj_loss	   : {metrics['loss_obj']}
-					sbj_acc        : {metrics['acc_sbj']}
-					obj_acc	       : {metrics['acc_obj']}
-					rlp_loss   	   : {metrics['loss_rlp']}				 
-					rlp_acc 	   : {metrics['acc_rlp']}\n"""
-				  )
+			# print(f"""Iteration    : {step}
+			# 		RCNN_Loss	   : {final_loss.item()}
+			# 		rpn_cls_loss   : {metrics['loss_objectness'].item()}
+			# 		rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
+			# 		box_loss 	   : {metrics['loss_box_reg']}
+			# 		cls_loss       : {metrics['loss_classifier']}
+			# 		sbj_loss	   : {metrics['loss_sbj']}
+			# 		obj_loss	   : {metrics['loss_obj']}
+			# 		sbj_acc        : {metrics['acc_sbj']}
+			# 		obj_acc	       : {metrics['acc_obj']}
+			# 		rlp_loss   	   : {metrics['loss_rlp']}				 
+			# 		rlp_acc 	   : {metrics['acc_rlp']}\n"""
+			# 	  )
+			# show information
+			
+			progress.display(step)
 
 
 		if step % 1000 == 0:

@@ -5,7 +5,9 @@ import tensorboardX
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 
-    def __init__(self):
+    def __init__(self, name, fmt=':f'):
+        self.name = name
+        self.fmt = fmt
         self.reset()
 
     def reset(self):
@@ -14,51 +16,31 @@ class AverageMeter(object):
         self.sum = 0
         self.count = 0
 
-    def update(self, val):
+    def update(self, val, n=1):
         self.val = val
-        self.sum += val 
-        self.count += 1
+        self.sum += val * n
+        self.count += n
         self.avg = self.sum / self.count
 
-
-class Logger(object):
-
-    def __init__(self, path, header):
-        self.log_file = open(path, 'w')
-        self.logger = csv.writer(self.log_file, delimiter='\t')
-
-        self.logger.writerow(header)
-        self.header = header
-
-    def __del(self):
-        self.log_file.close()
-
-    def log(self, values):
-        write_values = []
-        for col in self.header:
-            assert col in values
-            write_values.append(values[col])
-
-        self.logger.writerow(write_values)
-        self.log_file.flush()
+    def __str__(self):
+        fmtstr = '{name} {val' + self.fmt + '} ({avg' + self.fmt + '})'
+        return fmtstr.format(**self.__dict__)
 
 
-def load_value_file(file_path):
-    with open(file_path, 'r') as input_file:
-        value = float(input_file.read().rstrip('\n\r'))
+class ProgressMeter(object):
+    def __init__(self, meters, prefix=""):
+        self.batch_fmtstr = self._get_batch_fmtstr()
+        self.meters = meters
+        self.prefix = prefix
 
-    return value
+    def display(self, batch):
+        entries = [self.prefix + self.batch_fmtstr.format(batch)]
+        entries += [str(meter) for meter in self.meters]
+        print('\t'.join(entries))
 
-
-def calculate_accuracy(outputs, targets):
-    batch_size = targets.size(0)
-
-    _, pred = outputs.topk(1, 1, True)
-    pred = pred.t()
-    correct = pred.eq(targets.view(1, -1))
-    n_correct_elems = correct.float().sum().item()
-
-    return n_correct_elems / batch_size
+    def _get_batch_fmtstr(self):
+        fmt = '{}'
+        return '[' + fmt + ']'
 
 
 class Metrics():
@@ -66,14 +48,14 @@ class Metrics():
         self.summary_writer = tensorboardX.SummaryWriter(log_dir=log_dir)
 
     def log_metrics(self, train_losses, val_losses, epoch, lr):
-        train_tot_loss = train_losses['total_loss'] 
+        train_tot_loss = train_losses['total_loss']
         train_sbj_loss = train_losses['sbj_loss']
-        train_obj_loss = train_losses['obj_loss'] 
+        train_obj_loss = train_losses['obj_loss']
         train_rel_loss = train_losses['rel_loss']
 
-        val_tot_loss = val_losses['total_loss'] 
+        val_tot_loss = val_losses['total_loss']
         val_sbj_loss = val_losses['sbj_loss']
-        val_obj_loss = val_losses['obj_loss'] 
+        val_obj_loss = val_losses['obj_loss']
         val_rel_loss = val_losses['rel_loss']
 
         # val_tot_loss, val_sbj_loss, val_obj_loss, val_rel_loss = val_metrics
@@ -109,4 +91,3 @@ class Metrics():
         #     'losses/val_obj_loss', val_obj_loss, global_step=epoch)
         # self.summary_writer.add_scalar(
         #     'losses/val_rel_loss', val_rel_loss, global_step=epoch)
-
