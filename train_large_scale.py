@@ -53,10 +53,10 @@ def val_epoch(model, dataloader):
 			metrics["loss_classifier"] + metrics["loss_box_reg"] + \
 			metrics["loss_sbj"] + metrics["loss_obj"] + metrics["loss_rlp"]
 
-		losses_sbj.update(metrics["loss_sbj"].item())
-		losses_obj.update(metrics["loss_obj"].item())
-		losses_rel.update(metrics["loss_rlp"].item())
-		losses_total.update(final_loss.item())
+		losses_sbj.update(metrics["loss_sbj"].item(), len(images))
+		losses_obj.update(metrics["loss_obj"].item(), len(images))
+		losses_rel.update(metrics["loss_rlp"].item(), len(images))
+		losses_total.update(final_loss.item(), len(images))
 
 	losses = {}
 	losses['total_loss'] = losses_total.avg
