@@ -86,7 +86,7 @@ def save_model(model, optimizer, step):
     state = {'step': step, 'state_dict': model.state_dict(
     ), 'optimizer_state_dict': optimizer.state_dict()}
     torch.save(state, os.path.join(
-        'snapshots', f'large_scale_vrd-iter-{step}.pth'))
+        'snapshots', f'large_scale_vrd_model.pth'))
 
 
 def main_worker():
@@ -195,6 +195,7 @@ def main_worker():
                              prefix='Train: ')
 
     faster_rcnn.train()
+    th = 10000
     for step in range(1, opt.max_iter):
         try:
             input_data = next(dataiterator)
@@ -253,10 +254,13 @@ def main_worker():
                 scheduler.step(val_losses['total_loss'])
             lr = optimizer.param_groups[0]['lr']
 
-            # write summary
+            if train_losses['total_loss'] < th:
+                save_model(faster_rcnn, optimizer, step)
+                print(f"Saved model")
+                th = train_losses['total_loss']
+
+             # write summary
             summary_writer.log_metrics(train_losses, val_losses, step, lr)
-            save_model(faster_rcnn, optimizer, step)
-            print(f"Saved model")
 
             print(f"* Average training loss : {train_losses['total_loss']:.3f}")
             print(f"* Average validation loss : {val_losses['total_loss']:.3f}")
