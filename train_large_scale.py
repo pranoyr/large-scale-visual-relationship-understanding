@@ -212,10 +212,10 @@ def main_worker():
 		# 	lr = optimizer.param_groups[2]['lr']
 		# 	backbone_lr = optimizer.param_groups[0]['lr']
 
-		losses_sbj.update(metrics["loss_sbj"].item())
-		losses_obj.update(metrics["loss_obj"].item())
-		losses_rel.update(metrics["loss_rlp"].item())
-		losses_total.update(final_loss.item())
+		losses_sbj.update(metrics["loss_sbj"].item(), len(images))
+		losses_obj.update(metrics["loss_obj"].item(), len(images))
+		losses_rel.update(metrics["loss_rlp"].item(), len(images))
+		losses_total.update(final_loss.item(), len(images))
 
 		if (step) % 10 == 0:
 			# print(f"""Iteration    : {step}
