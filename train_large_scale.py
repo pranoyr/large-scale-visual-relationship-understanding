@@ -185,7 +185,7 @@ def main_worker():
 	losses_obj = AverageMeter('Loss', ':.4e')
 	losses_rel = AverageMeter('Loss', ':.4e')
 	losses_total = AverageMeter('Loss', ':.4e')
-	progress = ProgressMeter([losses_sbj, losses_obj, losses_rel, losses_rel, losses_total],
+	progress = ProgressMeter([losses_sbj, losses_obj, losses_rel, losses_total],
         prefix='Train: ')
 
 	faster_rcnn.train()
