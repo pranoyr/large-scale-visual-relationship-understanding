@@ -258,8 +258,8 @@ def main_worker():
             save_model(faster_rcnn, optimizer, step)
             print(f"Saved model")
 
-            print(f"Average training loss : {train_losses['total_loss']}")
-            print(f"Average validation loss : {val_losses['total_loss']}")
+            print(f"* Average training loss : {train_losses['total_loss']:.3f}")
+            print(f"* Average validation loss : {val_losses['total_loss']:.3f}")
 
 
 if __name__ == "__main__":
