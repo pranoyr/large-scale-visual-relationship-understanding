@@ -213,33 +213,12 @@ def main_worker():
         final_loss.backward()
         optimizer.step()
 
-        # if step in [83631, 111508]:
-        # 	lr_new = lr * 0.1
-        # 	net_utils.update_learning_rate_rel(optimizer, lr, lr_new)
-        # 	lr = optimizer.param_groups[2]['lr']
-        # 	backbone_lr = optimizer.param_groups[0]['lr']
-
         losses_sbj.update(metrics["loss_sbj"].item(), len(images))
         losses_obj.update(metrics["loss_obj"].item(), len(images))
         losses_rel.update(metrics["loss_rlp"].item(), len(images))
         losses_total.update(final_loss.item(), len(images))
 
         if (step) % 10 == 0:
-            # print(f"""Iteration    : {step}
-            # 		RCNN_Loss	   : {final_loss.item()}
-            # 		rpn_cls_loss   : {metrics['loss_objectness'].item()}
-            # 		rpn_reg_loss   : {metrics['loss_rpn_box_reg'].item()}
-            # 		box_loss 	   : {metrics['loss_box_reg']}
-            # 		cls_loss       : {metrics['loss_classifier']}
-            # 		sbj_loss	   : {metrics['loss_sbj']}
-            # 		obj_loss	   : {metrics['loss_obj']}
-            # 		sbj_acc        : {metrics['acc_sbj']}
-            # 		obj_acc	       : {metrics['acc_obj']}
-            # 		rlp_loss   	   : {metrics['loss_rlp']}
-            # 		rlp_acc 	   : {metrics['acc_rlp']}\n"""
-            # 	  )
-            # show information
-
             progress.display(step)
 
         if step % 1000 == 0:
