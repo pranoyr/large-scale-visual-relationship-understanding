@@ -51,8 +51,8 @@ class VRDDataset(Dataset):
 		self._preds_to_ind = dict(
 			zip(self.preds, range(len(self.preds))))
 
-		with open(os.path.join(self.dataset_path, 'ImageSets', image_set +'.txt'), 'r') as file:
-			self.ids_list = self._read_image_ids(file)
+		image_sets_file = os.path.join(self.dataset_path, 'ImageSets', image_set +'.txt')
+		self.ids_list = self._read_image_ids(image_sets_file)
 
 		print(self.ids_list)
 
