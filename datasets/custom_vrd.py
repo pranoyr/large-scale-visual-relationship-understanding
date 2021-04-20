@@ -54,6 +54,8 @@ class VRDDataset(Dataset):
 		with open(os.path.join(self.dataset_path, 'ImageSets', image_set +'.txt'), 'r') as file:
 			self.ids_list = file.readlines()
 
+		print(self.ids_list)
+
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
 
@@ -76,7 +78,6 @@ class VRDDataset(Dataset):
 
 		annotations = pd.read_csv(f'{self.dataset_path}/vrd/{filename}.csv')
 		annotations = annotations.values.tolist()
-		print(annotations)
 		boxes = []
 		labels = []
 		preds = []
