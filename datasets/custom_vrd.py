@@ -36,8 +36,6 @@ class VRDDataset(Dataset):
 		self.dataset_path = dataset_path
 		self.image_set = image_set
 		# read annotations file
-		with open(os.path.join(self.dataset_path, 'json_dataset', f'annotations_{self.image_set}.json'), 'r') as f:
-			self.annotations = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'objects.json'), 'r') as f:
 			self.all_objects = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
