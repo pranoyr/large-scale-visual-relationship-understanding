@@ -71,7 +71,7 @@ class VRDDataset(Dataset):
 		"""
 		Construct an image path from the image's "index" identifier.
 		"""
-		image_path = os.path.join(self.dataset_path, 'JPEGImages', filename, '.png')
+		image_path = f"{self.dataset_path}/JPEGImages/{filename}.png"
 		img = Image.open(image_path)
 		return img
 
