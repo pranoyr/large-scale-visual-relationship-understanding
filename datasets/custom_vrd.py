@@ -76,6 +76,7 @@ class VRDDataset(Dataset):
 
 		annotations = pd.read_csv(f'{self.dataset_path}/vrd/{filename}.csv')
 		annotations = annotations.values.tolist()
+		print(annotations)
 		boxes = []
 		labels = []
 		preds = []
