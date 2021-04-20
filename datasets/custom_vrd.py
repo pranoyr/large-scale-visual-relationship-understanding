@@ -96,9 +96,9 @@ class VRDDataset(Dataset):
 
 			# prepare labels for subject and object
 			# map to word
-			gt_sbj_label = self.all_objects[gt_sbj_label]
-			gt_obj_label = self.all_objects[gt_obj_label]
-			predicate = self.predicates[predicate]
+			# gt_sbj_label = self.all_objects[gt_sbj_label]
+			# gt_obj_label = self.all_objects[gt_obj_label]
+			# predicate = self.predicates[predicate]
 			# map to new index
 			labels.append([self._class_to_ind[gt_sbj_label],
 						   self._class_to_ind[gt_obj_label]])
