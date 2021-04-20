@@ -93,7 +93,7 @@ class VRDDataset(Dataset):
 
 			if gt_sbj_label=="person" or gt_obj_label=="person":
     				continue
-			print(gt_sbj_label, predicate, gt_obj_label )
+			# print(gt_sbj_label, predicate, gt_obj_label )
 
 			# prepare bboxes for subject and object
 			boxes.append([gt_sbj_bbox, gt_obj_bbox])
