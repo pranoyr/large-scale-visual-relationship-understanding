@@ -91,6 +91,8 @@ class VRDDataset(Dataset):
 			gt_sbj_bbox, gt_obj_bbox = ast.literal_eval(spo[1]), ast.literal_eval(spo[4])
 			predicate = spo[2]
 
+			print(gt_sbj_label, predicate, gt_obj_label )
+
 			# prepare bboxes for subject and object
 			boxes.append([gt_sbj_bbox, gt_obj_bbox])
 

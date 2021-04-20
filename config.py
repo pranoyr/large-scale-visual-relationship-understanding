@@ -21,7 +21,7 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
-__C.DEVICE = 'cuda:1'
+__C.DEVICE = 'cpu'
 
 #
 # Training options
@@ -175,7 +175,7 @@ __C.RPN.POSITIVE_FRACTION = 0.5
 #
 
 __C.TEST = AttrDict()
-__C.TEST.THRESHOLD = 0.1
+__C.TEST.THRESHOLD = 0.5
 
 
 #
