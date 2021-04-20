@@ -52,12 +52,19 @@ class VRDDataset(Dataset):
 			zip(self.preds, range(len(self.preds))))
 
 		with open(os.path.join(self.dataset_path, 'ImageSets', image_set +'.txt'), 'r') as file:
-			self.ids_list = file.readlines()
+			self.ids_list = self._read_image_ids(file)
 
 		print(self.ids_list)
 
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
+
+	def _read_image_ids(self, image_sets_file):
+		ids = []
+		with open(image_sets_file) as f:
+			for line in f:
+				ids.append(line.rstrip())
+		return ids
 
 	def __len__(self):
 		return len(self.ids_list)
