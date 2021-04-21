@@ -102,7 +102,8 @@ class RoIHeads(torch.nn.Module):
 
 
             # remove dulplicates for sbj and obj gts
-            gt_boxes_in_image = 
+            gt_sbj_boxes_in_image = 
+            gt_obj_boxes_in_image = 
 
             sbj_match_quality_matrix = box_ops.box_iou(
                 gt_boxes_in_image[:, 0, :], sbj_proposals_in_image)
@@ -125,7 +126,11 @@ class RoIHeads(torch.nn.Module):
                 min=0)
 
 
-            a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1))  
+            # a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1)) 
+            sbj_boxes = gt_sbj_boxes_in_image[sbj_matched_idxs_in_image]
+            obj_boxes = gt_obj_boxes_in_image[obj_matched_idxs_in_image]
+
+            
 
 
             sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
