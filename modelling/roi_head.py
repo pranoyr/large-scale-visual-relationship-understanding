@@ -104,6 +104,7 @@ class RoIHeads(torch.nn.Module):
             # remove dulplicates for sbj and obj gts
             gt_sbj_boxes_in_image = torch.unique(gt_boxes_in_image[:, 0, :], dim=0)
             gt_obj_boxes_in_image = torch.unique(gt_boxes_in_image[:, 1, :], dim=0)
+            
 
             sbj_match_quality_matrix = box_ops.box_iou(
                 gt_sbj_boxes_in_image, sbj_proposals_in_image)
@@ -128,26 +129,31 @@ class RoIHeads(torch.nn.Module):
             # a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1)) 
             sbj_boxes = gt_sbj_boxes_in_image[sbj_matched_idxs_in_image]
             obj_boxes = gt_obj_boxes_in_image[obj_matched_idxs_in_image]
+            labels_in_image = torch.ones(sbj_boxes.shape[0])
+            for i in range(len(sbj_boxes)):
+                sbj_indices = torch.where(torch.all(gt_boxes_in_image[:, 0, :] == sbj_boxes[i], dim=1))[0]
+                obj_indices = torch.where(torch.all(gt_boxes_in_image[:, 1, :] == obj_boxes[i], dim=1))[0]
+                matched_idx = np.intersect1d(sbj_indices, obj_indices)
+                if matched_idx:
+                    labels_in_image[i] = gt_preds_in_image[matched_idx[0]]
 
             # print(gt_boxes_in_image[:, 0, :].shape)
             # print(gt_sbj_boxes_in_image.shape)
             # print(gt_boxes_in_image[:, 1, :].shape)
             # print(gt_obj_boxes_in_image.shape)
 
-            print(gt_boxes_in_image[:, 0, :])
-            print("***")
-            print(sbj_boxes)
+            # print(gt_boxes_in_image[:, 0, :])
+            # print("***")
+            # print(sbj_boxes
 
+            # sbj_indices = [torch.where(torch.all(gt_boxes_in_image[:, 0, :] == x, dim=1))[0].item() for x in sbj_boxes]  
+            # obj_indices = [torch.where(torch.all(gt_boxes_in_image[:, 1, :] == x, dim=1))[0].item() for x in obj_boxes] 
+            # sbj_indices = torch.tensor(sbj_indices)
+            # obj_indices = torch.tensor(obj_indices)
 
-
-            sbj_indices = [torch.where(torch.all(gt_boxes_in_image[:, 0, :] == x, dim=1))[0].item() for x in sbj_boxes]  
-            obj_indices = [torch.where(torch.all(gt_boxes_in_image[:, 1, :] == x, dim=1))[0].item() for x in obj_boxes] 
-            sbj_indices = torch.tensor(sbj_indices)
-            obj_indices = torch.tensor(obj_indices)
-
-            mask = sbj_indices == obj_indices
-            sbj_indices[~mask]=0
-            labels_in_image = gt_preds_in_image[sbj_indices]
+            # mask = sbj_indices == obj_indices
+            # sbj_indices[~mask]=0
+            # labels_in_image = gt_preds_in_image[sbj_indices]
             
             # sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
             #                           obj_matched_idxs_in_image] = -1
