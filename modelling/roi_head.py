@@ -99,6 +99,11 @@ class RoIHeads(torch.nn.Module):
             # 	)
             # else:
             # set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
+
+
+            # remove dulplicates for sbj and obj gts
+            gt_boxes_in_image = 
+
             sbj_match_quality_matrix = box_ops.box_iou(
                 gt_boxes_in_image[:, 0, :], sbj_proposals_in_image)
             obj_match_quality_matrix = box_ops.box_iou(
@@ -107,10 +112,21 @@ class RoIHeads(torch.nn.Module):
             # # Label background (below the low threshold)
             # bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
             # labels_in_image[bg_inds] = 0
+
+
             sbj_matched_idxs_in_image = self.proposal_matcher(
                 sbj_match_quality_matrix)
             obj_matched_idxs_in_image = self.proposal_matcher(
                 obj_match_quality_matrix)
+
+            sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
+                min=0)
+            obj_matched_idxs_in_image = obj_matched_idxs_in_image.clamp(
+                min=0)
+
+
+            a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1))  
+
 
             sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
                                       obj_matched_idxs_in_image] = -1

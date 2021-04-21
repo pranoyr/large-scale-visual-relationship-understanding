@@ -1,24 +1,37 @@
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 import torch
 
-# Define FPN
-fpn = resnet_fpn_backbone(
-    backbone_name='resnet18', pretrained=True, trainable_layers=5)
+# # Define FPN
+# fpn = resnet_fpn_backbone(
+#     backbone_name='resnet18', pretrained=True, trainable_layers=5)
 
 
 
-x = torch.Tensor(1,3,512,512)
-outputs = fpn(x)
+# x = torch.Tensor(1,3,512,512)
+# outputs = fpn(x)
 
-# print(type(outputs))
+# # print(type(outputs))
 
-for i in outputs.items():
-    print(i[1].shape)
+# for i in outputs.items():
+#     print(i[1].shape)
 
-    # >>> # returns
-    #     >>>   [('0', torch.Size([1, 256, 16, 16])),
-    #     >>>    ('1', torch.Size([1, 256, 8, 8])),
-    #     >>>    ('2', torch.Size([1, 256, 4, 4])),
-    #     >>>    ('3', torch.Size([1, 256, 2, 2])),
-    #     >>>    ('pool', torch.Size([1, 256, 1, 1]))]
+#     # >>> # returns
+#     #     >>>   [('0', torch.Size([1, 256, 16, 16])),
+#     #     >>>    ('1', torch.Size([1, 256, 8, 8])),
+#     #     >>>    ('2', torch.Size([1, 256, 4, 4])),
+#     #     >>>    ('3', torch.Size([1, 256, 2, 2])),
+#     #     >>>    ('pool', torch.Size([1, 256, 1, 1]))]
+
+import numpy as np
+x = torch.tensor([[1,2,3],
+                  [4,5,6],[1,2,3]])
+
+
+print(x)
+
+a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1))  
+
+print(a)
+
+
 
