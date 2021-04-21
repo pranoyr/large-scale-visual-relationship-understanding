@@ -134,7 +134,7 @@ class RoIHeads(torch.nn.Module):
 				sbj_indices = torch.where(torch.all(gt_boxes_in_image[:, 0, :] == sbj_boxes[i], dim=1))[0]
 				obj_indices = torch.where(torch.all(gt_boxes_in_image[:, 1, :] == obj_boxes[i], dim=1))[0]
 				matched_idx = np.intersect1d(sbj_indices.cpu().numpy(), obj_indices.cpu().numpy())
-				if matched_idx:
+				if matched_idx.any():
 					labels_in_image[i] = gt_preds_in_image[matched_idx[0]]
 
 			# print(gt_boxes_in_image[:, 0, :].shape)
