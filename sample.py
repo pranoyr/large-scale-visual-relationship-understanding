@@ -49,6 +49,8 @@ print(b)
 
 a = np.intersect1d(a[0],b[0])
 print(a[0])
+
+
 # print(b)
 
 # mask = a==b
