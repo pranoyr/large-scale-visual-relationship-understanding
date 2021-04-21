@@ -134,7 +134,8 @@ class RoIHeads(torch.nn.Module):
             sbj_indices = torch.tensor(sbj_indices)
             obj_indices = torch.tensor(obj_indices)
 
-            labels_in_image = sbj_indices == obj_indices
+            mask = sbj_indices == obj_indices
+            
             
             # sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
             #                           obj_matched_idxs_in_image] = -1
