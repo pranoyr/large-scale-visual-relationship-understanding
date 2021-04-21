@@ -23,15 +23,29 @@ import torch
 #     #     >>>    ('pool', torch.Size([1, 256, 1, 1]))]
 
 import numpy as np
-x = torch.tensor([[1,2,3],
-                  [4,5,6],[1,2,3]])
+gt_sbj = torch.tensor([[1,2,3],
+                  [4,5,6],
+                  [7,8,9]])
 
 
-print(x)
+gt_obj = torch.tensor([[11,12,13],
+                  [14,15,16],
+                  [17,18,19]])
 
-a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1))  
 
+
+
+sbj_boxes = torch.tensor([[1,2,3],[7,8,9]])
+obj_boxes = torch.tensor([[11,12,13],[14,15,16]])
+
+
+a = torch.tensor([torch.where(torch.all(gt_sbj == x, dim=1))[0].item() for x in sbj_boxes])  
+b = torch.tensor([torch.where(torch.all(gt_obj == x, dim=1))[0].item() for x in obj_boxes]) 
 print(a)
+print(b)
 
+mask = a==b
+
+print(mask.to(dtype=torch.int64))
 
 

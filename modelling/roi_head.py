@@ -120,27 +120,30 @@ class RoIHeads(torch.nn.Module):
             obj_matched_idxs_in_image = self.proposal_matcher(
                 obj_match_quality_matrix)
 
-            sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
-                min=0)
-            obj_matched_idxs_in_image = obj_matched_idxs_in_image.clamp(
-                min=0)
-
+            # sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
+            #     min=0)
+            # obj_matched_idxs_in_image = obj_matched_idxs_in_image.clamp(
+            #     min=0)
 
             # a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1)) 
             sbj_boxes = gt_sbj_boxes_in_image[sbj_matched_idxs_in_image]
             obj_boxes = gt_obj_boxes_in_image[obj_matched_idxs_in_image]
 
+            sbj_indices = [torch.where(torch.all(gt_sbj_boxes_in_image == x, dim=1))[0].item() for x in sbj_boxes])  
+            obj_indices = [torch.where(torch.all(gt_obj_boxes_in_image == x, dim=1))[0].item() for x in obj_boxes]) 
+            sbj_indices = torch.tensor(sbj_indices)
+            obj_indices = torch.tensor(obj_indices)
+
+            labels_in_image = sbj_indices == obj_indices
             
+            # sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
+            #                           obj_matched_idxs_in_image] = -1
+            # clamped_sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
+            #     min=0)
 
-
-            sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
-                                      obj_matched_idxs_in_image] = -1
-            clamped_sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
-                min=0)
-
-            labels_in_image = gt_preds_in_image[clamped_sbj_matched_idxs_in_image]
-            bg_inds = sbj_matched_idxs_in_image == -1
-            labels_in_image[bg_inds] = 0
+            # labels_in_image = gt_preds_in_image[clamped_sbj_matched_idxs_in_image]
+            # bg_inds = sbj_matched_idxs_in_image == -1
+            # labels_in_image[bg_inds] = 0
 
             labels_in_image = labels_in_image.to(dtype=torch.int64)
             labels.append(labels_in_image)
