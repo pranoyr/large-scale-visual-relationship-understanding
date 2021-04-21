@@ -48,4 +48,9 @@ mask = a==b
 
 print(mask.to(dtype=torch.int64))
 
+sbj = torch.tensor([[1,2,3],
+                  [1,2,3],
+                  [7,8,9]])
+
+print(torch.unique(sbj, dim=0))
 
