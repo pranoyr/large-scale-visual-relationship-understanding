@@ -129,7 +129,7 @@ class RoIHeads(torch.nn.Module):
 			# a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1)) 
 			sbj_boxes = gt_sbj_boxes_in_image[sbj_matched_idxs_in_image]
 			obj_boxes = gt_obj_boxes_in_image[obj_matched_idxs_in_image]
-			labels_in_image = torch.ones(sbj_boxes.shape[0])
+			labels_in_image = torch.zeros(sbj_boxes.shape[0])
 			for i in range(len(sbj_boxes)):
 				sbj_indices = torch.where(torch.all(gt_boxes_in_image[:, 0, :] == sbj_boxes[i], dim=1))[0]
 				obj_indices = torch.where(torch.all(gt_boxes_in_image[:, 1, :] == obj_boxes[i], dim=1))[0]
