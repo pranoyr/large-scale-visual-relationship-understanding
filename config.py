@@ -175,7 +175,7 @@ __C.RPN.POSITIVE_FRACTION = 0.5
 #
 
 __C.TEST = AttrDict()
-__C.TEST.THRESHOLD = 0.9
+__C.TEST.THRESHOLD = 0.7
 
 
 #
@@ -183,7 +183,7 @@ __C.TEST.THRESHOLD = 0.9
 #
 
 __C.DATASET_DIR = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), 'data', 'Aircraft')
+    os.path.abspath(__file__)), 'data', 'VRD')
 
 __C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(
     __file__)), 'data', 'wordvectors', 'GoogleNews-vectors-negative300.bin')
