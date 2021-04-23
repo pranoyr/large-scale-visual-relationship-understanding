@@ -34,7 +34,7 @@ from torchvision.ops import boxes as box_ops
 from dataset import get_training_data, get_validation_data
 
 from config import cfg
-from datasets.vrd import VRDDataset, collater
+from datasets.vrd import collater
 from modelling.model import FasterRCNN
 from opts import parse_opts
 from utils.util import AverageMeter, Metrics, ProgressMeter
