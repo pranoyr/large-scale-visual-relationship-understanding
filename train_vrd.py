@@ -86,9 +86,11 @@ def load_train_utils(opt, optimizer, scheduler):
 
 
 def save_model(model, optimizer, scheduler, step):
+    """ Saving model and train_utils 
+    """
     state = {'step': step, 'state_dict': model.state_dict(
     ), 'optimizer_state_dict': optimizer.state_dict(),
-    'scheduler_state_dict': scheduler.state_dict()
+        'scheduler_state_dict': scheduler.state_dict()
     }
     torch.save(state, os.path.join(
         'snapshots', f'large_scale_vrd_model.pth'))
@@ -246,8 +248,10 @@ def main_worker():
              # write summary
             summary_writer.log_metrics(train_losses, val_losses, step, lr)
 
-            print(f"* Average training loss : {train_losses['total_loss']:.3f}")
-            print(f"* Average validation loss : {val_losses['total_loss']:.3f}")
+            print(
+                f"* Average training loss : {train_losses['total_loss']:.3f}")
+            print(
+                f"* Average validation loss : {val_losses['total_loss']:.3f}")
 
             losses_sbj.reset()
             losses_obj.reset()
