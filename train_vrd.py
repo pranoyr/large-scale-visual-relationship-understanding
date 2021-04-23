@@ -239,10 +239,10 @@ def main_worker():
                 scheduler.step(val_losses['total_loss'])
             lr = optimizer.param_groups[0]['lr']
 
-            if train_losses['total_loss'] < th:
+            if val_losses['total_loss'] < th:
                 save_model(faster_rcnn, optimizer, scheduler, step)
                 print(f"*** Saved model ***")
-                th = train_losses['total_loss']
+                th = val_losses['total_loss']
 
              # write summary
             summary_writer.log_metrics(train_losses, val_losses, step, lr)
