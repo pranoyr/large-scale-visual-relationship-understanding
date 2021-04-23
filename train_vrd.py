@@ -71,7 +71,7 @@ def load_from_ckpt(opt, model):
     """
     checkpoint = torch.load(opt.weight_path)
     model.load_state_dict(checkpoint['state_dict'])
-    print("** Loaded Model **")
+    print("** Loaded model **")
 
 
 def load_train_utils(opt, optimizer, scheduler):
@@ -81,7 +81,7 @@ def load_train_utils(opt, optimizer, scheduler):
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
     step = checkpoint['step'] + 1
-    print(" ** Loaded Optmizer and Scheduler ** ")
+    print(" ** Loaded optmizer and scheduler ** ")
     return step
 
 
