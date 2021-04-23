@@ -46,7 +46,7 @@ def val_epoch(model, dataloader):
 	losses_rel = AverageMeter('Loss', ':.4e')
 	losses_total = AverageMeter('Loss', ':.4e')
 
-	for i, data in enumerate(dataloader):
+	for _, data in enumerate(dataloader):
 		images, targets = data
 		with torch.no_grad():
 			_, metrics = model(images, targets)
