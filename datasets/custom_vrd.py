@@ -29,8 +29,8 @@ def one_hot_encode(integer_encoding, num_classes):
     return onehot_encoded
 
 
-class VRDDataset(Dataset):
-    """VRD dataset."""
+class CustomDataset(Dataset):
+    """Custom dataset."""
 
     def __init__(self, dataset_path, image_set):
         self.dataset_path = dataset_path

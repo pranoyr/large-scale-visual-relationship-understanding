@@ -31,6 +31,7 @@ from torchvision.models.detection.rpn import (AnchorGenerator,
                                               RegionProposalNetwork, RPNHead)
 from torchvision.models.resnet import resnet101
 from torchvision.ops import boxes as box_ops
+from dataset import get_training_data, get_validation_data
 
 from config import cfg
 from datasets.vrd import VRDDataset, collater
@@ -103,12 +104,12 @@ def main_worker():
     torch.manual_seed(seed)
 
     opt = parse_opts()
-    dataset_train = VRDDataset(cfg.DATASET_DIR, 'train')
-    dataset_val = VRDDataset(cfg.DATASET_DIR, 'test')
+    train_data = get_training_data(cfg)
+    val_data = get_validation_data(cfg)
     train_loader = DataLoader(
-        dataset_train, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=True)
+        train_data, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=True)
     val_loader = DataLoader(
-        dataset_val, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=False)
+        val_data, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=True)
 
     print(f"Training dataset size : {len(train_loader.dataset)}")
     print(f"Validation dataset size : {len(val_loader.dataset)}")

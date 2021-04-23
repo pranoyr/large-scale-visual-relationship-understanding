@@ -181,9 +181,9 @@ __C.TEST.THRESHOLD = 0.01
 #
 # Dataset, Word Vectors Directory
 #
-
+__C.DATASET = "VRD"
 __C.DATASET_DIR = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), 'data', 'VRD')
+    os.path.abspath(__file__)), 'data', __C.DATASET)
 
 __C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(
     __file__)), 'data', 'wordvectors', 'GoogleNews-vectors-negative300.bin')
