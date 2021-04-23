@@ -244,6 +244,11 @@ def main_worker():
             print(f"* Average training loss : {train_losses['total_loss']:.3f}")
             print(f"* Average validation loss : {val_losses['total_loss']:.3f}")
 
+            losses_sbj.reset()
+            losses_obj.reset()
+            losses_rel.reset()
+            losses_total.reset()
+
 
 if __name__ == "__main__":
     main_worker()
