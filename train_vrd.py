@@ -75,7 +75,7 @@ def load_from_ckpt(opt, model):
 
 
 def load_train_utils(opt, optimizer, scheduler):
-    """ loading optmizer 
+    """ loading optmizer, scheduler
     """
     checkpoint = torch.load(opt.weight_path)
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
