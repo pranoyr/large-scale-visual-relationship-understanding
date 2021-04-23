@@ -91,19 +91,12 @@ class VRDDataset(Dataset):
 			gt_sbj_bbox, gt_obj_bbox = ast.literal_eval(spo[1]), ast.literal_eval(spo[4])
 			predicate = spo[2]
 
-			if gt_sbj_label=="person" or gt_obj_label=="person":
-    				continue
-			# print(gt_sbj_label, predicate, gt_obj_label )
-
+			# if gt_sbj_label=="person" or gt_obj_label=="person":
+    		# 		continue
 			# prepare bboxes for subject and object
 			boxes.append([gt_sbj_bbox, gt_obj_bbox])
 
-			# prepare labels for subject and object
-			# map to word
-			# gt_sbj_label = self.all_objects[gt_sbj_label]
-			# gt_obj_label = self.all_objects[gt_obj_label]
-			# predicate = self.predicates[predicate]
-			# map to new index
+			# Map to index
 			labels.append([self._class_to_ind[gt_sbj_label],
 						   self._class_to_ind[gt_obj_label]])
 			preds.append(self._preds_to_ind[predicate])
