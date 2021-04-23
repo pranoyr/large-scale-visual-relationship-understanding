@@ -41,7 +41,6 @@ class VRDDataset(Dataset):
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
 			self.predicates = json.load(f)
 
-
 		self.classes = self.all_objects.copy()
 		self.preds = self.predicates.copy()
 		self.classes.insert(0, '__background__')
