@@ -189,7 +189,7 @@ def main_worker():
     # lr of non-backbone parameters, for commmand line outputs.
     lr = optimizer.param_groups[2]['lr']
     # lr of backbone parameters, for commmand line outputs.
-    backbone_lr = optimizer.param_groups[0]['lr']
+    # backbone_lr = optimizer.param_groups[0]['lr']
 
     summary_writer = Metrics(log_dir='tf_logs')
 
