@@ -98,7 +98,7 @@ class VRDDataset(Dataset):
             # prepare bboxes for subject and object
             boxes.append([gt_sbj_bbox, gt_obj_bbox])
 
-            # Map to index
+            # map to index
             labels.append([self._class_to_ind[gt_sbj_label],
                            self._class_to_ind[gt_obj_label]])
             preds.append(self._preds_to_ind[predicate])
