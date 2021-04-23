@@ -15,6 +15,8 @@ def parse_opts():
 						help='number of iterations')
 	parser.add_argument('--scheduler', type=str, default="plateau",
 						help='number of epochs')
+	parser.add_argument('--begin_iter', type=int, default=1,
+						help='starting iteration')
 	args = parser.parse_args()
 
 	return args

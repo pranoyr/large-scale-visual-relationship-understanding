@@ -71,20 +71,25 @@ def load_from_ckpt(opt, model):
     """
     checkpoint = torch.load(opt.weight_path)
     model.load_state_dict(checkpoint['state_dict'])
-    print("Loaded Model ...")
+    print("** Loaded Model **")
 
 
-def load_optmizer(opt, optimizer):
+def load_train_utils(opt, optimizer, scheduler):
     """ loading optmizer 
     """
     checkpoint = torch.load(opt.weight_path)
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    print("Loaded Optimizer ...")
+    scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+    step = checkpoint['step'] + 1
+    print(" ** Loaded Optmizer and Scheduler ** ")
+    return step
 
 
-def save_model(model, optimizer, step):
+def save_model(model, optimizer, scheduler, step):
     state = {'step': step, 'state_dict': model.state_dict(
-    ), 'optimizer_state_dict': optimizer.state_dict()}
+    ), 'optimizer_state_dict': optimizer.state_dict(),
+    'scheduler_state_dict': scheduler.state_dict()
+    }
     torch.save(state, os.path.join(
         'snapshots', f'large_scale_vrd_model.pth'))
 
@@ -166,14 +171,6 @@ def main_worker():
     elif cfg.TRAIN.TYPE == "SGD":
         optimizer = torch.optim.SGD(params, momentum=cfg.TRAIN.MOMENTUM)
 
-    if opt.weight_path:
-        load_optmizer(opt, optimizer)
-
-    # lr of non-backbone parameters, for commmand line outputs.
-    lr = optimizer.param_groups[2]['lr']
-    # lr of backbone parameters, for commmand line outputs.
-    backbone_lr = optimizer.param_groups[0]['lr']
-
     # scheduler
     if opt.scheduler == "plateau":
         scheduler = lr_scheduler.ReduceLROnPlateau(
@@ -184,6 +181,14 @@ def main_worker():
     elif opt.scheduler == "step_lr":
         scheduler = lr_scheduler.StepLR(
             optimizer, step_size=5, gamma=0.1, last_epoch=-1)
+
+    if opt.weight_path:
+        opt.begin_iter = load_train_utils(opt, optimizer, scheduler)
+
+    # lr of non-backbone parameters, for commmand line outputs.
+    lr = optimizer.param_groups[2]['lr']
+    # lr of backbone parameters, for commmand line outputs.
+    backbone_lr = optimizer.param_groups[0]['lr']
 
     summary_writer = Metrics(log_dir='tf_logs')
 
@@ -196,7 +201,7 @@ def main_worker():
 
     faster_rcnn.train()
     th = 10000
-    for step in range(1, opt.max_iter):
+    for step in range(opt.begin_iter, opt.max_iter):
         try:
             input_data = next(dataiterator)
         except StopIteration:
@@ -234,8 +239,8 @@ def main_worker():
             lr = optimizer.param_groups[0]['lr']
 
             if train_losses['total_loss'] < th:
-                save_model(faster_rcnn, optimizer, step)
-                print(f"Saved model")
+                save_model(faster_rcnn, optimizer, scheduler, step)
+                print(f"*** Saved model ***")
                 th = train_losses['total_loss']
 
              # write summary
