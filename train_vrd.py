@@ -124,9 +124,7 @@ def main_worker():
     faster_rcnn.to(cfg.DEVICE)
 
     lr = cfg.TRAIN.LEARNING_RATE
-    #tr_momentum = cfg.TRAIN.MOMENTUM
-    #tr_momentum = args.momentum
-
+    
     ### Optimizer ###
     # record backbone params, i.e., conv_body and box_head params
     backbone_bias_params = []
