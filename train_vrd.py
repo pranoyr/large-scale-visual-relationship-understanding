@@ -67,7 +67,7 @@ def val_epoch(model, dataloader):
 
 
 def load_from_ckpt(opt, model):
-    """ Loading model from checkpoint
+    """ Loading model from checkpoint.
     """
     checkpoint = torch.load(opt.weight_path)
     model.load_state_dict(checkpoint['state_dict'])
@@ -75,7 +75,7 @@ def load_from_ckpt(opt, model):
 
 
 def load_train_utils(opt, optimizer, scheduler):
-    """ loading optmizer, scheduler
+    """ loading optmizer, scheduler.
     """
     checkpoint = torch.load(opt.weight_path)
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -86,7 +86,7 @@ def load_train_utils(opt, optimizer, scheduler):
 
 
 def save_model(model, optimizer, scheduler, step):
-    """ Saving model and train_utils 
+    """ Saving model and train_utils.
     """
     state = {'step': step, 'state_dict': model.state_dict(
     ), 'optimizer_state_dict': optimizer.state_dict(),
