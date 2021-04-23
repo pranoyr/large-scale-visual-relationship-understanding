@@ -133,11 +133,3 @@ def collater(data):
 	for i, s in enumerate(data):
 			annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
 	return imgs, annotations
-
-
-if __name__=='__main__':
-	dataset = pd.read_csv("/Users/pranoyr/Downloads/Visual-Relationshiop-Detection-Annotation-tool-master/demo/vrd/test.csv")
-	dataset = dataset.values.tolist()
-	res = ast.literal_eval(dataset[0][1])
-
-
