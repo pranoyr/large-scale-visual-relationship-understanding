@@ -88,45 +88,19 @@ class RoIHeads(torch.nn.Module):
 		for sbj_proposals_in_image, obj_proposals_in_image, gt_boxes_in_image, gt_labels_in_image, \
 				gt_preds_in_image in zip(sbj_proposals, obj_proposals, gt_boxes, gt_labels, gt_preds):
 
-			# if gt_preds_in_image.numel() == 0:
-			# 	# Background image
-			# 	device = sbj_proposals_in_image.device
-			# 	clamped_sbj_matched_idxs_in_image = torch.zeros(
-			# 		(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
-			# 	)
-			# 	labels_in_image = torch.zeros(
-			# 		(sbj_proposals_in_image.shape[0],), dtype=torch.int64, device=device
-			# 	)
-			# else:
-			# set to self.box_similarity when https://github.com/pytorch/pytorch/issues/27495 lands
-
-
-			# remove dulplicates for sbj and obj gts
+			# Remove dulplicates for sbj and obj gths
 			gt_sbj_boxes_in_image = torch.unique(gt_boxes_in_image[:, 0, :], dim=0)
 			gt_obj_boxes_in_image = torch.unique(gt_boxes_in_image[:, 1, :], dim=0)
 			
-
 			sbj_match_quality_matrix = box_ops.box_iou(
 				gt_sbj_boxes_in_image, sbj_proposals_in_image)
 			obj_match_quality_matrix = box_ops.box_iou(
 				gt_obj_boxes_in_image, obj_proposals_in_image)
-
-			# # Label background (below the low threshold)
-			# bg_inds = matched_idxs_in_image == self.proposal_matcher.BELOW_LOW_THRESHOLD
-			# labels_in_image[bg_inds] = 0
-
-
 			sbj_matched_idxs_in_image = self.proposal_matcher(
 				sbj_match_quality_matrix)
 			obj_matched_idxs_in_image = self.proposal_matcher(
 				obj_match_quality_matrix)
 
-			# sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
-			#     min=0)
-			# obj_matched_idxs_in_image = obj_matched_idxs_in_image.clamp(
-			#     min=0)
-
-			# a = torch.where(torch.all(x == torch.tensor([[1,2,3]]), dim=1)) 
 			sbj_boxes = gt_sbj_boxes_in_image[sbj_matched_idxs_in_image]
 			obj_boxes = gt_obj_boxes_in_image[obj_matched_idxs_in_image]
 			labels_in_image = torch.zeros(sbj_boxes.shape[0])
@@ -136,33 +110,6 @@ class RoIHeads(torch.nn.Module):
 				matched_idx = np.intersect1d(sbj_indices.cpu().numpy(), obj_indices.cpu().numpy())
 				if matched_idx.any():
 					labels_in_image[i] = gt_preds_in_image[matched_idx[0]]
-
-			# print(gt_boxes_in_image[:, 0, :].shape)
-			# print(gt_sbj_boxes_in_image.shape)
-			# print(gt_boxes_in_image[:, 1, :].shape)
-			# print(gt_obj_boxes_in_image.shape)
-
-			# print(gt_boxes_in_image[:, 0, :])
-			# print("***")
-			# print(sbj_boxes
-
-			# sbj_indices = [torch.where(torch.all(gt_boxes_in_image[:, 0, :] == x, dim=1))[0].item() for x in sbj_boxes]  
-			# obj_indices = [torch.where(torch.all(gt_boxes_in_image[:, 1, :] == x, dim=1))[0].item() for x in obj_boxes] 
-			# sbj_indices = torch.tensor(sbj_indices)
-			# obj_indices = torch.tensor(obj_indices)
-
-			# mask = sbj_indices == obj_indices
-			# sbj_indices[~mask]=0
-			# labels_in_image = gt_preds_in_image[sbj_indices]
-			
-			# sbj_matched_idxs_in_image[sbj_matched_idxs_in_image !=
-			#                           obj_matched_idxs_in_image] = -1
-			# clamped_sbj_matched_idxs_in_image = sbj_matched_idxs_in_image.clamp(
-			#     min=0)
-
-			# labels_in_image = gt_preds_in_image[clamped_sbj_matched_idxs_in_image]
-			# bg_inds = sbj_matched_idxs_in_image == -1
-			# labels_in_image[bg_inds] = 0
 
 			labels_in_image = labels_in_image.to(dtype=torch.int64, device=torch.device(cfg.DEVICE))
 			labels.append(labels_in_image)
