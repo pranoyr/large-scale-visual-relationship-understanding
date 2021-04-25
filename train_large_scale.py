@@ -123,6 +123,9 @@ def main_worker():
         load_from_ckpt(opt, faster_rcnn)
     faster_rcnn.to(cfg.DEVICE)
 
+    if opt.lr is not None:
+        cfg.TRAIN.LEARNING_RATE = opt.lr
+        print(f"Learning rate : {cfg.TRAIN.LEARNING_RATE}")
     lr = cfg.TRAIN.LEARNING_RATE
     
     ### Optimizer ###
