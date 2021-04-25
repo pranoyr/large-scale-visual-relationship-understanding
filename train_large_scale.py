@@ -224,6 +224,9 @@ def main_worker():
         losses_rel.update(metrics["loss_rlp"].item(), len(images))
         losses_total.update(final_loss.item(), len(images))
 
+        if opt.scheduler != "plateau":
+                scheduler.step()
+
         if (step) % 10 == 0:
             progress.display(step)
 
@@ -237,6 +240,7 @@ def main_worker():
 
             if opt.scheduler == "plateau":
                 scheduler.step(val_losses['total_loss'])
+
             lr = optimizer.param_groups[0]['lr']
 
             if val_losses['total_loss'] < th:

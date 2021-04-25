@@ -233,7 +233,7 @@ def main_worker():
 			train_losses['sbj_loss'] = losses_sbj.avg
 			train_losses['obj_loss'] = losses_obj.avg
 			train_losses['rel_loss'] = losses_rel.avg
-			val_losses = val_epoch(faster_rcnn, val_loader)
+			# val_losses = val_epoch(faster_rcnn, val_loader)
 
 			# if opt.scheduler == "plateau":
 			# 	scheduler.step(val_losses['total_loss'])
