@@ -9,7 +9,7 @@ def parse_opts():
 						help='input image path')
 	parser.add_argument('--batch_size', type=int, default=2,
 						help='batch size')
-	parser.add_argument('--lr', type=int,
+	parser.add_argument('--lr', type=float,
 						help='learning rate')
 	parser.add_argument('--num_workers', type=int, default=0,
 						help='number of workers for data loaders')
