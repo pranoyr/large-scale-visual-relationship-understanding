@@ -125,8 +125,8 @@ def main_worker():
 
     if opt.lr is not None:
         cfg.TRAIN.LEARNING_RATE = opt.lr
-        print(f"Learning rate : {cfg.TRAIN.LEARNING_RATE}")
     lr = cfg.TRAIN.LEARNING_RATE
+    print(f"Learning rate : {cfg.TRAIN.LEARNING_RATE}")
     
     ### Optimizer ###
     # record backbone params, i.e., conv_body and box_head params
