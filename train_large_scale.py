@@ -186,8 +186,8 @@ def main_worker():
         scheduler = lr_scheduler.StepLR(
             optimizer, step_size=5, gamma=0.1, last_epoch=-1)
 
-    # if opt.weight_path:
-    #     opt.begin_iter = load_train_utils(opt, optimizer, scheduler)
+    if opt.weight_path:
+        opt.begin_iter = load_train_utils(opt, optimizer, scheduler)
 
     # lr of non-backbone parameters, for commmand line outputs.
     lr = optimizer.param_groups[2]['lr']
