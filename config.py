@@ -181,7 +181,7 @@ __C.TEST.THRESHOLD = 0.05
 #
 # Dataset, Word Vectors Directory
 #
-__C.DATASET = "VRD"
+__C.DATASET = "Aircraft"
 __C.DATASET_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'data', __C.DATASET)
 
