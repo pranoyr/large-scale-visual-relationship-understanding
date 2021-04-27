@@ -80,6 +80,8 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
     sbj = objects[sbj_label]
     obj = objects[obj_label]
     pred = predicates[pred]
+    if obj!="aeroplane":
+        continue
     print(sbj, pred, obj)
 
     color = list(np.random.random(size=3) * 256)
