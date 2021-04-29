@@ -42,6 +42,7 @@ with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'predicates.json'), 'r')
     predicates = json.load(f)
 predicates.insert(0, 'unknown')
 
+cfg.DEVICE = "cpu"
 faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 
 # load pretrained weights

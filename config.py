@@ -21,7 +21,7 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
-__C.DEVICE = 'cuda'
+__C.DEVICE = 'cuda:1'
 
 #
 # Training options
@@ -175,15 +175,15 @@ __C.RPN.POSITIVE_FRACTION = 0.5
 #
 
 __C.TEST = AttrDict()
-__C.TEST.THRESHOLD = 0.3
+__C.TEST.THRESHOLD = 0.5
 
 
 #
 # Dataset, Word Vectors Directory
 #
-
+__C.DATASET = "Aircraft"
 __C.DATASET_DIR = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), 'data', 'VRD')
+    os.path.abspath(__file__)), 'data', __C.DATASET)
 
 __C.WORD_VECTORS_DIR = os.path.join(os.path.dirname(os.path.abspath(
     __file__)), 'data', 'wordvectors', 'GoogleNews-vectors-negative300.bin')
