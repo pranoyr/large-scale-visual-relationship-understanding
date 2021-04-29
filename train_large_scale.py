@@ -44,11 +44,7 @@ def val_epoch(model, dataloader):
     losses_rel = AverageMeter('Loss', ':.4e')
     losses_total = AverageMeter('Loss', ':.4e')
 
-<<<<<<< HEAD
-    for i, data in enumerate(dataloader):
-=======
     for _, data in enumerate(dataloader):
->>>>>>> vrd
         images, targets = data
         with torch.no_grad():
             _, metrics = model(images, targets)
@@ -183,7 +179,7 @@ def main_worker():
             optimizer, 'min', patience=5)
     elif opt.scheduler == "multi_step":
         scheduler = lr_scheduler.MultiStepLR(
-            optimizer, milestones=[20000, 60000])
+            optimizer, milestones=[83631, 111508])
     elif opt.scheduler == "step_lr":
         scheduler = lr_scheduler.StepLR(
             optimizer, step_size=5, gamma=0.1, last_epoch=-1)
