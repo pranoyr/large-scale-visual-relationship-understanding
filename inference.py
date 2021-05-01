@@ -104,5 +104,5 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
     set_text(pred,predicate_point)
 
 
-path = "./results/2.jpg"
+path = "./results/1.jpg"
 cv2.imwrite(path, draw)
