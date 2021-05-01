@@ -54,6 +54,7 @@ Visual Genome Dataset, VGG BackBone, Resnet 152
 
 ## Results
 ![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/1.jpg)
+![alt text](https://github.com/pranoyr/large-scale-visual-relationship-understanding/blob/master/results/2.jpg)
 
 * person wear shirt
 * person next to person
