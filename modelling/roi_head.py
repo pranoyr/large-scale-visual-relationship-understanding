@@ -215,6 +215,9 @@ class RoIHeads(torch.nn.Module):
 	def combine_labels(self, pos_sbj_labels, pos_obj_labels):
 		all_labels = []
 		for sbj_labels, obj_labels in zip(pos_sbj_labels, pos_obj_labels):
+    		print("***")
+			print(sbj_labels.shape)
+			print(obj_labels.shape)
 			all_labels.append(torch.cat([sbj_labels, obj_labels]))
 		return all_labels
 
