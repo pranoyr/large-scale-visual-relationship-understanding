@@ -212,6 +212,18 @@ class RoIHeads(torch.nn.Module):
 
 		return n_labels, n_props
 
+	def combine_labels(self, pos_sbj_labels, pos_obj_labels):
+		all_labels = []
+		for sbj_labels, obj_labels in zip(pos_sbj_labels, pos_obj_labels):
+			all_labels.append(torch.cat(sbj_labels, obj_labels))
+		return all_labels
+
+	def combine_boxes(self, pos_sbj_boxes, pos_obj_boxes):
+		all_boxes = []
+		for sbj_boxes, obj_boxes in zip(pos_sbj_boxes, pos_obj_boxes):
+			all_boxes.append(torch.cat(sbj_boxes, obj_boxes))
+		return all_boxes
+
 	def check_targets(self, targets):
 		# type: (Optional[List[Dict[str, Tensor]]]) -> None
 		assert targets is not None
@@ -287,9 +299,9 @@ class RoIHeads(torch.nn.Module):
 		pos_obj_labels, pos_obj_proposals = self.extract_positive_proposals(
 			obj_labels, obj_proposals)
 
-		all_labels = pos_sbj_labels + pos_obj_labels
-		all_proposals = pos_sbj_proposals + pos_obj_proposals
-
+		all_labels = self.combine_labels(pos_sbj_labels, pos_obj_labels)
+		all_proposals = self.combine_boxes(pos_sbj_proposals, pos_obj_proposals)
+		
 		# prepare relation proposals
 		rlp_proposals = []
 		for img_id in range(num_images):
