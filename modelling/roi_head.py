@@ -317,6 +317,8 @@ class RoIHeads(torch.nn.Module):
 			sbj_inds = np.repeat(np.arange(sbj_shape), obj_shape)
 			obj_inds = np.tile(np.arange(obj_shape), sbj_shape)
 
+			sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
+
 			pos_sbj_labels[img_id] = all_labels[img_id][sbj_inds]
 			pos_obj_labels[img_id] = all_labels[img_id][obj_inds]
 			pos_sbj_proposals[img_id] = all_proposals[img_id][sbj_inds]
