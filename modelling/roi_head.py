@@ -221,7 +221,7 @@ class RoIHeads(torch.nn.Module):
 	def combine_boxes(self, pos_sbj_boxes, pos_obj_boxes):
 		all_boxes = []
 		for sbj_boxes, obj_boxes in zip(pos_sbj_boxes, pos_obj_boxes):
-    		print("***")
+			print("***")
 			print(sbj_boxes.shape)
 			print(obj_boxes.shape)
 			print(torch.cat([sbj_boxes, obj_boxes]).shape)
