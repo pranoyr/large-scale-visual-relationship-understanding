@@ -325,6 +325,11 @@ class RoIHeads(torch.nn.Module):
 		data_obj = {'proposals': pos_obj_proposals, 'labels': pos_obj_labels}
 		data_rlp = {'proposals': rlp_proposals, 'labels': rlp_labels}
 
+		print(pos_sbj_proposals.shape)
+		print(pos_obj_proposals.shape)
+		print(rlp_proposals.shape)
+
+
 		return all_proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp
 
 	def postprocess_detections(self,
