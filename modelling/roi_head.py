@@ -287,18 +287,21 @@ class RoIHeads(torch.nn.Module):
 		pos_obj_labels, pos_obj_proposals = self.extract_positive_proposals(
 			obj_labels, obj_proposals)
 
+		all_labels = pos_sbj_labels + pos_obj_labels
+		all_proposals = pos_sbj_proposals + pos_obj_proposals
+
 		# prepare relation proposals
 		rlp_proposals = []
 		for img_id in range(num_images):
-			sbj_shape = pos_sbj_labels[img_id].shape[0]
-			obj_shape = pos_obj_labels[img_id].shape[0]
+			sbj_shape = all_labels[img_id].shape[0]
+			obj_shape = all_labels[img_id].shape[0]
 			sbj_inds = np.repeat(np.arange(sbj_shape), obj_shape)
 			obj_inds = np.tile(np.arange(obj_shape), sbj_shape)
 
-			pos_sbj_labels[img_id] = pos_sbj_labels[img_id][sbj_inds]
-			pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
-			pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][sbj_inds]
-			pos_obj_proposals[img_id] = pos_obj_proposals[img_id][obj_inds]
+			pos_sbj_labels[img_id] = all_labels[img_id][sbj_inds]
+			pos_obj_labels[img_id] = all_labels[img_id][obj_inds]
+			pos_sbj_proposals[img_id] = all_proposals[img_id][sbj_inds]
+			pos_obj_proposals[img_id] = all_proposals[img_id][obj_inds]
 
 			rlp_proposals.append(box_utils.boxes_union(
 				pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
@@ -322,9 +325,9 @@ class RoIHeads(torch.nn.Module):
 		data_obj = {'proposals': pos_obj_proposals, 'labels': pos_obj_labels}
 		data_rlp = {'proposals': rlp_proposals, 'labels': rlp_labels}
 
-		print(pos_sbj_proposals[0].shape)
-		print(pos_obj_proposals[0].shape)
-		print(rlp_proposals[0].shape)
+		print(pos_sbj_proposals[1].shape)
+		print(pos_obj_proposals[1].shape)
+		print(rlp_proposals[1].shape)
 
 
 		return all_proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp
