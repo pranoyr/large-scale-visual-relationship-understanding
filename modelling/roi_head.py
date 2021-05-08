@@ -215,6 +215,9 @@ class RoIHeads(torch.nn.Module):
 	def combine_labels(self, pos_sbj_labels, pos_obj_labels):
 		all_labels = []
 		for sbj_labels, obj_labels in zip(pos_sbj_labels, pos_obj_labels):
+    		print("***")
+    		print(sbj_labels.shape)
+			print(obj_labels.shape)
 			all_labels.append(torch.cat([sbj_labels, obj_labels]))
 		return all_labels
 
@@ -337,9 +340,9 @@ class RoIHeads(torch.nn.Module):
 		data_obj = {'proposals': pos_obj_proposals, 'labels': pos_obj_labels}
 		data_rlp = {'proposals': rlp_proposals, 'labels': rlp_labels}
 
-		print(pos_sbj_proposals[1].shape)
-		print(pos_obj_proposals[1].shape)
-		print(rlp_proposals[1].shape)
+		print(pos_sbj_proposals[0].shape)
+		print(pos_obj_proposals[0].shape)
+		print(rlp_proposals[0].shape)
 
 
 		return all_proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp
