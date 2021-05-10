@@ -76,13 +76,13 @@ class FasterRCNN(nn.Module):
             assert len(val) == 2
             original_image_sizes.append((val[0], val[1]))
 
-        if self.training:
+        if targets:
             targets = self.flatten_targets(targets)
         images, targets = self.transform(images, targets)
 
         fpn_feature_maps = self.fpn(images.tensors.to(cfg.DEVICE))
 
-        if self.training:
+        if targets:
             proposals, rpn_losses, fpn_feature_maps = self.rpn(
                 images, fpn_feature_maps, targets)
             targets = self.unflatten_targets(targets)

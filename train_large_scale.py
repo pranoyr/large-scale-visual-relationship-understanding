@@ -39,6 +39,7 @@ from utils.util import AverageMeter, Metrics, ProgressMeter
 
 
 def val_epoch(model, dataloader):
+    model.eval()
     losses_sbj = AverageMeter('Loss', ':.4e')
     losses_obj = AverageMeter('Loss', ':.4e')
     losses_rel = AverageMeter('Loss', ':.4e')
@@ -231,37 +232,38 @@ def main_worker():
         if (step) % 10 == 0:
             progress.display(step)
 
-        if step % 2500 == 0:
+        if step % 10 == 0:
             train_losses = {}
             train_losses['total_loss'] = losses_total.avg
             train_losses['sbj_loss'] = losses_sbj.avg
             train_losses['obj_loss'] = losses_obj.avg
             train_losses['rel_loss'] = losses_rel.avg
-            # val_losses = val_epoch(faster_rcnn, val_loader)
+            val_losses = val_epoch(faster_rcnn, val_loader)
 
-            # if opt.scheduler == "plateau":
-            #     scheduler.step(val_losses['total_loss'])
+            if opt.scheduler == "plateau":
+                scheduler.step(val_losses['total_loss'])
 
-            # lr = optimizer.param_groups[0]['lr']
+            lr = optimizer.param_groups[0]['lr']
 
-            # if val_losses['total_loss'] < th:
-            #     save_model(faster_rcnn, optimizer, scheduler, step)
-            #     print(f"*** Saved model ***")
-            #     th = val_losses['total_loss']
+            if val_losses['total_loss'] < th:
+                save_model(faster_rcnn, optimizer, scheduler, step)
+                print(f"*** Saved model ***")
+                th = val_losses['total_loss']
             save_model(faster_rcnn, optimizer, scheduler, step)
 
-            # # write summary
-            # summary_writer.log_metrics(train_losses, val_losses, step, lr)
+            # write summary
+            summary_writer.log_metrics(train_losses, val_losses, step, lr)
 
             print(
                 f"* Average training loss : {train_losses['total_loss']:.3f}")
-            # print(
-            #     f"* Average validation loss : {val_losses['total_loss']:.3f}")
+            print(
+                f"* Average validation loss : {val_losses['total_loss']:.3f}")
 
             losses_sbj.reset()
             losses_obj.reset()
             losses_rel.reset()
             losses_total.reset()
+            faster_rcnn.train()
 
 
 if __name__ == "__main__":

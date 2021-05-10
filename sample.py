@@ -101,3 +101,8 @@ if a.any():
 
 # print(torch.unique(sbj, dim=0))
 
+
+a = None
+
+if not a:
+    print("$@#$")
