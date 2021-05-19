@@ -94,7 +94,6 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
 		in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
 	sbj = objects[sbj_label]
 	obj = objects[obj_label]
-	print(pred)
 	pred = predicates[pred]
 	print(sbj, pred, obj)
 	color = list(np.random.random(size=3) * 256)
