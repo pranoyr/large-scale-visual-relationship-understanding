@@ -1,4 +1,3 @@
-
 import json
 import os
 import random
@@ -71,7 +70,7 @@ im = Image.open(opt.image_path)
 img = np.array(im)
 draw = img.copy()
 draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
-draw_objects = draw.copy()
+draw_objects = draw_rlp.copy()
 im = transform(im)
 
 with torch.no_grad():
