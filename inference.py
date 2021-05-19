@@ -17,18 +17,14 @@ from modelling.model import FasterRCNN
 from opts import parse_opts
 
 
-def draw_boxes(img, box, label, blk, blk1, _ind_to_class):
+def draw_boxes(img, box, label, _ind_to_class):
 	cv2.rectangle(img, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (0, 255, 0), 2)
 	text =  f"{_ind_to_class[int(label)]}"
-	text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, thickness=1)[0]
 	coord = (int(box[0])+3, int(box[1])+7+10)
-	cv2.rectangle(blk, (coord[0]-1, coord[1]-15), (coord[0]+text_size[0]+1, coord[1]+text_size[1]-4), (0, 255, 0), cv2.FILLED)
-	cv2.rectangle(blk1, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (0, 100, 0), cv2.FILLED)
-	img = cv2.addWeighted(img, 1.0, blk, 0.25, 1)
-	img = cv2.addWeighted(img, 1.0, blk1, 0.25, 1)
 	cv2.putText(img, text, coord, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+	return img
 	
-def set_text(text,text_pos):
+def set_text(draw, text, text_pos):
 	font = cv2.FONT_HERSHEY_SIMPLEX
 	lineThickness = 1
 	font_size = 0.5
@@ -74,7 +70,7 @@ transform = transforms.Compose([
 im = Image.open(opt.image_path)
 img = np.array(im)
 draw = img.copy()
-draw = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
+draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
 draw_objects = draw.copy()
 im = transform(im)
 
@@ -105,23 +101,17 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
 				 int((sbj_box[1].item() + sbj_box[3].item())/2))
 	centr_obj = (int((obj_box[0].item() + obj_box[2].item())/2),
 				 int((obj_box[1].item() + obj_box[3].item())/2))
-	set_text(sbj,centr_sub)
-	set_text(obj,centr_obj)
+	set_text(draw_rlp, sbj,centr_sub)
+	set_text(draw_rlp, obj,centr_obj)
 	# draw line conencting sbj and obj
-	cv2.line(draw, centr_sub, centr_obj, color, thickness=2)
+	cv2.line(draw_rlp, centr_sub, centr_obj, color, thickness=2)
 	predicate_point = (
 		int((centr_sub[0] + centr_obj[0])/2), int((centr_sub[1] + centr_obj[1])/2))
-	set_text(pred,predicate_point)
-path = f"./results/rel_{opt.image_path}"
-cv2.imwrite(path, draw)
+	set_text(draw_rlp, pred, predicate_point)
+path = f"./results/rel-{opt.image_path.split('/')[-1]}"
+cv2.imwrite(path, draw_rlp)
 
-
-blk   = np.zeros(draw_objects.shape, np.uint8)
-blk1 = blk.copy()
 for bbox, label in zip(boxes, labels):
-	sbj = objects[sbj_label]
-	obj = objects[obj_label]
-	pred = predicates[pred]
-	draw_boxes(draw_objects, bbox, label, blk, blk1, _ind_to_class)
-path = f"./results/objs_{opt.image_path}"
+	draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
+path = f"./results/objs-{opt.image_path.split('/')[-1]}"
 cv2.imwrite(path, draw_objects)
