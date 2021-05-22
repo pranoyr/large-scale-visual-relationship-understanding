@@ -13,22 +13,6 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms, utils
 
 
-def y1y2x1x2_to_x1y1x2y2(y1y2x1x2):
-    x1 = y1y2x1x2[2]
-    y1 = y1y2x1x2[0]
-    x2 = y1y2x1x2[3]
-    y2 = y1y2x1x2[1]
-    return [x1, y1, x2, y2]
-
-
-def one_hot_encode(integer_encoding, num_classes):
-    """ One hot encode.
-    """
-    onehot_encoded = [0 for _ in range(num_classes)]
-    onehot_encoded[integer_encoding] = 1
-    return onehot_encoded
-
-
 class CustomDataset(Dataset):
     """Custom dataset."""
 
