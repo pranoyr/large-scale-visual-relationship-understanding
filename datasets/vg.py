@@ -14,6 +14,7 @@ def load_annotations(index):
         try:
             gt_obj_label = spo['object']['names'][0]
         except:
+            print(spo)
             gt_obj_label = spo['object']['name']
         # gt_obj_bbox = spo['object']['bbox']
         predicate = spo['predicate']
