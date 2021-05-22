@@ -48,5 +48,5 @@ def __getitem__(index):
     # img = Image.open(img_path)
     # img = self.transform(img)
 for i in range(1000):
-    __getitem__(1)
+    __getitem__(i)
 	
