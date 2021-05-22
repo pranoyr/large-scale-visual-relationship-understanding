@@ -9,7 +9,6 @@ data = json.load(f)
 
 def load_annotations(index):
     for spo in data[index]['relationships']:
-        print(spo)
         gt_sbj_label = spo['subject']['name']
         # gt_sbj_bbox = spo['subject']['bbox']
         gt_obj_label = spo['object']['name']
@@ -42,7 +41,7 @@ def __getitem__(index):
     # img = self.transform(img)
 
 
-__getitem__(1)
+__getitem__(0)
 	
 
 
