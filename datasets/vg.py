@@ -9,7 +9,6 @@ data = json.load(f)
   
 # Iterating through the json
 # list
-print(data)
 for i in data:
     print(i)
     break
