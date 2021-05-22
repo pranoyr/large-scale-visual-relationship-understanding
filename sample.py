@@ -23,7 +23,7 @@ def load_annotations(index):
         # gt_obj_bbox = spo['object']['bbox']
         predicate = spo['predicate']
 
-        print(gt_sbj_label , predicate, gt_obj_label)
+        print(gt_sbj_label)
         # return(gt_sbj_label , predicate, gt_obj_label)
 
         # prepare bboxes for subject and object
