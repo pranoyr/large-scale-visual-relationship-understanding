@@ -24,7 +24,7 @@ def load_annotations(index):
         predicate = spo['predicate']
 
         print(gt_sbj_label , predicate, gt_obj_label)
-        return(gt_sbj_label , predicate, gt_obj_label)
+        # return(gt_sbj_label , predicate, gt_obj_label)
 
         # prepare bboxes for subject and object
         # gt_sbj_bbox = y1y2x1x2_to_x1y1x2y2(gt_sbj_bbox)
@@ -44,7 +44,7 @@ def load_annotations(index):
 
 def __getitem__(index):
     img_name = data[index]['image_id']
-    boxes, labels, preds = load_annotations(index)
+    load_annotations(index)
     # img_path = self.image_path_from_index(img_name)
     # img = Image.open(img_path)
     # img = self.transform(img)
