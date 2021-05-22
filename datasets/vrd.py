@@ -23,14 +23,6 @@ def y1y2x1x2_to_x1y1x2y2(y1y2x1x2):
 	return [x1, y1, x2, y2]
 
 
-def one_hot_encode(integer_encoding, num_classes):
-	""" One hot encode.
-	"""
-	onehot_encoded = [0 for _ in range(num_classes)]
-	onehot_encoded[integer_encoding] = 1
-	return onehot_encoded
-
-
 def make_image_list(dataset_path, type):
 	imgs_list = []
 	with open(os.path.join(dataset_path, 'json_dataset', f'annotations_{type}.json'), 'r') as f:
