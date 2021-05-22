@@ -12,7 +12,7 @@ def load_annotations(index):
         print(spo)
         gt_sbj_label = spo['subject']['name']
         # gt_sbj_bbox = spo['subject']['bbox']
-        gt_obj_label = spo['object']['names'][0]
+        gt_obj_label = spo['object']['name']
         # gt_obj_bbox = spo['object']['bbox']
         predicate = spo['predicate']
 
