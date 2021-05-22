@@ -12,11 +12,11 @@ def load_annotations(index):
         try:
             gt_sbj_label = spo['subject']['name']
         except:
-            gt_sbj_label = ' '.join(spo['subject']['names'])
+            gt_sbj_label = ''.join(spo['subject']['names'])
 
         # gt_sbj_bbox = spo['subject']['bbox']
         try:
-            gt_obj_label = ' '.join(spo['object']['names'][0])
+            gt_obj_label = ''.join(spo['object']['names'][0])
         except:
             gt_obj_label = spo['object']['name']
         # gt_obj_bbox = spo['object']['bbox']
