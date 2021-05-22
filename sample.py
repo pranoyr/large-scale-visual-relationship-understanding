@@ -52,5 +52,6 @@ def __getitem__(index):
     # img = self.transform(img)
 for i in range(len(data)):
     __getitem__(i)
-print(len(list(set(objects))))
-	
+data = list(set(objects))
+with open('data.json', 'w') as f:
+    json.dump(data, f)
