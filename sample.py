@@ -52,5 +52,5 @@ def __getitem__(index):
     # img = self.transform(img)
 for i in range(1000):
     __getitem__(i)
-    print(set(objects))
+print(set(objects))
 	
