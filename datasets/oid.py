@@ -1,3 +1,4 @@
+from _typeshed import OpenBinaryMode
 import json
 import os
 
@@ -13,6 +14,7 @@ from shapely.ops import cascaded_union
 from skimage import io, transform
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms, utils
+import pandas as pd
 
 
 def y1y2x1x2_to_x1y1x2y2(y1y2x1x2):
@@ -55,12 +57,14 @@ class OIDDataset(Dataset):
 		self.dataset_path = dataset_path
 		self.image_set = image_set
 		# read annotations file
-		with open(os.path.join(self.dataset_path, 'json_dataset', f'annotations_{self.image_set}.json'), 'r') as f:
-			self.annotations = json.load(f)
+        self.annotations = pd.read_csv(os.path.join(self.dataset_path, 'challenge-2018-train-vrd.csv'))
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'objects.json'), 'r') as f:
 			self.all_objects = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
 			self.predicates = json.load(f)
+
+        
+	    dataset = dataset.values.tolist()
 
 		self.root = os.path.join(
 			self.dataset_path, 'sg_dataset', f'sg_{self.image_set}_images')
@@ -149,3 +153,6 @@ def collater(data):
 	for i, s in enumerate(data):
     		annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
 	return imgs, annotations
+
+if __name__=='__main__'
+    dataset = OIDDataset()
