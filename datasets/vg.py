@@ -48,7 +48,7 @@ def __getitem__(index):
     # img = self.transform(img)
 
 
-__getitem__(0)
+__getitem__(1)
 	
 
 
