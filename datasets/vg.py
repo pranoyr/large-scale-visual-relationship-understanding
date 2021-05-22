@@ -9,7 +9,11 @@ data = json.load(f)
 
 def load_annotations(index):
     for spo in data[index]['relationships']:
-        gt_sbj_label = spo['subject']['name']
+        try:
+            gt_sbj_label = spo['subject']['name']
+        except:
+            gt_sbj_label = spo['subject']['names'][0]
+
         # gt_sbj_bbox = spo['subject']['bbox']
         try:
             gt_obj_label = spo['object']['names'][0]
