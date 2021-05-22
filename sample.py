@@ -50,7 +50,7 @@ def __getitem__(index):
     # img_path = self.image_path_from_index(img_name)
     # img = Image.open(img_path)
     # img = self.transform(img)
-for i in range(1000):
+for i in range(len(data)):
     __getitem__(i)
-print(set(objects))
+print(len(list(set(objects))))
 	
