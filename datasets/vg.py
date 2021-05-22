@@ -1,3 +1,5 @@
+import json
+
 # Opening JSON file
 f = open('/home/cyberdome/data/vg/relationships.json',)
   
