@@ -8,6 +8,7 @@ f = open('/home/cyberdome/data/vg/relationships.json')
 data = json.load(f)
 print(len(data))
 
+objects = []
 def load_annotations(index):
     for spo in data[index]['relationships']:
         try:
@@ -23,7 +24,8 @@ def load_annotations(index):
         # gt_obj_bbox = spo['object']['bbox']
         predicate = spo['predicate']
 
-        print(gt_sbj_label)
+        objects.append(gt_sbj_label)
+        objects.append(gt_obj_label)
         # return(gt_sbj_label , predicate, gt_obj_label)
 
         # prepare bboxes for subject and object
@@ -50,4 +52,5 @@ def __getitem__(index):
     # img = self.transform(img)
 for i in range(1000):
     __getitem__(i)
+    print(set(objects))
 	
