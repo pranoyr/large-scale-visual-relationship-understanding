@@ -6,6 +6,7 @@ f = open('/home/cyberdome/data/vg/relationships.json')
 # returns JSON object as 
 # a dictionary
 data = json.load(f)
+print(len(data))
 
 def load_annotations(index):
     for spo in data[index]['relationships']:
