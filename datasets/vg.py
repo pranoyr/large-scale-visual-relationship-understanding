@@ -8,7 +8,7 @@ f = open('/home/cyberdome/data/vg/relationships.json')
 data = json.load(f)
 
 def load_annotations(index):
-    for spo in data['relationships']:
+    for spo in data[index]['relationships']:
         gt_sbj_label = spo['subject']['name']
         # gt_sbj_bbox = spo['subject']['bbox']
         gt_obj_label = spo['object']['names'][0]
