@@ -22,15 +22,20 @@ def get_obj_prd_vecs():
 word2vec_model = get_obj_prd_vecs()
 
 
+
+
 import numpy.linalg as la
 def check_word_vector(obj_cat):
+    a = 0
     obj_words = obj_cat.split()
     for word in obj_words:
         try:
             raw_vec = word2vec_model[word]
             x = raw_vec / la.norm(raw_vec)
+            a = a + x
         except:
             return False
+        y = a/len(obj_words)
     return True
 
 # Opening JSON file
