@@ -32,7 +32,7 @@ def check_word_vector(obj_cat):
     return True
 
 # Opening JSON file
-f = open('/home/cyberdome/data/vg/relationships.json')
+f = open('./data/vg/relationships.json')
   
 # returns JSON object as 
 # a dictionary
