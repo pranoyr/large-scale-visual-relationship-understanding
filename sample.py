@@ -1,5 +1,36 @@
 import json
 from utils.boxes import xywh_to_xyxy
+import config as cfg
+import gensim
+
+
+def get_obj_prd_vecs():
+    word_vector_path = cfg.WORD_VECTORS_DIR
+    dataset_path = cfg.DATASET_DIR
+    word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(
+        word_vector_path, binary=True)
+    print('Word Embeddings loaded.')
+    # change everything into lowercase
+    all_keys = list(word2vec_model.vocab.keys())
+    for key in all_keys:
+        new_key = key.lower()
+        word2vec_model.vocab[new_key] = word2vec_model.vocab.pop(key)
+    print('Wiki words converted to lowercase.')
+    return word2vec_model
+
+
+word2vec_model = get_obj_prd_vecs()
+
+def check_word_vector(obj_cat):
+    obj_words = obj_cat.split()
+    for word in obj_words:
+        try:
+            raw_vec = word2vec_model[word]
+        except:
+            return False
+    return True
+
+
 # Opening JSON file
 f = open('/home/cyberdome/data/vg/relationships.json')
   
@@ -18,15 +49,16 @@ def load_annotations(index):
 
         # gt_sbj_bbox = spo['subject']['bbox']
         try:
-            gt_obj_label = ''.join(spo['object']['names'][0])
-            print(len(spo['object']['names']))
-        except:
             gt_obj_label = spo['object']['name']
+        except:
+            gt_obj_label = ''.join(spo['object']['names'][0])
         # gt_obj_bbox = spo['object']['bbox']
         predicate = spo['predicate']
 
-        objects.append(gt_sbj_label)
-        objects.append(gt_obj_label)
+        if check_word_vector(gt_sbj_label):
+            objects.append(gt_sbj_label)
+        if check_word_vector(gt_obj_label):
+            objects.append(gt_obj_label)
         # return(gt_sbj_label , predicate, gt_obj_label)
 
         # prepare bboxes for subject and object
