@@ -110,8 +110,6 @@ class VGDataset(Dataset):
 		boxes, labels, preds = self.load_annotation(index)
 		img = self.transform(img)
 
-		print(labels)
-		print(preds)
 		assert len(boxes) == len(
 			labels), "boxes and labels should be of equal length"
 
