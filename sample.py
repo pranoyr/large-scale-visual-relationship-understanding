@@ -87,7 +87,11 @@ def __getitem__(index):
     # img = self.transform(img)
 for i in range(len(data)):
     __getitem__(i)
-data = list(set(objects))
+objects = list(set(objects))
+predicates = list(set(predicates))
 print(len(data))
 with open('objects.json', 'w') as f:
-    json.dump(data, f)
+    json.dump(objects, f)
+
+with open('predicates.json', 'w') as f:
+    json.dump(predicates, f)
