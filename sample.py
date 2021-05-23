@@ -42,6 +42,7 @@ objects = []
 predicates = []
 def load_annotations(index):
     for spo in data[index]['relationships']:
+        print(spo)
         try:
             gt_sbj_label = spo['subject']['name']
         except:

@@ -17,23 +17,6 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms, utils
 
 
-def make_image_list(dataset_path, type):
-	imgs_list = []
-	with open(os.path.join(dataset_path, 'json_dataset', f'annotations_{type}.json'), 'r') as f:
-		annotations = json.load(f)
-	sg_images = os.listdir(os.path.join(
-		dataset_path, 'sg_dataset', f'sg_{type}_images'))
-
-	annotations_copy = annotations.copy()
-	for ann in annotations.items():
-		if(not annotations[ann[0]] or ann[0] not in sg_images):
-			annotations_copy.pop(ann[0])
-
-	for ann in annotations_copy.items():
-		imgs_list.append(ann[0])
-	return imgs_list
-
-
 class VGDataset(Dataset):
 	"""Visual Genome dataset."""
 
@@ -42,10 +25,14 @@ class VGDataset(Dataset):
 		self.image_set = image_set
 		# read annotations file
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'relationships.json'), 'r') as f:
-			self.rlps = json.load(f)
+			self.data = json.load(f)
+		with open(os.path.join(self.dataset_path, 'json_dataset','objects.json'), 'r') as f:
+			self.all_objects = json.load(f)
+		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
+			self.predicates = json.load(f)
 		
 		self.root = os.path.join(
-			self.dataset_path, 'sg_dataset', f'sg_{self.image_set}_images')
+			self.dataset_path, 'images')
 
 		self.classes = self.all_objects.copy()
 		self.preds = self.predicates.copy()
@@ -55,20 +42,18 @@ class VGDataset(Dataset):
 		self._class_to_ind = dict(zip(self.classes, range(len(self.classes))))
 		self._preds_to_ind = dict(
 			zip(self.preds, range(len(self.preds))))
-		self.imgs_list = make_image_list(self.dataset_path, self.image_set)
-
+		
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
 
 	def __len__(self):
-		return len(self.imgs_list)
+		return len(self.data)
 
 	def image_path_from_index(self, img_name):
 		"""
 		Construct an image path from the image's "index" identifier.
 		"""
-		image_path = os.path.join(self.dataset_path, 'sg_dataset', f'sg_{self.image_set}_images',
-								  img_name)
+		image_path = os.path.join(self.dataset_path, 'images', img_name)
 		assert os.path.exists(image_path), \
 			'Path does not exist: {}'.format(image_path)
 		return image_path
@@ -90,6 +75,20 @@ class VGDataset(Dataset):
 			gt_obj_bbox = spo['object']['bbox']
 			predicate = spo['predicate']
 
+			try:
+				gt_sbj_label = spo['subject']['name']
+			except:
+				gt_sbj_label = ''.join(spo['subject']['names'][0])
+			# gt_sbj_bbox = spo['subject']['bbox']
+
+			try:
+				gt_obj_label = spo['object']['name']
+			except:
+				gt_obj_label = ''.join(spo['object']['names'][0])
+			# gt_obj_bbox = spo['object']['bbox']
+
+			predicate = spo['predicate']
+
 			# prepare bboxes for subject and object
 			gt_sbj_bbox = y1y2x1x2_to_x1y1x2y2(gt_sbj_bbox)
 			gt_obj_bbox = y1y2x1x2_to_x1y1x2y2(gt_obj_bbox)
@@ -107,7 +106,7 @@ class VGDataset(Dataset):
 		return boxes, labels, preds
 
 	def __getitem__(self, index):
-		img_name = self.imgs_list[index]
+		img_name = self.data[index]['image_id']
 		boxes, labels, preds = self.load_pascal_annotation(img_name)
 		img_path = self.image_path_from_index(img_name)
 		img = Image.open(img_path)
@@ -129,7 +128,7 @@ def collater(data):
 	for i, s in enumerate(data):
 		annotations[i]['labels'] = s['labels'].to(cfg.DEVICE)
 	for i, s in enumerate(data):
-    		annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
+			annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
 	return imgs, annotations
 
 
