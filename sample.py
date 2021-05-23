@@ -1,6 +1,6 @@
 import json
 from utils.boxes import xywh_to_xyxy
-import config as cfg
+from config import cfg
 import gensim
 
 
