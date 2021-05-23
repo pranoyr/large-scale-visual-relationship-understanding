@@ -125,7 +125,7 @@ __C.BOX.BATCH_SIZE_PER_IMAGE = 512
 
 __C.BOX.POSITIVE_FRACTION = 0.25
 
-__C.BOX.NUM_CLASSES = 101
+__C.BOX.NUM_CLASSES = 56232
 
 
 #
@@ -181,7 +181,7 @@ __C.TEST.THRESHOLD = 0.5
 #
 # Dataset, Word Vectors Directory
 #
-__C.DATASET = "VRD"
+__C.DATASET = "VG"
 __C.DATASET_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'data', __C.DATASET)
 
