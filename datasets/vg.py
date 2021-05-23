@@ -15,6 +15,7 @@ from shapely.ops import cascaded_union
 from skimage import io, transform
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms, utils
+from utils.boxes import xywh_to_xyxy
 
 
 class VGDataset(Dataset):
@@ -26,23 +27,23 @@ class VGDataset(Dataset):
 		# read annotations file
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'relationships.json'), 'r') as f:
 			self.data = json.load(f)
-		with open(os.path.join(self.dataset_path, 'json_dataset','objects.json'), 'r') as f:
-			self.all_objects = json.load(f)
+		with open(os.path.join(self.dataset_path, 'json_dataset', 'objects.json'), 'r') as f:
+			all_objects = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
-			self.predicates = json.load(f)
-		
+			predicates = json.load(f)
+
 		self.root = os.path.join(
 			self.dataset_path, 'images')
 
-		self.classes = self.all_objects.copy()
-		self.preds = self.predicates.copy()
+		self.classes = all_objects.copy()
+		self.preds = predicates.copy()
 		self.classes.insert(0, '__background__')
 		self.preds.insert(0, 'unknown')
 
 		self._class_to_ind = dict(zip(self.classes, range(len(self.classes))))
 		self._preds_to_ind = dict(
 			zip(self.preds, range(len(self.preds))))
-		
+
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
 
@@ -79,27 +80,26 @@ class VGDataset(Dataset):
 				gt_sbj_label = spo['subject']['name']
 			except:
 				gt_sbj_label = ''.join(spo['subject']['names'][0])
-			# gt_sbj_bbox = spo['subject']['bbox']
+			gt_sbj_bbox = spo['subject']['x'], spo['subject']['y'], spo['subject']['w'], spo['subject']['h']
 
 			try:
 				gt_obj_label = spo['object']['name']
 			except:
 				gt_obj_label = ''.join(spo['object']['names'][0])
-			# gt_obj_bbox = spo['object']['bbox']
+			gt_obj_bbox = spo['object']['x'], spo['object']['y'], spo['object']['w'], spo['object']['h']
 
 			predicate = spo['predicate']
 
+			if (gt_sbj_label not in self.classes or gt_obj_label not in self.classes or predicate not in self.preds):
+				continue
+
 			# prepare bboxes for subject and object
-			gt_sbj_bbox = y1y2x1x2_to_x1y1x2y2(gt_sbj_bbox)
-			gt_obj_bbox = y1y2x1x2_to_x1y1x2y2(gt_obj_bbox)
+			gt_sbj_bbox = xywh_to_xyxy(gt_sbj_bbox)
+			gt_obj_bbox = xywh_to_xyxy(gt_obj_bbox)
 			boxes.append([gt_sbj_bbox, gt_obj_bbox])
 
 			# prepare labels for subject and object
-			# map to word
-			gt_sbj_label = self.all_objects[gt_sbj_label]
-			gt_obj_label = self.all_objects[gt_obj_label]
-			predicate = self.predicates[predicate]
-			# map to new index
+			# map to index
 			labels.append([self._class_to_ind[gt_sbj_label],
 						   self._class_to_ind[gt_obj_label]])
 			preds.append(self._preds_to_ind[predicate])
@@ -111,7 +111,7 @@ class VGDataset(Dataset):
 		img_path = self.image_path_from_index(img_name)
 		img = Image.open(img_path)
 		img = self.transform(img)
-	
+
 		assert len(boxes) == len(
 			labels), "boxes and labels should be of equal length"
 
@@ -128,8 +128,5 @@ def collater(data):
 	for i, s in enumerate(data):
 		annotations[i]['labels'] = s['labels'].to(cfg.DEVICE)
 	for i, s in enumerate(data):
-			annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
+		annotations[i]['preds'] = s['preds'].to(cfg.DEVICE)
 	return imgs, annotations
-
-
-
