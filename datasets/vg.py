@@ -60,7 +60,7 @@ class VGDataset(Dataset):
 			'Path does not exist: {}'.format(image_path)
 		return image_path
 
-	def load_pascal_annotation(self, index):
+	def load_annotation(self, index):
 		"""
 		Load image and bounding boxes info from XML file in the PASCAL VOC
 		format.
@@ -68,15 +68,7 @@ class VGDataset(Dataset):
 		boxes = []
 		labels = []
 		preds = []
-		# preds = []
-		annotation = self.annotations[index]
-		for spo in annotation:
-			gt_sbj_label = spo['subject']['category']
-			gt_sbj_bbox = spo['subject']['bbox']
-			gt_obj_label = spo['object']['category']
-			gt_obj_bbox = spo['object']['bbox']
-			predicate = spo['predicate']
-
+		for spo in self.data[index]['relationships']:
 			try:
 				gt_sbj_label = spo['subject']['name']
 			except:
@@ -108,9 +100,9 @@ class VGDataset(Dataset):
 
 	def __getitem__(self, index):
 		img_name = self.data[index]['image_id']
-		boxes, labels, preds = self.load_pascal_annotation(img_name)
 		img_path = self.image_path_from_index(img_name)
 		img = Image.open(img_path)
+		boxes, labels, preds = self.load_annotation(index)
 		img = self.transform(img)
 
 		assert len(boxes) == len(
