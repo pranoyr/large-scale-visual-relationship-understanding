@@ -26,6 +26,7 @@ def check_word_vector(obj_cat):
     for word in obj_words:
         try:
             raw_vec = word2vec_model[word]
+            print(raw_vec)
         except:
             return False
     return True
