@@ -45,10 +45,12 @@ class VGDataset(Dataset):
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
 
+		print("$#%#$%")
 		self.filter_data()
 	
 	def filter_data(self):
 		for index in range(len(self.data)):
+			print(index)
 			_ , _ , preds = self.load_annotation(index)
 			if len(preds) == 0:
 				self.data.pop(index)
