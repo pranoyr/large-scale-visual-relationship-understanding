@@ -86,5 +86,6 @@ def __getitem__(index):
 for i in range(len(data)):
     __getitem__(i)
 data = list(set(objects))
+print(len(data))
 with open('data.json', 'w') as f:
     json.dump(data, f)
