@@ -53,6 +53,7 @@ class VGDataset(Dataset):
 		for index in range(len(self.data)):
 			_ , _ , preds = self.load_annotation(index)
 			if len(preds) == 0:
+				print(index)
 				filtered_data.pop(index)
 		return filtered_data
 					
@@ -77,7 +78,6 @@ class VGDataset(Dataset):
 		labels = []
 		preds = []
 		for spo in self.data[index]['relationships']:
-			print(index)
 			try:
 				gt_sbj_label = spo['subject']['name']
 			except:
