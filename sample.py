@@ -39,6 +39,7 @@ data = json.load(f)
 print(len(data))
 
 objects = []
+predicates = []
 def load_annotations(index):
     for spo in data[index]['relationships']:
         try:
@@ -58,6 +59,8 @@ def load_annotations(index):
             objects.append(gt_sbj_label)
         if check_word_vector(gt_obj_label):
             objects.append(gt_obj_label)
+        if check_word_vector(predicate):
+            predicates.append(predicate)
         # return(gt_sbj_label , predicate, gt_obj_label)
 
         # prepare bboxes for subject and object
