@@ -26,7 +26,7 @@ class VGDataset(Dataset):
 		self.image_set = image_set
 		# read annotations file
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'relationships.json'), 'r') as f:
-			self.data = json.load(f)[:5000]
+			self.data = json.load(f)[:500]
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'objects.json'), 'r') as f:
 			self.all_objects_list = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
@@ -46,6 +46,7 @@ class VGDataset(Dataset):
 			transforms.ToTensor()])
 
 		self.filter_data()
+		print(len(self.data))
 	
 	def filter_data(self):
 		for index in range(len(self.data)):
