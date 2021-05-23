@@ -14,6 +14,7 @@ def load_annotations(index):
         try:
             gt_sbj_label = spo['subject']['name']
         except:
+            print(len(spo['subject']['names']))
             gt_sbj_label = ''.join(spo['subject']['names'][0])
 
         # gt_sbj_bbox = spo['subject']['bbox']
