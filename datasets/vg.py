@@ -45,14 +45,16 @@ class VGDataset(Dataset):
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
 
-		self.filter_data()
+		self.data = self.filter_data()
 		print(len(self.data))
 	
 	def filter_data(self):
+		filtered_data = self.data.copy()
 		for index in range(len(self.data)):
 			_ , _ , preds = self.load_annotation(index)
 			if len(preds) == 0:
-				self.data.pop(index)
+				filtered_data.pop(index)
+		return filtered_data
 					
 	def __len__(self):
 		return len(self.data)
