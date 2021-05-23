@@ -38,6 +38,7 @@ class VGDataset(Dataset):
 		self.classes = all_objects.copy()
 		self.preds = predicates.copy()
 		self.classes.insert(0, '__background__')
+		print(f"Total object classes {len(self.classes)}")
 		self.preds.insert(0, 'unknown')
 
 		self._class_to_ind = dict(zip(self.classes, range(len(self.classes))))
