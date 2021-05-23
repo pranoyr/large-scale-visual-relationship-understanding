@@ -28,26 +28,31 @@ class VGDataset(Dataset):
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'relationships.json'), 'r') as f:
 			self.data = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'objects.json'), 'r') as f:
-			all_objects = json.load(f)
+			self.all_objects_list = json.load(f)
 		with open(os.path.join(self.dataset_path, 'json_dataset', 'predicates.json'), 'r') as f:
-			predicates = json.load(f)
+			self.predicates_list = json.load(f)
 
 		self.root = os.path.join(
 			self.dataset_path, 'images')
 
-		self.classes = all_objects.copy()
-		self.preds = predicates.copy()
-		self.classes.insert(0, '__background__')
+		self.all_objects_list.insert(0, '__background__')
 		print(f"Total object classes {len(self.classes)}")
-		self.preds.insert(0, 'unknown')
+		self.predicates_list.insert(0, 'unknown')
 
-		self._class_to_ind = dict(zip(self.classes, range(len(self.classes))))
-		self._preds_to_ind = dict(
-			zip(self.preds, range(len(self.preds))))
+		self._class_to_ind = dict(zip(self.all_objects_list, range(len(self.all_objects_list))))
+		self._preds_to_ind = dict(zip(self.predicates_list, range(len(self.predicates_list))))
 
 		self.transform = transforms.Compose([
 			transforms.ToTensor()])
 
+		self.filter_data()
+	
+	def filter_data(self):
+		for index in range(len(self.data)):
+			_ , _ , preds = self.load_annotation(index)
+			if preds.shape[0] == 0:
+				self.data.pop(index)
+					
 	def __len__(self):
 		return len(self.data)
 
@@ -83,7 +88,7 @@ class VGDataset(Dataset):
 
 			predicate = spo['predicate']
 
-			if (gt_sbj_label not in self.classes or gt_obj_label not in self.classes or predicate not in self.preds):
+			if (gt_sbj_label not in self.all_objects_list or gt_obj_label not in self.all_objects_list or predicate not in self.predicates_list):
 				continue
 
 			# prepare bboxes for subject and object
