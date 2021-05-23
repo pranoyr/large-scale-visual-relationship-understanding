@@ -50,7 +50,7 @@ class VGDataset(Dataset):
 	def filter_data(self):
 		for index in range(len(self.data)):
 			_ , _ , preds = self.load_annotation(index)
-			if preds.shape[0] == 0:
+			if len(preds) == 0:
 				self.data.pop(index)
 					
 	def __len__(self):
