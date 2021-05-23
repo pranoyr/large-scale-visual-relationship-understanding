@@ -51,11 +51,11 @@ class VGDataset(Dataset):
 	def __len__(self):
 		return len(self.data)
 
-	def image_path_from_index(self, img_name):
+	def image_path_from_id(self, img_id):
 		"""
 		Construct an image path from the image's "index" identifier.
 		"""
-		image_path = os.path.join(self.dataset_path, 'images', img_name)
+		image_path = os.path.join(self.dataset_path, 'images', img_id, '.jpg')
 		assert os.path.exists(image_path), \
 			'Path does not exist: {}'.format(image_path)
 		return image_path
@@ -99,8 +99,8 @@ class VGDataset(Dataset):
 		return boxes, labels, preds
 
 	def __getitem__(self, index):
-		img_name = self.data[index]['image_id']
-		img_path = self.image_path_from_index(img_name)
+		img_id = self.data[index]['image_id']
+		img_path = self.image_path_from_id(img_id)
 		img = Image.open(img_path)
 		boxes, labels, preds = self.load_annotation(index)
 		img = self.transform(img)
