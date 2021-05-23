@@ -75,6 +75,7 @@ class VGDataset(Dataset):
 		labels = []
 		preds = []
 		for spo in self.data[index]['relationships']:
+			print(index)
 			try:
 				gt_sbj_label = spo['subject']['name']
 			except:
