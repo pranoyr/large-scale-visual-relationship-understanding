@@ -30,7 +30,6 @@ def check_word_vector(obj_cat):
             return False
     return True
 
-
 # Opening JSON file
 f = open('/home/cyberdome/data/vg/relationships.json')
   
@@ -87,5 +86,5 @@ for i in range(len(data)):
     __getitem__(i)
 data = list(set(objects))
 print(len(data))
-with open('data.json', 'w') as f:
+with open('objects.json', 'w') as f:
     json.dump(data, f)
