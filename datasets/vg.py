@@ -36,7 +36,7 @@ class VGDataset(Dataset):
 			self.dataset_path, 'images')
 
 		self.all_objects_list.insert(0, '__background__')
-		print(f"Total object classes {len(self.classes)}")
+		print(f"Total object classes {len(self.all_objects_list)}")
 		self.predicates_list.insert(0, 'unknown')
 
 		self._class_to_ind = dict(zip(self.all_objects_list, range(len(self.all_objects_list))))
