@@ -49,12 +49,11 @@ class VGDataset(Dataset):
 		print(len(self.data))
 	
 	def filter_data(self):
-		filtered_data = self.data.copy()
+		filtered_data = []
 		for index in range(len(self.data)):
 			_ , _ , preds = self.load_annotation(index)
-			if len(preds) == 0:
-				print(index)
-				filtered_data.pop(index)
+			if len(preds) != 0:
+				filtered_data.append(self.data[index])
 		return filtered_data
 					
 	def __len__(self):
