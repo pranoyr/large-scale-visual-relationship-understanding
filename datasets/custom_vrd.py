@@ -97,8 +97,6 @@ class CustomDataset(Dataset):
         assert len(boxes) == len(
             labels), "boxes and labels should be of equal length"
 
-        print(labels)
-        print(preds)
         return {'boxes': torch.tensor(boxes, dtype=torch.float32),
                 'labels': torch.tensor(labels, dtype=torch.int64),
                 'preds': torch.tensor(preds, dtype=torch.int64),
