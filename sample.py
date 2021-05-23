@@ -89,7 +89,8 @@ for i in range(len(data)):
     __getitem__(i)
 objects = list(set(objects))
 predicates = list(set(predicates))
-print(len(data))
+print(len(objects))
+print(len(predicates))
 with open('objects.json', 'w') as f:
     json.dump(objects, f)
 
