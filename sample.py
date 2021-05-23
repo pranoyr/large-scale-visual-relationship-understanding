@@ -35,7 +35,7 @@ def check_word_vector(obj_cat):
             a = a + x
         except:
             return False
-        y = a/len(obj_words)
+    y = a/len(obj_words)
     return True
 
 # Opening JSON file
