@@ -71,7 +71,7 @@ def _resize_image_and_masks(image, self_min_size=800, self_max_size=1333):
 for data in train_loader:
     images, targets = data
     images = images[0]
-    images = _resize_image_and_masks(images)
+    images = _resize_image_and_masks(images).unsqueeze(0)
     images = images.view(images.size(0), images.size(1), -1)
     mean += images.mean(2).sum(0)
     std += images.std(2).sum(0)
