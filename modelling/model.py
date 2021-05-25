@@ -69,7 +69,7 @@ class FasterRCNN(nn.Module):
         return gth_list
 
     def forward(self, images, targets=None):
-
+    
         original_image_sizes = torch.jit.annotate(List[Tuple[int, int]], [])
         for img in images:
             val = img.shape[-2:]
