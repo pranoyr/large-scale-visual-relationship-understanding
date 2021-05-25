@@ -33,6 +33,8 @@ def check_word_vector(obj_cat):
             a = a + x
         except:
             return False
+    print(obj_words)
+    print(len(obj_words))
     y = a/len(obj_words)
     return True
 
@@ -96,7 +98,7 @@ def __getitem__(index):
 
 for i in range(len(data)):
     __getitem__(i)
-    
+
 objects = list(set(objects))
 predicates = list(set(predicates))
 print(len(objects))
