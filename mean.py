@@ -36,6 +36,7 @@ from datasets.vrd import collater
 from modelling.model import FasterRCNN
 from opts import parse_opts
 from utils.util import AverageMeter, Metrics, ProgressMeter
+from torchvision import transforms, utils
 
 
 mean = 0.
@@ -52,10 +53,15 @@ opt = parse_opts()
 train_data = get_training_data(cfg)
 val_data = get_validation_data(cfg)
 train_loader = DataLoader(
-    train_data, num_workers=opt.num_workers, collate_fn=collater, batch_size=opt.batch_size, shuffle=True)
+    train_data, num_workers=opt.num_workers, collate_fn=collater, batch_size=1, shuffle=True)
+
+
+transform = transforms.Compose([
+			transforms.ToTensor()])
 
 for data in train_loader:
     images, targets = data
+    images = transform(images[0])
     images = images.view(images.size(0), images.size(1), -1)
     mean += images.mean(2).sum(0)
     std += images.std(2).sum(0)
