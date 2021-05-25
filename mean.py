@@ -61,7 +61,7 @@ transform = transforms.Compose([
 
 for data in train_loader:
     images, targets = data
-    images = transform(images[0])
+    images = images[0]
     images = images.view(images.size(0), images.size(1), -1)
     mean += images.mean(2).sum(0)
     std += images.std(2).sum(0)
