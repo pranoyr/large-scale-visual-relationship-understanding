@@ -64,11 +64,11 @@ def load_annotations(index):
         # gt_obj_bbox = spo['object']['bbox']
         predicate = spo['predicate']
 
-        if check_word_vector(gt_sbj_label):
+        if gt_sbj_label and check_word_vector(gt_sbj_label):
             objects.append(gt_sbj_label)
-        if check_word_vector(gt_obj_label):
+        if gt_obj_label and check_word_vector(gt_obj_label):
             objects.append(gt_obj_label)
-        if check_word_vector(predicate):
+        if predicate and check_word_vector(predicate):
             predicates.append(predicate)
         # return(gt_sbj_label , predicate, gt_obj_label)
 
