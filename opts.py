@@ -11,12 +11,12 @@ def parse_opts():
 						help='batch size')
 	parser.add_argument('--lr', type=float,
 						help='learning rate')
-	parser.add_argument('--num_workers', type=int, default=0,
+	parser.add_argument('--num_workers', type=int, default=4,
 						help='number of workers for data loaders')
 	parser.add_argument('--max_iter', type=int, default=125446,
 						help='number of iterations')
-	parser.add_argument('--scheduler', type=str, default="plateau",
-						help='number of epochs')
+	parser.add_argument('--scheduler', type=str, default="multi_step",
+						help='scheduler')
 	parser.add_argument('--begin_iter', type=int, default=1,
 						help='starting iteration')
 	args = parser.parse_args()
