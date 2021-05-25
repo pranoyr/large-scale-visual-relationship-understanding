@@ -1,42 +1,13 @@
-import math
-import os
-import pdb
 import random
-import time
-from collections import OrderedDict
-import utils.net as net_utils
 
 import numpy as np
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import torchvision
-import torchvision.models as models
-import torchvision.models.detection._utils as det_utils
-import torchvision.utils as vutils
-from torch.autograd import Variable, gradcheck
-from torch.autograd.gradcheck import gradgradcheck
-from torch.jit.annotations import Dict, List, Optional, Tuple
-from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
-from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
-from torchvision.models.detection.faster_rcnn import (FastRCNNPredictor,
-                                                      GeneralizedRCNNTransform,
-                                                      MultiScaleRoIAlign,
-                                                      TwoMLPHead)
-from torchvision.models.detection.rpn import (AnchorGenerator,
-                                              RegionProposalNetwork, RPNHead)
-from torchvision.models.resnet import resnet101
-from torchvision.ops import boxes as box_ops
 from dataset import get_training_data, get_validation_data
 
 from config import cfg
 from datasets.vrd import collater
-from modelling.model import FasterRCNN
 from opts import parse_opts
-from utils.util import AverageMeter, Metrics, ProgressMeter
-from torchvision import transforms, utils
 
 
 mean = 0.
