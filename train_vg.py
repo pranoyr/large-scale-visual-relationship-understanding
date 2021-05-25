@@ -123,7 +123,10 @@ def main_worker():
 		load_from_ckpt(opt, faster_rcnn)
 	faster_rcnn.to(cfg.DEVICE)
 
+	if opt.lr is not None:
+		cfg.TRAIN.LEARNING_RATE = opt.lr
 	lr = cfg.TRAIN.LEARNING_RATE
+	print(f"Learning rate : {lr}")
 	
 	### Optimizer ###
 	# record backbone params, i.e., conv_body and box_head params
