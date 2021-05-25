@@ -33,8 +33,6 @@ def check_word_vector(obj_cat):
             a = a + x
         except:
             return False
-    print(obj_words)
-    print(len(obj_words))
     y = a/len(obj_words)
     return True
 
