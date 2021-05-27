@@ -116,9 +116,9 @@ def main_worker():
 
     faster_rcnn = FasterRCNN()
 
-    if torch.cuda.device_count() > 1 and opt.multi_gpu :
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        faster_rcnn = nn.DataParallel(faster_rcnn)
+    # if torch.cuda.device_count() > 1 and opt.multi_gpu :
+    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
+    #     faster_rcnn = nn.DataParallel(faster_rcnn)
 
     # loading model from a ckpt
     if opt.weight_path:
