@@ -19,6 +19,7 @@ def parse_opts():
 						help='scheduler')
 	parser.add_argument('--begin_iter', type=int, default=1,
 						help='starting iteration')
+	parser.add_argument('--multi_gpu', action='store_true', help='Enables multiple GPU training')
 	args = parser.parse_args()
 
 	return args
