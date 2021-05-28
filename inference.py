@@ -81,9 +81,9 @@ obj_boxes = detections[0]['obj_boxes']
 sbj_labels = detections[0]['sbj_labels']
 obj_labels = detections[0]['obj_labels']
 pred_labels = detections[0]['predicates']
-boxes = detections[0]['boxes']
-labels = detections[0]['labels']
-scores = detections[0]['scores']
+# boxes = detections[0]['boxes']
+# labels = detections[0]['labels']
+# scores = detections[0]['scores']
 
 for sbj_box, obj_box, sbj_label, obj_label, pred  \
 		in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
@@ -110,7 +110,7 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
 path = f"./results/rel-{opt.image_path.split('/')[-1]}"
 cv2.imwrite(path, draw_rlp)
 
-for bbox, label in zip(boxes, labels):
-	draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
-path = f"./results/objs-{opt.image_path.split('/')[-1]}"
-cv2.imwrite(path, draw_objects)
+# for bbox, label in zip(boxes, labels):
+# 	draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
+# path = f"./results/objs-{opt.image_path.split('/')[-1]}"
+# cv2.imwrite(path, draw_objects)

@@ -446,7 +446,7 @@ def postprocess(result,               # type: List[Dict[str, Tensor]]
 		boxes = resize_boxes(boxes, im_s, o_im_s)
 		result[i]["obj_boxes"] = boxes
 
-		boxes = pred["boxes"]
-		boxes = resize_boxes(boxes, im_s, o_im_s)
-		result[i]["boxes"] = boxes
+		# boxes = pred["boxes"]
+		# boxes = resize_boxes(boxes, im_s, o_im_s)
+		# result[i]["boxes"] = boxes
 	return result
