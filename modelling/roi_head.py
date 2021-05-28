@@ -213,7 +213,7 @@ class RoIHeads(torch.nn.Module):
 		return n_labels, n_props
 
 	def check_targets(self, targets):
-		# type: (Optional[List[Dict[str, Tensor]]]) -> None
+    		# type: (Optional[List[Dict[str, Tensor]]]) -> None
 		assert targets is not None
 		assert all(["boxes" in t for t in targets])
 		assert all(["labels" in t for t in targets])
@@ -403,7 +403,7 @@ class RoIHeads(torch.nn.Module):
 				floating_point_types = (torch.float, torch.double, torch.half)
 				assert t["boxes"].dtype in floating_point_types, 'target boxes must of float type'
 				assert t["labels"].dtype == torch.int64, 'target labels must of int64 type'
-		if self.training:
+		if targets:
 			proposals, matched_idxs, labels, regression_targets, data_sbj, data_obj, data_rlp = self.select_training_samples(
 				proposals, targets)
 
@@ -427,7 +427,7 @@ class RoIHeads(torch.nn.Module):
 			concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
 
 			sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
-				self.RelDN(concat_feat, sbj_feat, obj_feat)
+				self.RelDN(concat_feat, sbj_feat, obj_feat, targets)
 
 			result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
 			losses = {}
@@ -455,9 +455,6 @@ class RoIHeads(torch.nn.Module):
 			}
 
 		else:
-			labels = None
-			regression_targets = None
-			matched_idxs = None
 			result = []
 
 			# faster_rcnn branch
@@ -519,16 +516,20 @@ class RoIHeads(torch.nn.Module):
 				sbj_boxes = all_sbj_boxes[i][mask]
 				obj_boxes = all_obj_boxes[i][mask]
 				rlp_boxes = all_rlp_boxes[i][mask]
+
 				score_mask = rel_scores > cfg.TEST.THRESHOLD
 				result = [{"sbj_boxes": sbj_boxes[score_mask],
 						   "obj_boxes": obj_boxes[score_mask],
 						   'sbj_labels': subjects[score_mask],
 						   'obj_labels': objects[score_mask],
 						   'predicates': predicates[score_mask],
-						   'boxes': boxes[i],
-						   'scores': scores[i],
-						   'labels': labels[i]
 						   }]
+				# result = [{"sbj_boxes": sbj_boxes,
+				#            "obj_boxes": obj_boxes,
+				#            'sbj_labels': subjects,
+				#            'obj_labels': objects,
+				#            'predicates': predicates,
+				#            }]
 				losses = {}
 
 		return result, losses
