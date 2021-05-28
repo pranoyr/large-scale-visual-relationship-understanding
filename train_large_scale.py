@@ -132,7 +132,7 @@ def main_worker():
 
     if opt.weight_decay is not None:
         cfg.TRAIN.WEIGHT_DECAY = opt.weight_decay
-    print(f"Weight Decay : {opt.weight_decay}")
+    print(f"Weight Decay : {cfg.TRAIN.WEIGHT_DECAY}")
     
     ### Optimizer ###
     # record backbone params, i.e., conv_body and box_head params
