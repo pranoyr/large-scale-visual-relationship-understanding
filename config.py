@@ -75,7 +75,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0.0001
+__C.TRAIN.WEIGHT_DECAY = 5e-3
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
