@@ -241,7 +241,7 @@ def main_worker():
             train_losses['sbj_loss'] = losses_sbj.avg
             train_losses['obj_loss'] = losses_obj.avg
             train_losses['rel_loss'] = losses_rel.avg
-            # val_losses = val_epoch(faster_rcnn, val_loader)
+            val_losses = val_epoch(faster_rcnn, val_loader)
 
             # if opt.scheduler == "plateau":
             #     scheduler.step(val_losses['total_loss'])
@@ -254,13 +254,13 @@ def main_worker():
             #     th = val_losses['total_loss']
             save_model(faster_rcnn, optimizer, scheduler, step)
 
-            # # write summary
-            # summary_writer.log_metrics(train_losses, val_losses, step, lr)
+            # write summary
+            summary_writer.log_metrics(train_losses, val_losses, step, lr)
 
             print(
                 f"* Average training loss : {train_losses['total_loss']:.3f}")
-            # print(
-            #     f"* Average validation loss : {val_losses['total_loss']:.3f}")
+            print(
+                f"* Average validation loss : {val_losses['total_loss']:.3f}")
 
             losses_sbj.reset()
             losses_obj.reset()
