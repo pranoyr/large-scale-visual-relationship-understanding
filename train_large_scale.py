@@ -39,6 +39,7 @@ from utils.util import AverageMeter, Metrics, ProgressMeter
 
 
 def val_epoch(model, dataloader):
+    model.eval()
     losses_sbj = AverageMeter('Loss', ':.4e')
     losses_obj = AverageMeter('Loss', ':.4e')
     losses_rel = AverageMeter('Loss', ':.4e')
@@ -270,6 +271,7 @@ def main_worker():
             losses_obj.reset()
             losses_rel.reset()
             losses_total.reset()
+            faster_rcnn.train()
 
 
 if __name__ == "__main__":
