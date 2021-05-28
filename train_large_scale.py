@@ -248,8 +248,8 @@ def main_worker():
             train_losses['rel_loss'] = losses_rel.avg
             val_losses = val_epoch(faster_rcnn, val_loader)
 
-            # if opt.scheduler == "plateau":
-            #     scheduler.step(val_losses['total_loss'])
+            if opt.scheduler == "plateau":
+                scheduler.step(val_losses['total_loss'])
 
             # lr = optimizer.param_groups[0]['lr']
 
