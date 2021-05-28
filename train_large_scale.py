@@ -197,7 +197,7 @@ def main_worker():
         opt.begin_iter = load_train_utils(opt, optimizer, scheduler)
 
     # lr of non-backbone parameters, for commmand line outputs.
-    lr = optimizer.param_groups[2]['lr']
+    lr = optimizer.param_groups[0]['lr']
     # lr of backbone parameters, for commmand line outputs.
     # backbone_lr = optimizer.param_groups[0]['lr']
 
@@ -251,7 +251,7 @@ def main_worker():
             if opt.scheduler == "plateau":
                 scheduler.step(val_losses['total_loss'])
 
-            # lr = optimizer.param_groups[0]['lr']
+            lr = optimizer.param_groups[0]['lr']
 
             # if val_losses['total_loss'] < th:
             #     save_model(faster_rcnn, optimizer, scheduler, step)
