@@ -129,6 +129,10 @@ def main_worker():
         cfg.TRAIN.LEARNING_RATE = opt.lr
     lr = cfg.TRAIN.LEARNING_RATE
     print(f"Learning rate : {lr}")
+
+    if opt.weight_decay is not None:
+        cfg.TRAIN.WEIGHT_DECAY = opt.weight_decay
+    print(f"Weight Decay : {opt.weight_decay}")
     
     ### Optimizer ###
     # record backbone params, i.e., conv_body and box_head params
