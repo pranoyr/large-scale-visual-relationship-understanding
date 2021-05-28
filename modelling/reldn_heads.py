@@ -56,7 +56,7 @@ class reldn_head(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
-    def forward(self, spo_feat=None, sbj_feat=None, obj_feat=None):
+    def forward(self, spo_feat=None, sbj_feat=None, obj_feat=None, targets=None):
         device = sbj_feat.device
         sbj_vis_embeddings = self.so_vis_embeddings(sbj_feat)
         obj_vis_embeddings = self.so_vis_embeddings(obj_feat)
@@ -98,7 +98,7 @@ class reldn_head(nn.Module):
             prd_vis_embeddings, prd_sem_embeddings.t_())  # (#bs, #prd)
         prd_cls_scores = cfg.MODEL.NORM_SCALE * prd_sim_matrix
 
-        if not self.training:
+        if not targets:
             sbj_cls_scores = F.softmax(sbj_cls_scores, dim=1)
             obj_cls_scores = F.softmax(obj_cls_scores, dim=1)
             prd_cls_scores = F.softmax(prd_cls_scores, dim=1)
