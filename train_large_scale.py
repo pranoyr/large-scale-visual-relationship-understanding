@@ -93,7 +93,7 @@ def save_model(model, optimizer, scheduler, step):
         'scheduler_state_dict': scheduler.state_dict()
     }
     torch.save(state, os.path.join(
-        'snapshots', f'large_scale_vrd_inter-{step}.pth'))
+        'snapshots', f'large_scale_vrd_iter-{step}.pth'))
 
 
 def main_worker():
