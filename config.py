@@ -59,7 +59,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0.0005
+__C.TRAIN.WEIGHT_DECAY = 0.0001
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
@@ -126,7 +126,7 @@ __C.MODEL.BATCH_SIZE_PER_IMAGE_REL = 128
 
 __C.MODEL.POSITIVE_FRACTION_REL = 0.5
 
-__C.MODEL.NORM_SCALE = 3.0
+__C.MODEL.NORM_SCALE = 10.0
 
 
 #
@@ -159,7 +159,7 @@ __C.RPN.POSITIVE_FRACTION = 0.5
 #
 
 __C.TEST = AttrDict()
-__C.TEST.THRESHOLD = 0.5
+__C.TEST.THRESHOLD = 0.4
 
 
 #

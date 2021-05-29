@@ -66,51 +66,55 @@ faster_rcnn.eval()
 transform = transforms.Compose([
 			transforms.ToTensor()])
 
-im = Image.open(opt.image_path)
-img = np.array(im)
-draw = img.copy()
-draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
-draw_objects = draw_rlp.copy()
-im = transform(im)
 
-with torch.no_grad():
-	detections, losses = faster_rcnn([im])
+for img_name in os.listdir(opt.images_dir):
+	opt.image_path = f"{opt.images_dir}/{img_name}"
+	print(opt.image_path)
+	im = Image.open(opt.image_path)
+	img = np.array(im)
+	draw = img.copy()
+	draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
+	draw_objects = draw_rlp.copy()
+	im = transform(im)
 
-sbj_boxes = detections[0]['sbj_boxes']
-obj_boxes = detections[0]['obj_boxes']
-sbj_labels = detections[0]['sbj_labels']
-obj_labels = detections[0]['obj_labels']
-pred_labels = detections[0]['predicates']
-boxes = detections[0]['boxes']
-labels = detections[0]['labels']
-scores = detections[0]['scores']
+	with torch.no_grad():
+		detections, losses = faster_rcnn([im])
 
-for sbj_box, obj_box, sbj_label, obj_label, pred  \
-		in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
-	sbj = objects[sbj_label]
-	obj = objects[obj_label]
-	pred = predicates[pred]
-	print(sbj, pred, obj)
-	color = list(np.random.random(size=3) * 256)
-	font = cv2.FONT_HERSHEY_SIMPLEX
-	lineThickness = 1
-	font_size = 0.5
-	# write sbj and obj
-	centr_sub = (int((sbj_box[0].item() + sbj_box[2].item())/2),
-				 int((sbj_box[1].item() + sbj_box[3].item())/2))
-	centr_obj = (int((obj_box[0].item() + obj_box[2].item())/2),
-				 int((obj_box[1].item() + obj_box[3].item())/2))
-	set_text(draw_rlp, sbj,centr_sub)
-	set_text(draw_rlp, obj,centr_obj)
-	# draw line conencting sbj and obj
-	cv2.line(draw_rlp, centr_sub, centr_obj, color, thickness=2)
-	predicate_point = (
-		int((centr_sub[0] + centr_obj[0])/2), int((centr_sub[1] + centr_obj[1])/2))
-	set_text(draw_rlp, pred, predicate_point)
-path = f"./results/rel-{opt.image_path.split('/')[-1]}"
-cv2.imwrite(path, draw_rlp)
+	sbj_boxes = detections[0]['sbj_boxes']
+	obj_boxes = detections[0]['obj_boxes']
+	sbj_labels = detections[0]['sbj_labels']
+	obj_labels = detections[0]['obj_labels']
+	pred_labels = detections[0]['predicates']
+	# boxes = detections[0]['boxes']
+	# labels = detections[0]['labels']
+	# scores = detections[0]['scores']
 
-for bbox, label in zip(boxes, labels):
-	draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
-path = f"./results/objs-{opt.image_path.split('/')[-1]}"
-cv2.imwrite(path, draw_objects)
+	for sbj_box, obj_box, sbj_label, obj_label, pred  \
+			in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
+		sbj = objects[sbj_label]
+		obj = objects[obj_label]
+		pred = predicates[pred]
+		print(sbj, pred, obj)
+		color = list(np.random.random(size=3) * 256)
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		lineThickness = 1
+		font_size = 0.5
+		# write sbj and obj
+		centr_sub = (int((sbj_box[0].item() + sbj_box[2].item())/2),
+					int((sbj_box[1].item() + sbj_box[3].item())/2))
+		centr_obj = (int((obj_box[0].item() + obj_box[2].item())/2),
+					int((obj_box[1].item() + obj_box[3].item())/2))
+		set_text(draw_rlp, sbj,centr_sub)
+		set_text(draw_rlp, obj,centr_obj)
+		# draw line conencting sbj and obj
+		cv2.line(draw_rlp, centr_sub, centr_obj, color, thickness=2)
+		predicate_point = (
+			int((centr_sub[0] + centr_obj[0])/2), int((centr_sub[1] + centr_obj[1])/2))
+		set_text(draw_rlp, pred, predicate_point)
+	path = f"./results/rel-{opt.image_path.split('/')[-1]}"
+	cv2.imwrite(path, draw_rlp)
+
+	# for bbox, label in zip(boxes, labels):
+	# 	draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
+	# path = f"./results/objs-{opt.image_path.split('/')[-1]}"
+	# cv2.imwrite(path, draw_objects)
