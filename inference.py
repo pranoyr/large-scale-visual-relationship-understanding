@@ -10,6 +10,7 @@ import torch.nn.functional as F
 import torchvision
 from PIL import Image
 from torchvision import transforms, utils
+from torch.hub import load_state_dict_from_url
 
 from config import cfg
 from modelling.model import FasterRCNN
@@ -48,6 +49,8 @@ with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'predicates.json'), 'r')
 with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'objects.json'), 'r') as f:
 	all_objects = json.load(f)
 
+model_url = {"VRD":"https://github.com/pranoyr/large-scale-visual-relationship-understanding/releases/download/v1.0/large_scale_vrd_iter-25000.pth"}
+
 classes = all_objects.copy()
 predicates.insert(0, 'unknown')
 classes.insert(0, '__background__')
@@ -58,7 +61,7 @@ cfg.DEVICE = "cpu"
 faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 
 # load pretrained weights
-checkpoint = torch.load(opt.weight_path, map_location='cpu')
+checkpoint = load_state_dict_from_url(model_url["VRD"], map_location='cpu')
 faster_rcnn.load_state_dict(checkpoint['state_dict'])
 print("Model Restored")
 faster_rcnn.eval()
