@@ -1,19 +1,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
-import copy
 import os
-import os.path as osp
-from ast import literal_eval
-
-import numpy as np
-import six
-import torch
-import torch.nn as nn
-import yaml
-from packaging import version
-from torch.nn import init
-
 from utils.collections import AttrDict
 
 __C = AttrDict()
