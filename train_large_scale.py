@@ -39,6 +39,7 @@ from utils.util import AverageMeter, Metrics, ProgressMeter
 
 
 def val_epoch(model, dataloader):
+    model.eval()
     losses_sbj = AverageMeter('Loss', ':.4e')
     losses_obj = AverageMeter('Loss', ':.4e')
     losses_rel = AverageMeter('Loss', ':.4e')
@@ -92,7 +93,7 @@ def save_model(model, optimizer, scheduler, step):
         'scheduler_state_dict': scheduler.state_dict()
     }
     torch.save(state, os.path.join(
-        'snapshots', f'large_scale_vrd_model.pth'))
+        'snapshots', f'large_scale_vrd_iter-{step}.pth'))
 
 
 def main_worker():
@@ -116,6 +117,10 @@ def main_worker():
 
     faster_rcnn = FasterRCNN()
 
+    # if torch.cuda.device_count() > 1 and opt.multi_gpu :
+    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
+    #     faster_rcnn = nn.DataParallel(faster_rcnn)
+
     # loading model from a ckpt
     if opt.weight_path:
         load_from_ckpt(opt, faster_rcnn)
@@ -125,6 +130,10 @@ def main_worker():
         cfg.TRAIN.LEARNING_RATE = opt.lr
     lr = cfg.TRAIN.LEARNING_RATE
     print(f"Learning rate : {lr}")
+
+    if opt.weight_decay is not None:
+        cfg.TRAIN.WEIGHT_DECAY = opt.weight_decay
+    print(f"Weight Decay : {cfg.TRAIN.WEIGHT_DECAY}")
     
     ### Optimizer ###
     # record backbone params, i.e., conv_body and box_head params
@@ -188,7 +197,7 @@ def main_worker():
         opt.begin_iter = load_train_utils(opt, optimizer, scheduler)
 
     # lr of non-backbone parameters, for commmand line outputs.
-    lr = optimizer.param_groups[2]['lr']
+    lr = optimizer.param_groups[0]['lr']
     # lr of backbone parameters, for commmand line outputs.
     # backbone_lr = optimizer.param_groups[0]['lr']
 
@@ -237,12 +246,12 @@ def main_worker():
             train_losses['sbj_loss'] = losses_sbj.avg
             train_losses['obj_loss'] = losses_obj.avg
             train_losses['rel_loss'] = losses_rel.avg
-            # val_losses = val_epoch(faster_rcnn, val_loader)
+            val_losses = val_epoch(faster_rcnn, val_loader)
 
-            # if opt.scheduler == "plateau":
-            #     scheduler.step(val_losses['total_loss'])
+            if opt.scheduler == "plateau":
+                scheduler.step(val_losses['total_loss'])
 
-            # lr = optimizer.param_groups[0]['lr']
+            lr = optimizer.param_groups[0]['lr']
 
             # if val_losses['total_loss'] < th:
             #     save_model(faster_rcnn, optimizer, scheduler, step)
@@ -250,18 +259,19 @@ def main_worker():
             #     th = val_losses['total_loss']
             save_model(faster_rcnn, optimizer, scheduler, step)
 
-            # # write summary
-            # summary_writer.log_metrics(train_losses, val_losses, step, lr)
+            # write summary
+            summary_writer.log_metrics(train_losses, val_losses, step, lr)
 
             print(
                 f"* Average training loss : {train_losses['total_loss']:.3f}")
-            # print(
-            #     f"* Average validation loss : {val_losses['total_loss']:.3f}")
+            print(
+                f"* Average validation loss : {val_losses['total_loss']:.3f}")
 
             losses_sbj.reset()
             losses_obj.reset()
             losses_rel.reset()
             losses_total.reset()
+            faster_rcnn.train()
 
 
 if __name__ == "__main__":

@@ -1,19 +1,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
-import copy
 import os
-import os.path as osp
-from ast import literal_eval
-
-import numpy as np
-import six
-import torch
-import torch.nn as nn
-import yaml
-from packaging import version
-from torch.nn import init
-
 from utils.collections import AttrDict
 
 __C = AttrDict()
@@ -40,22 +27,6 @@ __C.TRAIN.BACKBONE_LR_SCALAR = 0.1
 # E.g., 'step', 'steps_with_decay', ...
 __C.TRAIN.LR_POLICY = 'step'
 
-# Some LR Policies (by example):
-# 'step'
-#   lr = TRAIN.BASE_LR * TRAIN.GAMMA ** (cur_iter // TRAIN.STEP_SIZE)
-# 'steps_with_decay'
-#   TRAIN.STEPS = [0, 60000, 80000]
-#   TRAIN.GAMMA = 0.1
-#   lr = TRAIN.BASE_LR * TRAIN.GAMMA ** current_step
-#   iters [0, 59999] are in current_step = 0, iters [60000, 79999] are in
-#   current_step = 1, and so on
-# 'steps_with_lrs'
-#   TRAIN.STEPS = [0, 60000, 80000]
-#   TRAIN.LRS = [0.02, 0.002, 0.0002]
-#   lr = LRS[current_step]
-
-# Hyperparameter used by the specified policy
-# For 'step', the current LR is multiplied by TRAIN.GAMMA at each step
 __C.TRAIN.GAMMA = 0.1
 
 # Uniform step size for 'steps' policy
@@ -75,7 +46,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0.001
+__C.TRAIN.WEIGHT_DECAY = 0.0001
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
