@@ -6,9 +6,6 @@
 Thie Repository is an implementation of the paper https://arxiv.org/pdf/1804.10660.pdf
 
 
-## Download Pre-trained Model
-Download the model from [here](https://drive.google.com/file/d/10aQe2m3c0yzOrgC9c45bBiAoMuVxXQsW/view?usp=sharing).
-
 
 ## Download the VRD Dataet
 Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjaykrishna/vrd/).
@@ -17,8 +14,7 @@ Download the data VRD dataset from [here](https://cs.stanford.edu/people/ranjayk
 ## Pretrained Word Vectors
 Download pretrained embeddings from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit).
 Put it in the data/wordvectors folder. Folder structure is shown below.
-    
-    
+
 
 ### Folder Structure
 ```
@@ -46,7 +42,9 @@ python train_large_scale.py
 
 ## Inference
 ```
-python inference.py --input_image <path-to-image> --weight_path <path-to-weight-file>
+python inference.py --input_image <path-to-image> 
+
+python inference_batch.py --images_dir <path-to-dir>
 ```
 
 ## To Do
