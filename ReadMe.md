@@ -30,7 +30,7 @@ Put it in the data/wordvectors folder. Folder structure is shown below.
 
 ## Train
 ```
-python train_large_scale.py
+./train.sh
 ```
 
 ### Note 
