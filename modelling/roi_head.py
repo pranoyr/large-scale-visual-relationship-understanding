@@ -318,7 +318,7 @@ class RoIHeads(torch.nn.Module):
 			pos_obj_labels[img_id] = pos_obj_labels[img_id][img_sampled_inds]-1
 			rlp_labels[img_id] = rlp_labels[img_id][img_sampled_inds]
 
-		data_sbj = {'proposals': pos_sbj_proposals, 'labels': pos_sbj_labels}
+		data_sbj = {'proposals': pos_sbj_proposals, 'labels': pos_sbj_labels}	# pos_sbj_labels -> List([Tensor])
 		data_obj = {'proposals': pos_obj_proposals, 'labels': pos_obj_labels}
 		data_rlp = {'proposals': rlp_proposals, 'labels': rlp_labels}
 
@@ -427,7 +427,7 @@ class RoIHeads(torch.nn.Module):
 			concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
 
 			sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
-				self.RelDN(concat_feat, sbj_feat, obj_feat, targets, data_sbj['labels'], data_obj['labels'])
+				self.RelDN(concat_feat, sbj_feat, obj_feat, targets, data_sbj["labels"], data_obj["labels"])
 
 			result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
 			losses = {}

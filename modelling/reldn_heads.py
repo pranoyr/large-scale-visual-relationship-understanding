@@ -22,6 +22,7 @@ class reldn_head(nn.Module):
         # initialize word vectors
         self.obj_vecs, self.prd_vecs = get_obj_prd_vecs()
 
+
         # add subnet
         self.prd_feats = nn.Sequential(
             nn.Linear(dim_in, 1024),
@@ -106,8 +107,7 @@ class reldn_head(nn.Module):
             ds_prd_vecs = Variable(torch.from_numpy(ds_prd_vecs.astype('float32'))).to(device)
             prd_sem_hidden = self.prd_sem_hidden(ds_prd_vecs)  # (#prd, 1024)
             # get sbj vis embeddings and expand to (#bs, #prd, 1024)
-            print(sbj_labels)
-            sbj_vecs = self.obj_vecs[sbj_labels.cpu().numpy()]  # (#bs, 300)
+            sbj_vecs = self.obj_vecs[torch.cat(sbj_labels).cpu().numpy()]  # (#bs, 300)
             sbj_vecs = Variable(torch.from_numpy(sbj_vecs.astype('float32'))).to(device)
             if len(list(sbj_vecs.size())) == 1:  # sbj_vecs should be 2d
                 sbj_vecs.unsqueeze_(0)
@@ -115,7 +115,7 @@ class reldn_head(nn.Module):
             sbj_sem_embeddings = sbj_sem_embeddings.unsqueeze(1).expand(
                 sbj_vecs.shape[0], ds_prd_vecs.shape[0], 1024)  # (#bs, 1024) --> # (#bs, 1, 1024) --> # (#bs, #prd, 1024)
             # get obj vis embeddings and expand to (#bs, #prd, 1024)
-            obj_vecs = self.obj_vecs[obj_labels.cpu().numpy()]  # (#bs, 300)
+            obj_vecs = self.obj_vecs[torch.cat(obj_labels).cpu().numpy()]  # (#bs, 300)
             obj_vecs = Variable(torch.from_numpy(obj_vecs.astype('float32'))).to(device)
             if len(list(obj_vecs.size())) == 1:  # obj_vecs should be 2d
                 obj_vecs.unsqueeze_(0)
