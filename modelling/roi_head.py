@@ -427,7 +427,7 @@ class RoIHeads(torch.nn.Module):
 			concat_feat = torch.cat((sbj_feat, rel_feat, obj_feat), dim=1)
 
 			sbj_cls_scores, obj_cls_scores, rlp_cls_scores = \
-				self.RelDN(concat_feat, sbj_feat, obj_feat, targets)
+				self.RelDN(concat_feat, sbj_feat, obj_feat, targets, data_sbj['labels'], data_obj['labels'])
 
 			result = torch.jit.annotate(List[Dict[str, torch.Tensor]], [])
 			losses = {}
