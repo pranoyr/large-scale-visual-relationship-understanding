@@ -106,6 +106,7 @@ class reldn_head(nn.Module):
             ds_prd_vecs = Variable(torch.from_numpy(ds_prd_vecs.astype('float32'))).to(device)
             prd_sem_hidden = self.prd_sem_hidden(ds_prd_vecs)  # (#prd, 1024)
             # get sbj vis embeddings and expand to (#bs, #prd, 1024)
+            print(sbj_labels)
             sbj_vecs = self.obj_vecs[sbj_labels.cpu().numpy()]  # (#bs, 300)
             sbj_vecs = Variable(torch.from_numpy(sbj_vecs.astype('float32'))).to(device)
             if len(list(sbj_vecs.size())) == 1:  # sbj_vecs should be 2d
