@@ -62,7 +62,6 @@ class VRDDataset(Dataset):
 		self.imgs_list = make_image_list(self.dataset_path, self.image_set)
 
 		self.transform = transforms.Compose([transforms.ColorJitter(brightness=[0.2,1]),
-			GaussianNoise(0.5),
 			transforms.ToTensor()])
 
 	def __len__(self):
