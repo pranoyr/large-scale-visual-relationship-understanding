@@ -12,6 +12,7 @@ from shapely.geometry import box
 from shapely.ops import cascaded_union
 from skimage import io, transform
 from torch.utils.data import DataLoader, Dataset
+from transforms import GaussianNoise
 from torchvision import transforms, utils
 from utils.boxes import y1y2x1x2_to_x1y1x2y2
 
@@ -60,7 +61,8 @@ class VRDDataset(Dataset):
 			zip(self.preds, range(len(self.preds))))
 		self.imgs_list = make_image_list(self.dataset_path, self.image_set)
 
-		self.transform = transforms.Compose([
+		self.transform = transforms.Compose([transforms.ColorJitter(brightness=[0.2,1]),
+			GaussianNoise(0.5),
 			transforms.ToTensor()])
 
 	def __len__(self):
