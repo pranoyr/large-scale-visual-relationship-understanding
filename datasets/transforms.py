@@ -29,8 +29,8 @@ class GaussianNoise(torch.nn.Module):
             PIL Image or Tensor: Randomly flipped image.
         """
         if torch.rand(1) < self.p:
-            img = Image.fromarray(random_noise(np.array(img), mode='gaussian', mean=0, var=0.001, clip=True))
-            return Image.fromarray(img)
+            img = random_noise(np.array(img), mode='gaussian', mean=0, var=0.001, clip=True)
+            return img
         return img
 
     def __repr__(self):
