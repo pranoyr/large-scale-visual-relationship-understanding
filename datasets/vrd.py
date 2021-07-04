@@ -117,7 +117,8 @@ class VRDDataset(Dataset):
 		boxes, labels, preds = self.load_pascal_annotation(img_name)
 		img_path = self.image_path_from_index(img_name)
 		img = Image.open(img_path)
-		img = self.transform(img)
+		img = self.transform(img).type(torch.float)
+
 	
 		assert len(boxes) == len(
 			labels), "boxes and labels should be of equal length"
