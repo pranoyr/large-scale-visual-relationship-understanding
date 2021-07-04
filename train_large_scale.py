@@ -185,7 +185,7 @@ def main_worker():
     # scheduler
     if opt.scheduler == "plateau":
         scheduler = lr_scheduler.ReduceLROnPlateau(
-            optimizer, 'min', patience=3)
+            optimizer, 'min', patience=5)
     elif opt.scheduler == "multi_step":
         scheduler = lr_scheduler.MultiStepLR(
             optimizer, milestones=[83631, 111508])
@@ -240,7 +240,7 @@ def main_worker():
         if (step) % 10 == 0:
             progress.display(step)
 
-        if step % 2500 == 0:
+        if step % 1000 == 0:
             train_losses = {}
             train_losses['total_loss'] = losses_total.avg
             train_losses['sbj_loss'] = losses_sbj.avg
