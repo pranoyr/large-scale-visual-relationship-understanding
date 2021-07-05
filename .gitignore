@@ -3,3 +3,5 @@
 /data
 /snapshots
 /results
+*.jpg
+*.png
