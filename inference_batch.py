@@ -111,7 +111,7 @@ for img_name in os.listdir(opt.images_dir):
 		predicate_point = (
 			int((centr_sub[0] + centr_obj[0])/2), int((centr_sub[1] + centr_obj[1])/2))
 		set_text(draw_rlp, pred, predicate_point)
-	path = f"./results/rel-{opt.image_path.split('/')[-1]}"
+	path = f"./results1/rel-{opt.image_path.split('/')[-1]}"
 	cv2.imwrite(path, draw_rlp)
 
 	# for bbox, label in zip(boxes, labels):
