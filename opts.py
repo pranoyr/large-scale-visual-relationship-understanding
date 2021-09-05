@@ -12,7 +12,7 @@ def parse_opts():
 	parser.add_argument('--lr', type=float,
 						help='learning rate')
 	parser.add_argument('--weight_decay', type=float,
-						help='learning rate')
+						help='weight rate')
 	parser.add_argument('--num_workers', type=int, default=0,
 						help='number of workers for data loaders')
 	parser.add_argument('--max_iter', type=int, default=125446,
