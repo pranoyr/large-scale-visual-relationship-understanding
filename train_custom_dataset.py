@@ -217,7 +217,7 @@ def main_worker():
 
 		optimizer.zero_grad()
 		final_loss.backward()
-		optimizer.step()
+		# optimizer.step()
 
 		losses_sbj.update(metrics["loss_sbj"].item(), len(images))
 		losses_obj.update(metrics["loss_obj"].item(), len(images))

@@ -46,7 +46,7 @@ __C.TRAIN.MAX_ITER = 40000
 __C.TRAIN.MOMENTUM = 0.9
 
 # L2 regularization hyperparameter
-__C.TRAIN.WEIGHT_DECAY = 0.0001
+__C.TRAIN.WEIGHT_DECAY = 0.0005
 
 # Whether to double the learning rate for bias
 __C.TRAIN.DOUBLE_BIAS = True
@@ -96,7 +96,7 @@ __C.BOX.BATCH_SIZE_PER_IMAGE = 512
 
 __C.BOX.POSITIVE_FRACTION = 0.25
 
-__C.BOX.NUM_CLASSES = 101
+__C.BOX.NUM_CLASSES = 7
 
 
 #
@@ -154,7 +154,7 @@ __C.TEST.THRESHOLD = 0.5
 #
 # Dataset, Word Vectors Directory
 #
-__C.DATASET = "VRD"
+__C.DATASET = "Aircraft"
 __C.DATASET_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'data', __C.DATASET)
 

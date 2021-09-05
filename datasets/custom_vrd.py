@@ -71,8 +71,9 @@ class CustomDataset(Dataset):
         labels = []
         preds = []
         for spo in annotations:
-            gt_sbj_label, gt_obj_label = spo[0].replace(
-                '_', ' ').lower(), spo[3].replace('_', ' ').lower()
+            # gt_sbj_label, gt_obj_label = spo[0].replace(
+            #     '_', ' ').lower(), spo[3].replace('_', ' ').lower()
+            gt_sbj_label, gt_obj_label = spo[0], spo[3]
             gt_sbj_bbox, gt_obj_bbox = ast.literal_eval(
                 spo[1]), ast.literal_eval(spo[4])
             predicate = spo[2]
