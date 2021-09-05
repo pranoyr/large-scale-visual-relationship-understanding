@@ -39,6 +39,11 @@ from modelling.model import FasterRCNN
 from opts import parse_opts
 from utils.util import AverageMeter, Metrics, ProgressMeter
 
+import wandb
+wandb.login()
+wandb.init(name='without scheduler', 
+           project='VRD',
+           entity='Pranoy')
 
 def val_epoch(model, dataloader):
 	losses_sbj = AverageMeter('Loss', ':.4e')
@@ -187,11 +192,11 @@ def main_worker():
 		opt.begin_iter = load_train_utils(opt, optimizer, scheduler)
 
 	# lr of non-backbone parameters, for commmand line outputs.
-	lr = optimizer.param_groups[2]['lr']
+	# lr = optimizer.param_groups[2]['lr']
 	# lr of backbone parameters, for commmand line outputs.
 	# backbone_lr = optimizer.param_groups[0]['lr']
 
-	summary_writer = Metrics(log_dir='tf_logs')
+	# summary_writer = Metrics(log_dir='tf_logs')
 
 	losses_sbj = AverageMeter('Sbj loss: ', ':.2f')
 	losses_obj = AverageMeter('Obj loss: ', ':.2f')
@@ -217,7 +222,7 @@ def main_worker():
 
 		optimizer.zero_grad()
 		final_loss.backward()
-		# optimizer.step()
+		optimizer.step()
 
 		losses_sbj.update(metrics["loss_sbj"].item(), len(images))
 		losses_obj.update(metrics["loss_obj"].item(), len(images))
@@ -235,9 +240,11 @@ def main_worker():
 			train_losses['rel_loss'] = losses_rel.avg
 			# val_losses = val_epoch(faster_rcnn, val_loader)
 
+			lr = optimizer.param_groups[0]['lr']
+
 			# if opt.scheduler == "plateau":
 			# 	scheduler.step(val_losses['total_loss'])
-			lr = optimizer.param_groups[0]['lr']
+		
 
 			# if val_losses['total_loss'] < th:
 			save_model(faster_rcnn, optimizer, scheduler, step)
@@ -251,6 +258,11 @@ def main_worker():
 				f"* Average training loss : {train_losses['total_loss']:.3f}")
 			# print(
 			# 	f"* Average validation loss : {val_losses['total_loss']:.3f}")
+
+			wandb.log({"train_loss": train_losses['total_loss'],
+					"lr": lr,
+					"iter": step})
+
 
 			losses_sbj.reset()
 			losses_obj.reset()
