@@ -540,6 +540,8 @@ class RoIHeads(torch.nn.Module):
                            'sbj_labels': subjects[score_mask],
                            'obj_labels': objects[score_mask],
                            'predicates': predicates[score_mask],
+                           'boxes':torch.tensor(boxes),
+                           'labels':torch.tensor(labels)
                            }]
                 # result = [{"sbj_boxes": sbj_boxes,
                 #            "obj_boxes": obj_boxes,

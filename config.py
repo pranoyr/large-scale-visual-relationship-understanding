@@ -148,7 +148,7 @@ __C.RPN.POSITIVE_FRACTION = 0.5
 #
 
 __C.TEST = AttrDict()
-__C.TEST.THRESHOLD = 0.5
+__C.TEST.THRESHOLD = 0.0
 
 
 #

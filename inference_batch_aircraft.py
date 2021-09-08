@@ -90,8 +90,8 @@ for img_name in os.listdir(opt.images_dir):
 	sbj_labels = detections[0]['sbj_labels']
 	obj_labels = detections[0]['obj_labels']
 	pred_labels = detections[0]['predicates']
-	# boxes = detections[0]['boxes']
-	# labels = detections[0]['labels']
+	boxes = detections[0]['boxes']
+	labels = detections[0]['labels']
 	# scores = detections[0]['scores']
 
 	for sbj_box, obj_box, sbj_label, obj_label, pred  \
@@ -103,7 +103,7 @@ for img_name in os.listdir(opt.images_dir):
 			continue
 		print(sbj, pred, obj)
 		if pred in ['from', 'to', 'of']:
-			pred = pred.replace('from', '').replace('to', '').replace('of', '')
+			continue
 		# if pred in ['attach to', 'arrive near']:
 		pred = pred.replace('attach to', 'attached').replace(
 				'arrive near', 'arrived').replace('on the left of', 'on left').replace('on the right of', 'on right').replace('in front of', 'in front')
@@ -132,7 +132,7 @@ for img_name in os.listdir(opt.images_dir):
 	path = f"./results/rel-{opt.image_path.split('/')[-1]}"
 	cv2.imwrite(path, draw_rlp)
 
-	# for bbox, label in zip(boxes, labels):
-	# 	draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
-	# path = f"./results/objs-{opt.image_path.split('/')[-1]}"
-	# cv2.imwrite(path, draw_objects)
+	for bbox, label in zip(boxes, labels):
+    		draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
+	path = f"./results/objs-{opt.image_path.split('/')[-1]}"
+	cv2.imwrite(path, draw_objects)
