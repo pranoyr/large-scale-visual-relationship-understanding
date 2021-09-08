@@ -16,16 +16,20 @@ from modelling.model import FasterRCNN
 from opts import parse_opts
 
 
-def draw_boxes(img, box, label, _ind_to_class):
-	cv2.rectangle(img, (int(box[0]), int(box[1])),
-				  (int(box[2]), int(box[3])), (0, 255, 0), 2)
-	text = f"{_ind_to_class[int(label)]}"
-	coord = (int(box[0])+3, int(box[1])+7+10)
-	cv2.putText(img, text, coord, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-	return img
+# def draw_boxes(img, box, label, _ind_to_class):
+# 	cv2.rectangle(img, (int(box[0]), int(box[1])),
+# 				  (int(box[2]), int(box[3])), (0, 255, 0), 2)
+# 	text = f"{_ind_to_class[int(label)]}"
+# 	coord = (int(box[0])+3, int(box[1])+7+10)
+# 	cv2.putText(img, text, coord, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+
+# 	cv2.rectangle(draw, box_coords[0], box_coords[1], (0, 0, 255), cv2.FILLED)
+# 	cv2.putText(draw, text, (text_offset_x, text_offset_y-5), font,
+# 				font_size, (255, 255, 255), lineThickness, cv2.LINE_AA)
+# 	return img
 
 
-def set_text(draw, text, text_pos, sbj_box):
+def set_text(draw, text, sbj_box):
 	font = cv2.FONT_HERSHEY_SIMPLEX
 	lineThickness = 1
 	font_size = 0.5
@@ -34,7 +38,10 @@ def set_text(draw, text, text_pos, sbj_box):
 	(text_width, text_height) = cv2.getTextSize(
 		text, font, font_size, lineThickness)[0]
 	# set the text start position
-	text_offset_x, text_offset_y = text_pos
+	# if not isinstance(sbj_box, int):
+	# 	text_offset_x, text_offset_y = int(sbj_box[0].item()), int(sbj_box[1].item())
+	# else:
+	text_offset_x, text_offset_y = int(sbj_box[0]), int(sbj_box[1])
 	# make the coords of the box with a small padding of two pixels
 	box_coords = ((text_offset_x, text_offset_y), (text_offset_x +
 				  text_width + 2, text_offset_y - text_height - 10))
@@ -102,26 +109,26 @@ for img_name in os.listdir(opt.images_dir):
 		if obj != 'aeroplane':
 			continue
 		print(sbj, pred, obj)
-		if pred in ['from', 'to', 'of']:
+		if sbj not in  ['person', 'catering truck']:
 			continue
 		# if pred in ['attach to', 'arrive near']:
 		pred = pred.replace('attach to', 'attached').replace(
 				'arrive near', 'arrived').replace('on the left of', 'on left').replace('on the right of', 'on right').replace('in front of', 'in front')
 
-		color = list(np.random.random(size=3) * 256)
-		font = cv2.FONT_HERSHEY_SIMPLEX
-		lineThickness = 1
-		font_size = 0.5
+		# color = list(np.random.random(size=3) * 256)
+		# font = cv2.FONT_HERSHEY_SIMPLEX
+		# lineThickness = 1
+		# font_size = 0.5
 		# write sbj and obj
-		centr_sub = (int(sbj_box[0].item()),
-					 int(sbj_box[1].item()))
+		# centr_sub = (int(sbj_box[0].item()),
+					#  int(sbj_box[1].item()))
 		# centr_obj = (int((obj_box[0].item() + obj_box[2].item())/2),
 		# 			int((obj_box[1].item() + obj_box[3].item())/2))
 		sbj_box = (int(sbj_box[0].item()),
 				   int(sbj_box[1].item()),
 				   int(sbj_box[2].item()),
 				   int(sbj_box[3].item()))
-		set_text(draw_rlp, sbj + ' '+ pred, centr_sub, sbj_box)
+		set_text(draw_rlp, sbj + ' '+ pred, sbj_box)
 
 		# set_text(draw_rlp, obj,centr_obj)
 		# draw line conencting sbj and obj
@@ -129,10 +136,18 @@ for img_name in os.listdir(opt.images_dir):
 		# predicate_point = (
 		# 	int((centr_sub[0] + centr_obj[0])/2), int((centr_sub[1] + centr_obj[1])/2))
 		# set_text(draw_rlp, pred, predicate_point)
-	path = f"./results/rel-{opt.image_path.split('/')[-1]}"
-	cv2.imwrite(path, draw_rlp)
+	# path = f"./results/rel-{opt.image_path.split('/')[-1]}"
+	# cv2.imwrite(path, draw_rlp)
 
 	for bbox, label in zip(boxes, labels):
-    		draw_objects = draw_boxes(draw_objects, bbox, label, _ind_to_class)
-	path = f"./results/objs-{opt.image_path.split('/')[-1]}"
-	cv2.imwrite(path, draw_objects)
+		if _ind_to_class[int(label)] in  ['person', 'catering truck']:
+				continue
+		sbj_box = (int(bbox[0].item()),
+				   int(bbox[1].item()),
+				   int(bbox[2].item()),
+				   int(bbox[3].item()))
+		draw_objects = set_text(draw_rlp, _ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box)
+	# path = f"./results/objs-{opt.image_path.split('/')[-1]}"
+	# cv2.imwrite(path, draw_objects)
+	path = f"./results1/rel-{opt.image_path.split('/')[-1]}"
+	cv2.imwrite(path, draw_rlp)

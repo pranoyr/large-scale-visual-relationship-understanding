@@ -534,14 +534,15 @@ class RoIHeads(torch.nn.Module):
                 obj_boxes = all_obj_boxes[i][mask]
                 rlp_boxes = all_rlp_boxes[i][mask]
 
+
                 score_mask = rel_scores > cfg.TEST.THRESHOLD
                 result = [{"sbj_boxes": sbj_boxes[score_mask],
                            "obj_boxes": obj_boxes[score_mask],
                            'sbj_labels': subjects[score_mask],
                            'obj_labels': objects[score_mask],
                            'predicates': predicates[score_mask],
-                           'boxes':torch.tensor(boxes),
-                           'labels':torch.tensor(labels)
+                           'boxes':torch.tensor(boxes[0]),
+                           'labels':torch.tensor(labels[0])
                            }]
                 # result = [{"sbj_boxes": sbj_boxes,
                 #            "obj_boxes": obj_boxes,
