@@ -157,4 +157,4 @@ while True:
 		set_text(draw_rlp, _ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box)
 	# path = f"./results/objs-{opt.image_path.split('/')[-1]}"
 	# cv2.imwrite(path, draw_objects)
-	cv2.write(cv2.resize(draw_rlp,(1280,720)))
+	out.write(cv2.resize(draw_rlp,(1280,720)))
