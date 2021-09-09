@@ -29,7 +29,7 @@ from opts import parse_opts
 # 	return img
 
 # Save video
-out = cv2.VideoWriter('/Users/pranoyr/Desktop/demo1.avi',
+out = cv2.VideoWriter('./demo1.avi',
 								cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10,
 											  (1280, 720))
 
