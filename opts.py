@@ -23,6 +23,8 @@ def parse_opts():
 						help='starting iteration')
 	parser.add_argument('--images_dir', type=str,
 						help='Directory of images')
+	parser.add_argument('--video_path', type=str,
+						help='sample video path')
 	# parser.add_argument('--multi_gpu', action='store_true', help='Enables multiple GPU training')
 	args = parser.parse_args()
 
