@@ -97,8 +97,13 @@ while True:
 	# draw_objects = draw_rlp.copy()
 	im = transform(im)
 
-	with torch.no_grad():
-		detections, losses = faster_rcnn([im])
+	try:
+		with torch.no_grad():
+			detections, losses = faster_rcnn([im])
+	except:
+		out.write(cv2.resize(draw_rlp,(1280,720)))
+		continue
+
 
 	sbj_boxes = detections[0]['sbj_boxes']
 	obj_boxes = detections[0]['obj_boxes']
