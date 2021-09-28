@@ -141,7 +141,7 @@ while True:
 		set_text(draw_rlp, sbj + ' '+ pred, sbj_box)
 		
 		if pred in trackable_objects:
-			predictions1.append((pred, sbj_box))
+			predictions1.append((sbj + ' '+ pred, sbj_box))
 
 
 	predictions2 = []
