@@ -24,7 +24,7 @@ def get_ts(frame_no, fps):
 
 
 def display_ts(predictions, frame_no, fps, th=10):
-	for (key, db_dict_of_object) in db_dict.items():
+	for (key, db_dict_of_object) in db_dict.copy().items():
 		if key not in predictions.keys():
 			db_dict.pop(key)
 			continue
@@ -54,6 +54,7 @@ def display_ts(predictions, frame_no, fps, th=10):
 		db_count += 1
 		count_mask = db_count == th
 
+		# update the database
 		db_dict[key]["count"] = db_count
 		db_dict[key]["box"] = db_tensor
 		
