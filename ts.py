@@ -89,6 +89,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 
 		print("db_dict")
 		print(db_dict)
+		print()
 		set_text(draw, results)
 	
 	print(db_dict)
