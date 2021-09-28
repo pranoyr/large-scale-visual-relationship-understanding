@@ -86,14 +86,13 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	
 		set_text(draw, results)
 
-		print("results")
-		print(results)
+	print("results")
+	print(results)
 
-		print("db_dict")
-		print(db_dict)
-		print()
-	
+	print("db_dict")
 	print(db_dict)
+	print()
+	
 	# update the database
 	for (key, box) in predictions.items():
 		if key not in db_dict.keys():
