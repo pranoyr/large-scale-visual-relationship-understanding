@@ -29,7 +29,9 @@ def display_ts(predictions, frame_no, fps, th=10):
 			db_tensor.pop(key)
 			continue
 
-		match_quality_matrix = box_ops.box_iou(torch.tensor(predictions[key]).type(
+		predictions_tensor =  torch.tensor(predictions[key])
+
+		match_quality_matrix = box_ops.box_iou(predictions_tensor.type(
 			torch.float32), db_tensor["box"].type(torch.float32))
 		proposal_matcher = det_utils.Matcher(
 			0.5,
@@ -38,15 +40,15 @@ def display_ts(predictions, frame_no, fps, th=10):
 		matched_idxs_in_image = proposal_matcher(match_quality_matrix)
 		clamped_matched_idxs_in_image = matched_idxs_in_image.clamp(min=0)
 
-		print(predictions[key])
-		fill = predictions[key][clamped_matched_idxs_in_image]
+
+		fill = predictions_tensor[clamped_matched_idxs_in_image]
 		count = db_tensor["count"]
 		mask = fill == 0
 		mask = mask[:, 0]
 		db_tensor = fill[~mask]
 		db_count = count[~mask]
 
-		diff = predictions[key][~predictions[key].unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
+		diff = predictions_tensor[~predictions_tensor.unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
 		db_tensor = torch.cat((db_tensor, diff))
 		db_count = torch.cat((db_count, torch.zeros(len(diff))))
 
