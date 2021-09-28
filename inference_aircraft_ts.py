@@ -32,10 +32,7 @@ def set_text(draw, text, sbj_box):
 	# get the width and height of the text box
 	(text_width, text_height) = cv2.getTextSize(
 		text, font, font_size, lineThickness)[0]
-	# set the text start position
-	# if not isinstance(sbj_box, int):
-	# 	text_offset_x, text_offset_y = int(sbj_box[0].item()), int(sbj_box[1].item())
-	# else:
+	
 	text_offset_x, text_offset_y = int(sbj_box[0]), int(sbj_box[1])
 	# make the coords of the box with a small padding of two pixels
 	box_coords = ((text_offset_x, text_offset_y), (text_offset_x +
@@ -47,7 +44,8 @@ def set_text(draw, text, sbj_box):
 				  (sbj_box[2], sbj_box[3]), (0, 0, 255))
 
 
-def create_preds_dict(predictions):   # prediction = [(class,box), (class,box), ...]
+def create_preds_dict(predictions1, predictions2):   # prediction = [(class,box), (class,box), ...]
+	predictions = predictions1 + predictions2
 	preds_dict = {}
 	for pred in predictions:
 		if pred[0] not in preds_dict.keys():
@@ -55,7 +53,7 @@ def create_preds_dict(predictions):   # prediction = [(class,box), (class,box), 
 
 		preds_dict[pred[0]].append(pred[1])
 
-	# preds_dict = {"arrive_near" : [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]}
+	# preds_dict = {"arrived" : [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]}
 	return preds_dict	
 
 
@@ -96,13 +94,13 @@ while True:
 	frame_no += 1
 	if not ret:
 		break
-	# opt.image_path = f"{opt.images_dir}/{img_name}"
+
 	frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 	im = Image.fromarray(frame)
 	img = np.array(im)
 	draw = img.copy()
 	draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
-	# draw_objects = draw_rlp.copy()
+
 	im = transform(im)
 
 	try:
@@ -111,7 +109,6 @@ while True:
 	except:
 		out.write(cv2.resize(draw_rlp,(1280,720)))
 		continue
-
 
 	sbj_boxes = detections[0]['sbj_boxes']
 	obj_boxes = detections[0]['obj_boxes']
@@ -160,18 +157,10 @@ while True:
 		if _ind_to_class[int(label)] in trackable_objects:
 			predictions2.append((_ind_to_class[int(label)], sbj_box))
 
-	if predictions1:
-		preds_dict1 = create_preds_dict(predictions1)
-	else:
-		preds_dict1 = {}
-	if predictions2:
-		preds_dict2 = create_preds_dict(predictions2)
-	else:
-		preds_dict2 = {}
-	
-	preds_dict = {**preds_dict1, **preds_dict2}
+
+	preds_dict = create_preds_dict(predictions1, predictions2)
 	
 	if preds_dict:
-		display_ts(preds_dict, frame_no, fps)
+		display_ts(draw_rlp, preds_dict, frame_no, fps)
 
 	out.write(cv2.resize(draw_rlp,(1280,720)))

@@ -2,6 +2,7 @@ import torch
 import torchvision.models.detection._utils as det_utils
 from torchvision.ops import boxes as box_ops
 import time
+import cv2
 
 
 # initalize the database
@@ -9,11 +10,30 @@ db_dict = {}
 results = []
 
 
+def set_text(draw, results):
+	x, y = 0, 0
+	for (timestamp, label) in results:
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		lineThickness = 1
+		font_size = 0.5
+		# set some text
+		# get the width and height of the text box
+		(text_width, text_height) = cv2.getTextSize(f"{label}, time: {timestamp}", font, font_size, lineThickness)[0]
+		
+		text_offset_x, text_offset_y = int(x), int(y)
+		# make the coords of the box with a small padding of two pixels
+		box_coords = ((text_offset_x, text_offset_y), (text_offset_x +text_width + 2, text_offset_y - text_height - 10))
+		cv2.rectangle(draw, box_coords[0], box_coords[1], (255, 0, 0), cv2.FILLED)
+		cv2.putText(draw, f"{label}, time: {timestamp}", (text_offset_x, text_offset_y-5), font,font_size, (255, 255, 255), lineThickness, cv2.LINE_AA)
+		x+=10
+		y+=10
+
 def write(ts_str):
 	""" Writes the timestamp to a file.
 	"""
 	with open("sample.txt", "a") as f:
 		f.write(str(ts_str))
+		f.write("\n")
 
 
 def get_ts(frame_no, fps):
@@ -23,10 +43,11 @@ def get_ts(frame_no, fps):
 	return time.strftime('%H:%M:%S', time.gmtime(sec))
 
 
-def display_ts(predictions, frame_no, fps, th=10):
+def display_ts(draw, predictions, frame_no, fps, th=10):
 	for (key, db_dict_of_object) in db_dict.copy().items():
 		if key not in predictions.keys():
-			db_dict.pop(key)
+			if key not in ["attached", "arrived"]:
+				db_dict.pop(key)
 			continue
 
 		predictions_tensor =  torch.tensor(predictions[key])
@@ -60,7 +81,8 @@ def display_ts(predictions, frame_no, fps, th=10):
 		
 		print(db_dict)
 		if count_mask.any():
-			results.append((get_ts(frame_no, fps), key))
+			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
+			set_text(draw, results)
 			write((get_ts(frame_no, fps), key))
 
 	# update the database
