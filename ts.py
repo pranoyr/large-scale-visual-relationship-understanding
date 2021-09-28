@@ -79,14 +79,19 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		db_dict[key]["count"] = db_count
 		db_dict[key]["box"] = db_tensor
 		
-		print(db_dict)
 		if count_mask.any():
 			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
 			# set_text(draw, results)
 			write((get_ts(frame_no, fps), key))
+		
+		print("results")
 		print(results)
-		set_text(draw, results)
 
+		print("db_dict")
+		print(db_dict)
+		set_text(draw, results)
+	
+	print(db_dict)
 	# update the database
 	for (key, box) in predictions.items():
 		if key not in db_dict.keys():
