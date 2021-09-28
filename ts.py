@@ -54,9 +54,9 @@ def display_ts(predictions, frame_no, fps, th=10):
 
 		db_count += 1
 		count_mask = db_count == th
+		print(db_count)	
 		if count_mask.any():
 			results.append((get_ts(frame_no, fps), key))
-			print(results)
 			write((get_ts(frame_no, fps), key))
 
 	# update the database
