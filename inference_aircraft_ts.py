@@ -161,6 +161,6 @@ while True:
 	preds_dict = create_preds_dict(predictions1, predictions2)
 	
 	if preds_dict:
-		display_ts(draw_rlp, preds_dict, frame_no, fps)
+		display_ts(draw_rlp, preds_dict, frame_no, fps=10)
 
 	out.write(cv2.resize(draw_rlp,(1280,720)))
