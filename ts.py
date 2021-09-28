@@ -91,8 +91,15 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 
 	print("db_dict")
 	print(db_dict)
+
+	print("predictions")
+	print(predictions)
+
+
 	print()
-	
+	print()
+	print()
+
 	# update the database
 	for (key, box) in predictions.items():
 		if key not in db_dict.keys():
