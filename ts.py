@@ -85,6 +85,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
 			set_text(draw, results)
 			write((get_ts(frame_no, fps), key))
+		set_text(draw, results)
 
 	# update the database
 	for (key, box) in predictions.items():
