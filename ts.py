@@ -27,6 +27,7 @@ def set_text(draw, results):
 		cv2.putText(draw, f"{label}, time: {timestamp}", (text_offset_x, text_offset_y-5), font,font_size, (255, 255, 255), lineThickness, cv2.LINE_AA)
 		x+=10
 		y+=10
+		print("*********")
 
 def write(ts_str):
 	""" Writes the timestamp to a file.
