@@ -17,7 +17,7 @@ from config import cfg
 from modelling.model import FasterRCNN
 from opts import parse_opts
 
-trackable_objects = ["aeroplane", "arrived", "attached"]
+trackable_objects = ["aeroplane", " catering truck arrived", "catering truck attached"]
 
 # Save video
 out = cv2.VideoWriter('./demo1.avi',
@@ -161,6 +161,6 @@ while True:
 	preds_dict = create_preds_dict(predictions1, predictions2)
 	
 	if preds_dict:
-		display_ts(draw_rlp, preds_dict, frame_no, fps=10)
+		display_ts(draw_rlp.replace("aeroplane","aircraft"), preds_dict, frame_no, fps=10)
 
 	out.write(cv2.resize(draw_rlp,(1280,720)))
