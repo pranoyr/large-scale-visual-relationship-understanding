@@ -162,11 +162,16 @@ while True:
 
 	if predictions1:
 		preds_dict1 = create_preds_dict.append(predictions1)
+	else:
+		preds_dict1 = {}
 	if predictions2:
 		preds_dict2 = create_preds_dict.append(predictions2)
+	else:
+		preds_dict2 = {}
 	
 	preds_dict = {**preds_dict1, **preds_dict2}
-
-	display_ts(preds_dict, frame_no, fps)
+	
+	if preds_dict:
+		display_ts(preds_dict, frame_no, fps)
 
 	out.write(cv2.resize(draw_rlp,(1280,720)))
