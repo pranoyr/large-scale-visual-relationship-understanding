@@ -50,7 +50,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 			db_dict.pop(key)
 			continue
 
-		predictions_tensor = torch.cat(torch.tensor([0,0,0,0]), torch.tensor(predictions[key]))
+		predictions_tensor = torch.cat([torch.tensor([[0,0,0,0]]), torch.tensor(predictions[key])])
 
 		match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
 		proposal_matcher = det_utils.Matcher(
@@ -68,6 +68,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		db_tensor = fill[~mask]
 		db_count = count[~mask]
 
+		# diff = db_tensor - predictions
 		diff = predictions_tensor[~predictions_tensor.unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
 		db_tensor = torch.cat((db_tensor, diff))
 		db_count = torch.cat((db_count, torch.zeros(len(diff))))
