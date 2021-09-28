@@ -86,6 +86,15 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	
 		set_text(draw, results)
 
+	
+	# update the database
+	for (key, box) in predictions.items():
+		if key not in db_dict.keys():
+			db_dict[key] = {"box": [], "count": []}
+			db_dict[key]["box"] = torch.tensor(box)
+			db_dict[key]["count"] = torch.tensor([0]*len(box))
+
+
 	print("results")
 	print(results)
 
@@ -99,10 +108,3 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	print()
 	print()
 	print()
-
-	# update the database
-	for (key, box) in predictions.items():
-		if key not in db_dict.keys():
-			db_dict[key] = {"box": [], "count": []}
-			db_dict[key]["box"] = torch.tensor(box)
-			db_dict[key]["count"] = torch.tensor([0]*len(box))
