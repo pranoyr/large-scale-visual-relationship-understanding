@@ -11,7 +11,7 @@ results = []
 
 
 def set_text(draw, results):
-	x, y = draw.shape[0] + 40, 40
+	x, y = draw.shape[0] + 80, 40
 	for (timestamp, label) in results:
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		lineThickness = 1
@@ -26,7 +26,7 @@ def set_text(draw, results):
 		cv2.rectangle(draw, box_coords[0], box_coords[1], (255, 0, 0), cv2.FILLED)
 		cv2.putText(draw, f"{label}, time: {timestamp}", (text_offset_x, text_offset_y-5), font,font_size, (255, 255, 255), lineThickness, cv2.LINE_AA)
 		# x+=10
-		y+=20
+		y+=30
 		print("*********")
 
 def write(ts_str):
