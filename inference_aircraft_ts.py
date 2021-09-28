@@ -141,8 +141,8 @@ while True:
 				   int(sbj_box[3].item())]
 		set_text(draw_rlp, sbj_pred, sbj_box)
 		
-		if sbj_pred in trackable_objects:
-			predictions1.append((sbj_pred, sbj_box))
+		# if sbj_pred in trackable_objects:
+		predictions1.append((sbj_pred, sbj_box))
 
 
 	predictions2 = []
@@ -155,8 +155,8 @@ while True:
 				   int(bbox[3].item())]
 		set_text(draw_rlp, _ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box)
 
-		if _ind_to_class[int(label)] in trackable_objects:
-			predictions2.append((_ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box))
+		#if _ind_to_class[int(label)] in trackable_objects:
+		predictions2.append((_ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box))
 
 
 	preds_dict = create_preds_dict(predictions1, predictions2)
