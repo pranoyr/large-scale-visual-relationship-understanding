@@ -68,16 +68,21 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		db_tensor = fill[~mask]
 		db_count = count[~mask]
 
+		db_count += 1
+		# update the database
+		db_dict[key]["count"] = db_count
+		db_dict[key]["box"] = db_tensor
+
 		diff = predictions_tensor[~predictions_tensor.unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
 		db_tensor = torch.cat((db_tensor, diff))
 		db_count = torch.cat((db_count, torch.zeros(len(diff))))
 
-		db_count += 1
+		# db_count += 1
 		count_mask = db_count == th
 
-		# update the database
-		db_dict[key]["count"] = db_count
-		db_dict[key]["box"] = db_tensor
+		# # update the database
+		# db_dict[key]["count"] = db_count
+		# db_dict[key]["box"] = db_tensor
 		
 		if count_mask.any():
 			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
