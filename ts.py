@@ -41,6 +41,7 @@ def display_ts(predictions, frame_no, fps, th=10):
 		fill = predictions[key][clamped_matched_idxs_in_image]
 		count = db_tensor["count"]
 		mask = fill == 0
+		print(mask)
 		mask = mask[:, 0]
 		db_tensor = fill[~mask]
 		db_count = count[~mask]
