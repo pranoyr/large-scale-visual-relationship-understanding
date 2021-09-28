@@ -161,11 +161,11 @@ while True:
 			predictions2.append((_ind_to_class[int(label)], sbj_box))
 
 	if predictions1:
-		preds_dict1 = create_preds_dict.append(predictions1)
+		preds_dict1 = create_preds_dict(predictions1)
 	else:
 		preds_dict1 = {}
 	if predictions2:
-		preds_dict2 = create_preds_dict.append(predictions2)
+		preds_dict2 = create_preds_dict(predictions2)
 	else:
 		preds_dict2 = {}
 	
