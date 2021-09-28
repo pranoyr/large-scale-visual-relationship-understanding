@@ -58,6 +58,7 @@ def display_ts(predictions, frame_no, fps, th=10):
 		db_dict[key]["count"] = db_count
 		db_dict[key]["box"] = db_tensor
 		
+		print(db_dict)
 		if count_mask.any():
 			results.append((get_ts(frame_no, fps), key))
 			write((get_ts(frame_no, fps), key))
