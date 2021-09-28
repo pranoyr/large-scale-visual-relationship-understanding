@@ -54,8 +54,10 @@ def create_preds_dict(predictions):   # prediction = [(class,box), (class,box), 
 			preds_dict[pred[0]] = []
 
 		preds_dict[pred[0]].append(pred[1])
+
+	# preds_dict = {"arrive_near" : [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]}
 	return preds_dict	
-    
+
 
 opt = parse_opts()
 with open(os.path.join(cfg.DATASET_DIR, 'json_dataset', 'objects.json'), 'r') as f:
