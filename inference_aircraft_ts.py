@@ -137,10 +137,10 @@ while True:
 				'arrive near', 'arrived').replace('on the left of', 'on left').replace('on the right of', 'on right').replace('in front of', 'in front')
 
 
-		sbj_box = (int(sbj_box[0].item()),
+		sbj_box = [int(sbj_box[0].item()),
 				   int(sbj_box[1].item()),
 				   int(sbj_box[2].item()),
-				   int(sbj_box[3].item()))
+				   int(sbj_box[3].item())]
 		set_text(draw_rlp, sbj + ' '+ pred, sbj_box)
 		
 		if pred in trackable_objects:
@@ -151,10 +151,10 @@ while True:
 	for bbox, label in zip(boxes, labels):
 		if _ind_to_class[int(label)] in  ['person', 'catering truck']:
 				continue
-		sbj_box = (int(bbox[0].item()),
+		sbj_box = [int(bbox[0].item()),
 				   int(bbox[1].item()),
 				   int(bbox[2].item()),
-				   int(bbox[3].item()))
+				   int(bbox[3].item())]
 		set_text(draw_rlp, _ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box)
 
 		if _ind_to_class[int(label)] in trackable_objects:
