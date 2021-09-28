@@ -83,7 +83,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		print(db_dict)
 		if count_mask.any():
 			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
-			set_text(draw, results)
+			# set_text(draw, results)
 			write((get_ts(frame_no, fps), key))
 		set_text(draw, results)
 
