@@ -133,15 +133,16 @@ while True:
 		pred = pred.replace('attach to', 'attached').replace(
 				'arrive near', 'arrived').replace('on the left of', 'on left').replace('on the right of', 'on right').replace('in front of', 'in front')
 
+		sbj_pred = sbj + ' '+ pred
 
 		sbj_box = [int(sbj_box[0].item()),
 				   int(sbj_box[1].item()),
 				   int(sbj_box[2].item()),
 				   int(sbj_box[3].item())]
-		set_text(draw_rlp, sbj + ' '+ pred, sbj_box)
+		set_text(draw_rlp, sbj_pred, sbj_box)
 		
-		if pred in trackable_objects:
-			predictions1.append((sbj + ' '+ pred, sbj_box))
+		if sbj_pred in trackable_objects:
+			predictions1.append((sbj_pred, sbj_box))
 
 
 	predictions2 = []
@@ -155,12 +156,12 @@ while True:
 		set_text(draw_rlp, _ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box)
 
 		if _ind_to_class[int(label)] in trackable_objects:
-			predictions2.append((_ind_to_class[int(label)], sbj_box))
+			predictions2.append((_ind_to_class[int(label)].replace("aeroplane","aircraft"), sbj_box))
 
 
 	preds_dict = create_preds_dict(predictions1, predictions2)
 	
 	if preds_dict:
-		display_ts(draw_rlp.replace("aeroplane","aircraft"), preds_dict, frame_no, fps=10)
+		display_ts(draw_rlp, preds_dict, frame_no, fps=10)
 
 	out.write(cv2.resize(draw_rlp,(1280,720)))
