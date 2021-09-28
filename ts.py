@@ -50,7 +50,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 			db_dict.pop(key)
 			continue
 
-		predictions_tensor =  torch.tensor(predictions[key])
+		predictions_tensor = torch.cat(torch.tensor([0,0,0,0]), torch.tensor(predictions[key]))
 
 		match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
 		proposal_matcher = det_utils.Matcher(
@@ -68,21 +68,16 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		db_tensor = fill[~mask]
 		db_count = count[~mask]
 
-		db_count += 1
-		# update the database
-		db_dict[key]["count"] = db_count
-		db_dict[key]["box"] = db_tensor
-
 		diff = predictions_tensor[~predictions_tensor.unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
 		db_tensor = torch.cat((db_tensor, diff))
 		db_count = torch.cat((db_count, torch.zeros(len(diff))))
 
-		# db_count += 1
+		db_count += 1
 		count_mask = db_count == th
 
-		# # update the database
-		# db_dict[key]["count"] = db_count
-		# db_dict[key]["box"] = db_tensor
+		# update the database
+		db_dict[key]["count"] = db_count
+		db_dict[key]["box"] = db_tensor
 		
 		if count_mask.any():
 			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
