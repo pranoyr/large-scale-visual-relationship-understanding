@@ -47,7 +47,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	for (key, db_dict_of_object) in db_dict.copy().items():
 		if key not in predictions.keys():
 			# if key not in ["catering truck attached", "catering truck arrived"]:
-    		db_dict.pop(key)
+			db_dict.pop(key)
 			continue
 
 		predictions_tensor =  torch.tensor(predictions[key])
