@@ -92,6 +92,7 @@ for sbj_box, obj_box, sbj_label, obj_label, pred  \
 	pred = predicates[pred]
 	if obj != 'aeroplane':
 		continue
+	obj = "aircraft"
 	print(sbj, pred, obj)
 	color = list(np.random.random(size=3) * 256)
 	font = cv2.FONT_HERSHEY_SIMPLEX
