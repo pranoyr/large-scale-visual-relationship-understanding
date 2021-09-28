@@ -27,7 +27,6 @@ def set_text(draw, results):
 		cv2.putText(draw, f"{label}, time: {timestamp}", (text_offset_x, text_offset_y-5), font,font_size, (255, 255, 255), lineThickness, cv2.LINE_AA)
 		# x+=10
 		y+=30
-		print("*********")
 
 def write(ts_str):
 	""" Writes the timestamp to a file.
@@ -85,6 +84,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 			results.append((get_ts(frame_no, fps), key)) # resutls = [(timestamp, "arrived")]
 			# set_text(draw, results)
 			write((get_ts(frame_no, fps), key))
+		print(results)
 		set_text(draw, results)
 
 	# update the database

@@ -127,7 +127,7 @@ while True:
 		pred = predicates[pred]
 		if obj != 'aeroplane':
 			continue
-		print(sbj, pred, obj)
+		# print(sbj, pred, obj)
 		if sbj not in  ['person', 'catering truck']:
 			continue
 		pred = pred.replace('attach to', 'attached').replace(
