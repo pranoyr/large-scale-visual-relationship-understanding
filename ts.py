@@ -38,10 +38,10 @@ def display_ts(predictions, frame_no, fps, th=10):
 		matched_idxs_in_image = proposal_matcher(match_quality_matrix)
 		clamped_matched_idxs_in_image = matched_idxs_in_image.clamp(min=0)
 
+		print(predictions[key])
 		fill = predictions[key][clamped_matched_idxs_in_image]
 		count = db_tensor["count"]
 		mask = fill == 0
-		print(mask)
 		mask = mask[:, 0]
 		db_tensor = fill[~mask]
 		db_count = count[~mask]
