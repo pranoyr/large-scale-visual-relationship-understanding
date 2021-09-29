@@ -11,7 +11,7 @@ results = []
 
 
 def set_text(draw, results):
-	x, y = draw.shape[0] + 10, 40
+	x, y = draw.shape[0] + 10, 20
 	for (timestamp, label) in results:
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		lineThickness = 1
