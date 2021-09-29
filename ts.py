@@ -46,8 +46,8 @@ def get_ts(frame_no, fps):
 def display_ts(draw, predictions, frame_no, fps, th=10):
 	for (key, db_dict_of_object) in db_dict.copy().items():
 		if key not in predictions.keys():
-    			if key not in ["aeroplane", "catering truck arrived", "catering truck attached", "bridge connected", "wheel chocks", "cargo door open"]:
-        					db_dict.pop(key)
+			# if key not in ["aeroplane", "catering truck arrived", "catering truck attached", "bridge connected", "wheel chocks", "cargo door open"]:
+			# 		db_dict.pop(key)
 			continue
 	
 		predictions_tensor = torch.cat([torch.tensor([[0,0,0,0]]), torch.tensor(predictions[key])])
@@ -76,8 +76,11 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		count = db_dict_of_object["count"]
 		mask = fill == 0
 		mask = mask[:, 0]
-		db_tensor = fill[~mask]
-		db_count = count[~mask]
+		# db_tensor = fill[~mask]
+		# db_count = count[~mask]
+
+		db_tensor = torch.cat([fill[~mask], db_dict_of_object["box"][mask]])
+		db_count = torch.cat([count[~mask], db_dict_of_object["count"][mask]])
 
 		# diff = db_tensor - predictions
 		diff = predictions_tensor[~predictions_tensor.unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
