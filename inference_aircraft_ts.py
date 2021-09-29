@@ -17,7 +17,7 @@ from config import cfg
 from modelling.model import FasterRCNN
 from opts import parse_opts
 
-trackable_objects = ["aeroplane", "catering truck arrived", "catering truck attached", "bridge connected", "wheel chocks", "cargo door open"]
+trackable_objects = ["aeroplane", "catering truck arrived", "catering truck attached", "bridge connected", "cargo door open"]
 
 # Save video
 out = cv2.VideoWriter('./demo1.avi',

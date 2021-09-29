@@ -52,8 +52,10 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	
 		predictions_tensor = torch.cat([torch.tensor([[0,0,0,0]]), torch.tensor(predictions[key])])
 
+		# get iou matrx
 		match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
-  
+
+		# get the best idx match between the prediction and the database
 		clamped_matched_idxs_in_image = []
 		for i in range(match_quality_matrix.shape[1]):
 			row_idx = match_quality_matrix[:,i].max(dim=0)[1]
@@ -62,7 +64,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 				clamped_matched_idxs_in_image.append(row_idx)
 			else:
 				clamped_matched_idxs_in_image.append(0)
-		clamped_matched_idxs_in_image = torch.tensor(clamped_matched_idxs_in_image)
+		clamped_matched_idxs_in_image = torch.tensor(clamped_matched_idxs_in_image)  
 
 		# match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
 		# proposal_matcher = det_utils.Matcher(
@@ -72,6 +74,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		# matched_idxs_in_image = proposal_matcher(match_quality_matrix)
 		# clamped_matched_idxs_in_image = matched_idxs_in_image.clamp(min=0)
 
+		# db_tensor and db_count updated with matched prediction tensor
 		fill = predictions_tensor[clamped_matched_idxs_in_image]
 		count = db_dict_of_object["count"]
 		mask = fill == 0
@@ -79,6 +82,7 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		# db_tensor = fill[~mask]
 		# db_count = count[~mask]
 
+		# concat with non matching db_dict values so that bboxes remain in db_dict
 		db_tensor = torch.cat([fill[~mask], db_dict_of_object["box"][mask]])
 		db_count = torch.cat([count[~mask], db_dict_of_object["count"][mask]])
 
