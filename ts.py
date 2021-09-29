@@ -47,9 +47,9 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	for (key, db_dict_of_object) in db_dict.copy().items():
 		if key not in predictions.keys():
 			if key not in ["catering truck attached", "catering truck arrived"]:
-    			db_dict.pop(key)
-			continue
-
+				db_dict.pop(key)
+				continue
+			
 		predictions_tensor = torch.cat([torch.tensor([[0,0,0,0]]), torch.tensor(predictions[key])])
 
 		match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
