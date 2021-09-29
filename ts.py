@@ -46,7 +46,7 @@ def get_ts(frame_no, fps):
 def display_ts(draw, predictions, frame_no, fps, th=10):
 	for (key, db_dict_of_object) in db_dict.copy().items():
 		if key not in predictions.keys():
-			if key not in ["aeroplane", "catering truck arrived", "catering truck attached", "bridge connected", "wheel chocks", "cargo door open"]:
+			if key not in ["aeroplane", "catering truck arrived", "catering truck attached", "bridge connected", "wheel chocks"]:
     				db_dict.pop(key)
 			continue
 	
