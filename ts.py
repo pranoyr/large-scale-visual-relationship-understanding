@@ -15,7 +15,7 @@ def set_text(draw, results):
 	for (timestamp, label) in results:
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		lineThickness = 1
-		font_size = 0.25
+		font_size = 0.5
 		# set some text
 		# get the width and height of the text box
 		(text_width, text_height) = cv2.getTextSize(f"{label}, time: {timestamp}", font, font_size, lineThickness)[0]
