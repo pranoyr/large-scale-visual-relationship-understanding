@@ -53,13 +53,24 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		predictions_tensor = torch.cat([torch.tensor([[0,0,0,0]]), torch.tensor(predictions[key])])
 
 		match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
-		proposal_matcher = det_utils.Matcher(
-			0.5,
-			0.5,
-			allow_low_quality_matches=False)
-		matched_idxs_in_image = proposal_matcher(match_quality_matrix)
-		clamped_matched_idxs_in_image = matched_idxs_in_image.clamp(min=0)
+  
+		clamped_matched_idxs_in_image = []
+		for i in range(match_quality_matrix.shape[1]):
+			row_idx = match_quality_matrix[:,i].max(dim=0)[1]
+			col_idx = match_quality_matrix[row_idx,:].max(dim=0)[1] 
+			if col_idx == i:
+				clamped_matched_idxs_in_image.append(row_idx)
+			else:
+				clamped_matched_idxs_in_image.append(0)
+		clamped_matched_idxs_in_image = torch.tensor(clamped_matched_idxs_in_image)
 
+		# match_quality_matrix = box_ops.box_iou(predictions_tensor.type(torch.float32), db_dict_of_object["box"].type(torch.float32))
+		# proposal_matcher = det_utils.Matcher(
+		# 	0.5,
+		# 	0.5,
+		# 	allow_low_quality_matches=False)
+		# matched_idxs_in_image = proposal_matcher(match_quality_matrix)
+		# clamped_matched_idxs_in_image = matched_idxs_in_image.clamp(min=0)
 
 		fill = predictions_tensor[clamped_matched_idxs_in_image]
 		count = db_dict_of_object["count"]
