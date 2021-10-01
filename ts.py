@@ -123,7 +123,6 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 	print("predictions")
 	print(predictions)
 
-
 	print()
 	print()
 	print()
