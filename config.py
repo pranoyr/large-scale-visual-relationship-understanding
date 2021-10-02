@@ -8,7 +8,7 @@ __C = AttrDict()
 #   from fast_rcnn_config import cfg
 cfg = __C
 
-__C.DEVICE = 'cuda'
+__C.DEVICE = 'cuda:1'
 
 #
 # Training options
