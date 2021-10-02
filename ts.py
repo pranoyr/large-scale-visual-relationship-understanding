@@ -81,10 +81,11 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		mask = mask[:, 0]
 		# db_tensor = fill[~mask]
 		# db_count = count[~mask]
+		
 
-		# concat with non matching db_dict values so that bboxes remain in db_dict
-		db_tensor = torch.cat([fill[~mask], db_dict_of_object["box"][mask]])
-		db_count = torch.cat([count[~mask], db_dict_of_object["count"][mask]])
+		# # concat with non matching db_dict values so that bboxes remain in db_dict
+		# db_tensor = torch.cat([fill[~mask], db_dict_of_object["box"][mask]])
+		# db_count = torch.cat([count[~mask], db_dict_of_object["count"][mask]])
 
 		# diff = db_tensor - predictions
 		diff = predictions_tensor[~predictions_tensor.unsqueeze(1).eq(db_tensor).all(-1).any(-1)][1:]
@@ -92,6 +93,9 @@ def display_ts(draw, predictions, frame_no, fps, th=10):
 		db_count = torch.cat((db_count, torch.zeros(len(diff))))
 
 		db_count += 1
+		# concat with non matching db_dict values so that bboxes remain in db_dict
+		db_tensor = torch.cat([fill[~mask], db_dict_of_object["box"][mask]])
+		db_count = torch.cat([count[~mask], db_dict_of_object["count"][mask]])
 		count_mask = db_count == th
 
 		# update the database
