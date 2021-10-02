@@ -71,7 +71,7 @@ classes.insert(0, '__background__')
 _class_to_ind = dict(zip(classes, range(len(classes))))
 _ind_to_class = {v: k for k, v in _class_to_ind.items()}
 
-cfg.DEVICE = "cuda:1"
+cfg.DEVICE = "cuda:0"
 faster_rcnn = FasterRCNN().to(cfg.DEVICE)
 
 # load pretrained weights
